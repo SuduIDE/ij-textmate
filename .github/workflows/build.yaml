@@ -28,3 +28,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: "./build/libs/*.jar"
+          release_name: ${{ matrix.os }}-java-${{ matrix.java }}
