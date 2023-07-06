@@ -30,12 +30,8 @@ jobs:
         with:
           tag_name: ${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}
           release_name: ${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
+      - uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/lib/*.jar
-          asset_name: plugin-${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}.zip
-          asset_content_type: application/zip
+          file: "./build/lib/*.jar"
