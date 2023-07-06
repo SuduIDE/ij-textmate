@@ -28,12 +28,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}
-          release_name: ${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}
+          tag_name: ${{ matrix.java }}-${{ matrix.os }}
+          release_name: ${{ matrix.java }}-${{ matrix.os }}
       - name: Upload file
         uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: "./build/libs/*.jar"
-          tag_name: ${{ matrix.java }}-${{ matrix.os }}-${{ github.run_number }}
+          tag_name: ${{ matrix.java }}-${{ matrix.os }}
