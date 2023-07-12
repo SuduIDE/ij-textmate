@@ -28,4 +28,10 @@
     <extensions defaultExtensionNs="com.intellij">
 
     </extensions>
+    <actions>
+        <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"
+                text="Inject Language" description="Introduces inject language">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
+        </action>
+    </actions>
 </idea-plugin>
