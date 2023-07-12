@@ -27,5 +27,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: "./build/libs/*.jar"
+          file: "./build/libs/ij-textmate*.jar"
           tag_name: ${{ matrix.java }}-${{ matrix.os }}
