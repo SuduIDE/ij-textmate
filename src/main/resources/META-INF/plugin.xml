@@ -23,6 +23,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.textmate</depends>
+    <depends>org.intellij.intelliLang</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -33,6 +34,10 @@
         <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"
                 text="Inject Language" description="Introduces inject language">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
+        </action>
+        <action id="com.razerford.ijTextmate.CheckType" class="com.razerford.ijTextmate.CheckType" text="Type"
+                description="Type">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl O"/>
         </action>
     </actions>
 </idea-plugin>
