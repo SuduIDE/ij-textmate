@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.Inject;
+package com.razerford.ijTextmate.Helpers;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
@@ -9,14 +9,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InjectorUtils {
+public class InjectorHelper {
     @Nullable
     public static PsiLanguageInjectionHost findInjectionHost(@NotNull Editor editor, @NotNull PsiFile file) {
         int offset = editor.getCaretModel().getOffset();
-        FileViewProvider vp = file.getViewProvider();
-        for (Language language : vp.getLanguages()) {
+        FileViewProvider viewProvider = file.getViewProvider();
+        for (Language language : viewProvider.getLanguages()) {
             PsiLanguageInjectionHost host = PsiTreeUtil.getParentOfType(
-                    vp.findElementAt(offset, language),
+                    viewProvider.findElementAt(offset, language),
                     PsiLanguageInjectionHost.class, false);
             if (host != null && host.isValidHost()) return host;
         }

@@ -1,2 +1,4 @@
-package com.razerford.ijTextmate.Inject;public class InjectLanguage {
+package com.razerford.ijTextmate.Inject;
+
+public class InjectLanguage {
 }

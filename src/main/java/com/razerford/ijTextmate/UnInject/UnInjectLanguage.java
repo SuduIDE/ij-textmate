@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.Inject;
+package com.razerford.ijTextmate.UnInject;
 
 public class UnInjectLanguage {
 }

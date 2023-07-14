@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.Inject;
+package com.razerford.ijTextmate.TemporaryLanguage;
 
 import com.intellij.openapi.util.Key;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
