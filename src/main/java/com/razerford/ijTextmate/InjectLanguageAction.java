@@ -1,6 +1,5 @@
 package com.razerford.ijTextmate;
 
-import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
@@ -8,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
 import com.razerford.ijTextmate.Inject.InjectLanguage;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
@@ -15,6 +15,7 @@ import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 public class InjectLanguageAction extends AnAction {
@@ -24,7 +25,7 @@ public class InjectLanguageAction extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
-        actionPerformedImpl(project, editor, file, "");
+        actionPerformedImpl(project, editor, file, "sql");
     }
 
     @Override
