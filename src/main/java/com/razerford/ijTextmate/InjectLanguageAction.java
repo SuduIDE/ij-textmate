@@ -9,7 +9,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.TemporaryEntity.TemporaryLanguageInjectionSupport;
+import com.razerford.ijTextmate.Inject.InjectLanguage;
+import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (host == null || host.getUserData(TemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
+        if (host == null || host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
             e.getPresentation().setEnabledAndVisible(false);
             return;
         }
@@ -56,8 +57,8 @@ public class InjectLanguageAction extends AnAction {
     public static void actionPerformedImpl(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile, @NotNull String languageId) {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
-
-//        Language language = InjectableTextMate.create(languageId);
+        InjectedLanguage injectedLanguage = InjectableTextMate.create(languageId);
+        InjectLanguage.inject(host, injectedLanguage, project);
 ////        project.getService(MyTemporaryLanguageInjection.class).addInjectionInPlace(language, host);
 //        MyTemporaryPlacesRegistry.getInstance(project).addHostWithUndo(project, host, InjectedLanguage.create(language.getID()));
 //        try {

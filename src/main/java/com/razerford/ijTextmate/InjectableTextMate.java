@@ -2,6 +2,7 @@ package com.razerford.ijTextmate;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.injection.Injectable;
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,5 +27,9 @@ public class InjectableTextMate extends Injectable {
     @Override
     public @Nullable Language getLanguage() {
         return TextMateLanguage.LANGUAGE;
+    }
+
+    public static @NotNull InjectedLanguage create(@NotNull String languageId) {
+        return InjectedLanguage.create((languageId.length() == 0) ? INSTANCE.getId() : String.format("textmate->%s", languageId));
     }
 }
