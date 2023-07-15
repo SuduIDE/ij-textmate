@@ -11,6 +11,7 @@ import com.razerford.ijTextmate.InjectableTextMate;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.textmate.TextMateLanguage;
 
 import java.util.List;
 
@@ -18,18 +19,15 @@ public class InjectLanguageHighlight implements MultiHostInjector {
     @Override
     public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
         if (!(context instanceof PsiLiteralValue && context instanceof PsiLanguageInjectionHost host)) return;
-
-//        InjectedLanguage language = host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
-
-//        if (language == null || language.getLanguage() == null) return;
-        InjectedLanguage language = InjectedLanguage.create("textmate");
+        InjectedLanguage language = host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
+        if (language == null) return;
         int start = 0;
         int end = context.getTextLength() - 1;
         String text = context.getText();
         while (text.charAt(start) == '"' && start < end) start++;
         while (text.charAt(end) == '"' && end > start) end--;
-        TextRange range = new TextRange(start, end);
-        registrar.startInjecting(language.getLanguage(), "sql").addPlace(null, null, host, range).doneInjecting();
+        TextRange range = new TextRange(start, end + 1);
+        registrar.startInjecting(TextMateLanguage.LANGUAGE, language.getSuffix()).addPlace(null, null, host, range).doneInjecting();
     }
 
     @Override

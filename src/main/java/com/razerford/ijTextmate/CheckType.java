@@ -29,6 +29,7 @@ public class CheckType extends AnAction {
 //        System.out.println(element.getText());
 //        System.out.println(element.getContext());
         var x = InjectorHelper.findInjectionHost(editor, file).getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
-        System.out.println(x.getID());
+        if (x != null)
+        System.out.println(x.getSuffix());
     }
 }
