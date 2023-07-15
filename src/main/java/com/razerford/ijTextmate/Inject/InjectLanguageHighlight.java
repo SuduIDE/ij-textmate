@@ -23,14 +23,13 @@ public class InjectLanguageHighlight implements MultiHostInjector {
 
 //        if (language == null || language.getLanguage() == null) return;
         InjectedLanguage language = InjectedLanguage.create("textmate");
-
-        TextRange range = new TextRange(1, context.getTextLength() - 1);
-        registrar.startInjecting(language.getLanguage())
-                .addPlace(null, null, host, range)
-                .doneInjecting();
-        registrar.startInjecting(language.getLanguage(), "php")
-                .addPlace(null, null, host, range)
-                .doneInjecting();
+        int start = 0;
+        int end = context.getTextLength() - 1;
+        String text = context.getText();
+        while (text.charAt(start) == '"' && start < end) start++;
+        while (text.charAt(end) == '"' && end > start) end--;
+        TextRange range = new TextRange(start, end);
+        registrar.startInjecting(language.getLanguage(), "sql").addPlace(null, null, host, range).doneInjecting();
     }
 
     @Override
