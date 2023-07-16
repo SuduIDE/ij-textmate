@@ -2,6 +2,7 @@ package com.razerford.ijTextmate.Helpers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.intellij.openapi.components.Service;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.plugins.textmate.configuration.BundleConfigBean;
 import org.jetbrains.plugins.textmate.configuration.TextMateSettings;
@@ -9,7 +10,8 @@ import org.jetbrains.plugins.textmate.configuration.TextMateSettings;
 import java.nio.file.Path;
 import java.util.*;
 
-public class TextMateHelper {
+@Service(Service.Level.PROJECT)
+public final class TextMateHelper {
     private final Map<String, String> languages = new HashMap<>();
     private static final Path FILE_WITH_EXTENSION = Path.of("package.json");
     private static final String CONTRIBUTES = "contributes";
@@ -17,6 +19,11 @@ public class TextMateHelper {
     private static final String EXTENSIONS = "extensions";
 
     public TextMateHelper() {
+        updateLanguages();
+    }
+
+    public void updateLanguages() {
+        languages.clear();
         Collection<BundleConfigBean> bundles = TextMateSettings.getInstance().getBundles();
         bundles.forEach((bundle) -> languages.put(bundle.getName(), bundle.getPath()));
     }

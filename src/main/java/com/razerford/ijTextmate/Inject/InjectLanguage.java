@@ -8,16 +8,8 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryPlacesRegistry;
-import org.intellij.plugins.intelliLang.Configuration;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
-import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport;
-import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class InjectLanguage {
     public static void inject(PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
