@@ -12,7 +12,7 @@ import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class InjectLanguage {
-    public static void inject(PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
+    public static void inject(@NotNull PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
         InjectedLanguage prevLanguage = host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
         SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(host);
         MyTemporaryPlacesRegistry.TemporaryPlace prevPlace = new MyTemporaryPlacesRegistry.TemporaryPlace(prevLanguage, pointer);
@@ -23,9 +23,6 @@ public class InjectLanguage {
     private static void addInjectionPlace(MyTemporaryPlacesRegistry.@NotNull TemporaryPlace place, Project project) {
         PsiLanguageInjectionHost host = place.psiElementPointer.getElement();
         if (host == null) return;
-        InjectedLanguageManager.getInstance(project).enumerate(host, (injectedPsi, places) -> {
-            injectedPsi.putUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
-        });
         host.putUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
         host.getManager().dropPsiCaches();
     }
