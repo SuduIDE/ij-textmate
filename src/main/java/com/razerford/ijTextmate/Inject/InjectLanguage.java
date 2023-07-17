@@ -3,13 +3,17 @@ package com.razerford.ijTextmate.Inject;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
 import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryPlacesRegistry;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class InjectLanguage {
     public static void inject(@NotNull PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
@@ -23,7 +27,37 @@ public class InjectLanguage {
     private static void addInjectionPlace(MyTemporaryPlacesRegistry.@NotNull TemporaryPlace place, Project project) {
         PsiLanguageInjectionHost host = place.psiElementPointer.getElement();
         if (host == null) return;
+        PsiElement element = host.getOriginalElement();
+        if (element != null) element = element.getParent();
+        PsiReference psiReference = getFirstReference(element);
+        if (!(element instanceof PsiNameIdentifierOwner) && psiReference != null) {
+            element = psiReference.resolve();
+            PsiLanguageInjectionHost newHost = getHostFromElementRoot(element);
+            host = (newHost == null) ? host : newHost;
+        }
         host.putUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
         host.getManager().dropPsiCaches();
+    }
+
+    @Contract(pure = true)
+    public static @Nullable PsiLanguageInjectionHost getHostFromElementRoot(PsiElement root) {
+        if (root == null) return null;
+        for (PsiElement element : root.getChildren()) {
+            if (element instanceof PsiLanguageInjectionHost host) {
+                return host;
+            }
+        }
+        return null;
+    }
+
+    @Contract(pure = true)
+    public static @Nullable PsiReference getFirstReference(PsiElement root) {
+        if (root == null) return null;
+        for (PsiElement element : root.getChildren()) {
+            if (element instanceof PsiReference reference) {
+                return reference;
+            }
+        }
+        return null;
     }
 }
