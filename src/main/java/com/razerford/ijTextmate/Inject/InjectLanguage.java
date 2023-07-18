@@ -1,19 +1,16 @@
 package com.razerford.ijTextmate.Inject;
 
-import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
-import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryPlacesRegistry;
+import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
+import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
+import com.razerford.ijTextmate.PersistentStorage.MyTemporaryPlacesRegistry;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class InjectLanguage {
     public static void inject(@NotNull PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
@@ -21,6 +18,8 @@ public class InjectLanguage {
         SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(host);
         MyTemporaryPlacesRegistry.TemporaryPlace prevPlace = new MyTemporaryPlacesRegistry.TemporaryPlace(prevLanguage, pointer);
         MyTemporaryPlacesRegistry.TemporaryPlace place = new MyTemporaryPlacesRegistry.TemporaryPlace(language, pointer);
+        PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
+        elements.addElement(pointer);
         WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(place, project));
     }
 

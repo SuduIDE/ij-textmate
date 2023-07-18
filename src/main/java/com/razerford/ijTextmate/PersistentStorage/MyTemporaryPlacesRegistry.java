@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.TemporaryEntity;
+package com.razerford.ijTextmate.PersistentStorage;
 
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.SmartPsiElementPointer;

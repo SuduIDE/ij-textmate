@@ -6,13 +6,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.TemporaryEntity.MyTemporaryLanguageInjectionSupport;
+import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
+import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 
 import static java.lang.System.out;
@@ -24,7 +23,9 @@ public class CheckType extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
-
+        for (var ee : project.getService(PersistentStorage.class).getState().getElements()) {
+            out.println(ee.getElement().getText());
+        }
 //        Collection<PsiReference> refs;
 //        ReferencesSearch.search(file.findElementAt(editor.getCaretModel().getOffset()));
 //        PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());

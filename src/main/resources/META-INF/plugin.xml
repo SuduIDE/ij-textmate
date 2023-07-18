@@ -29,6 +29,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <multiHostInjector implementation="com.razerford.ijTextmate.Inject.InjectLanguageHighlight"/>
+        <projectService serviceImplementation="com.razerford.ijTextmate.PersistentStorage.PersistentStorage"/>
     </extensions>
     <actions>
         <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"

@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.TemporaryEntity;
+package com.razerford.ijTextmate.PersistentStorage;
 
 import com.intellij.openapi.util.Key;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
