@@ -1,14 +1,20 @@
 package com.razerford.ijTextmate.PersistentStorage;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.Converter;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import com.intellij.util.xmlb.annotations.Property;
+import io.ktor.util.collections.ConcurrentSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.Set;
 
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
@@ -23,29 +29,57 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
     @Override
     public void loadState(@NotNull SetElement state) {
         mySetElement = state;
+        System.out.println("load");
+//        VirtualFile vf = PsiManager.getInstance(ApplicationManager.getApplication().getService(Project.class)).getProject().getProjectFile();
+//        PsiFile file = PsiManager.getInstance(ApplicationManager.getApplication().getService(Project.class)).findFile(vf);
+//        for (TemporaryPlace place : state.getElements()) {
+//            PsiElement element = file.findElementAt(place.offset);
+//            if (element.isValid())
+//                element.putUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE,
+//                        InjectedLanguage.create(place.languageId));
+//        }
     }
 
     public static class SetElement {
-        @Attribute
-        private final Set<SmartPsiElementPointer<? extends PsiLanguageInjectionHost>> set = new HashSet<>();
+        @Property
+        @OptionTag(converter = ConverterSetElement.class)
+        private final Set<TemporaryPlace> set = new ConcurrentSet<>();
 
         public SetElement() {
         }
 
-        public boolean addElement(SmartPsiElementPointer<? extends PsiLanguageInjectionHost> elementPointer) {
-            return set.add(elementPointer);
+        public boolean addElement(TemporaryPlace place) {
+            return set.add(place);
         }
 
-        public boolean contains(SmartPsiElementPointer<? extends PsiLanguageInjectionHost> elementPointer) {
-            return set.contains(elementPointer);
+        public boolean contains(TemporaryPlace place) {
+            return set.contains(place);
         }
 
-        public boolean remove(SmartPsiElementPointer<? extends PsiLanguageInjectionHost> elementPointer) {
-            return set.remove(elementPointer);
+        public boolean remove(TemporaryPlace place) {
+            return set.remove(place);
         }
 
-        public Set<SmartPsiElementPointer<? extends PsiLanguageInjectionHost>> getElements() {
+        public Set<TemporaryPlace> getElements() {
             return set;
+        }
+    }
+
+    public static class ConverterSetElement extends Converter<Set<TemporaryPlace>> {
+        @Override
+        public @Nullable Set<TemporaryPlace> fromString(@NotNull String value) {
+            GsonBuilder gson = new GsonBuilder();
+            Type collectionType = new TypeToken<Set<TemporaryPlace>>() {
+            }.getType();
+            return gson.create().fromJson(value, collectionType);
+        }
+
+        @Override
+        public @Nullable String toString(@NotNull Set<TemporaryPlace> value) {
+            Writer writer = new StringWriter();
+            Gson gson = new Gson();
+            gson.toJson(gson.toJsonTree(value), writer);
+            return writer.toString();
         }
     }
 }
