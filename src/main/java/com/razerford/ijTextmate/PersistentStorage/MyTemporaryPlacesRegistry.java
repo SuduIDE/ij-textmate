@@ -11,12 +11,12 @@ public class MyTemporaryPlacesRegistry {
     private final List<TemporaryPlace> temporaryPlaces = ContainerUtil.createLockFreeCopyOnWriteList();
 
     public static class TemporaryPlace {
-        public final InjectedLanguage language;
-        public SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer;
+        public final String languageId;
+        public int offset;
 
-        public TemporaryPlace(InjectedLanguage language, SmartPsiElementPointer<PsiLanguageInjectionHost> elementPointer) {
-            this.psiElementPointer = elementPointer;
-            this.language = language;
+        public TemporaryPlace(String languageId, final int offset) {
+            this.offset = offset;
+            this.languageId = languageId;
         }
     }
 }

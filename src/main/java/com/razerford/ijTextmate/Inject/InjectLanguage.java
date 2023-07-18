@@ -4,8 +4,6 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.MyTemporaryPlacesRegistry;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -15,17 +13,12 @@ public class InjectLanguage {
     public static final Key<InjectedLanguage> MY_TEMPORARY_INJECTED_LANGUAGE = Key.create("MY_TEMPORARY_INJECTED_LANGUAGE");
 
     public static void inject(@NotNull PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
-        InjectedLanguage prevLanguage = host.getUserData(MY_TEMPORARY_INJECTED_LANGUAGE);
-        SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(host);
-        MyTemporaryPlacesRegistry.TemporaryPlace prevPlace = new MyTemporaryPlacesRegistry.TemporaryPlace(prevLanguage, pointer);
-        MyTemporaryPlacesRegistry.TemporaryPlace place = new MyTemporaryPlacesRegistry.TemporaryPlace(language, pointer);
-        PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
-        elements.addElement(pointer);
-        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(place, project));
+//        PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
+//        elements.addElement(pointer);
+        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(language, host, project));
     }
 
-    private static void addInjectionPlace(MyTemporaryPlacesRegistry.@NotNull TemporaryPlace place, Project project) {
-        PsiLanguageInjectionHost host = place.psiElementPointer.getElement();
+    private static void addInjectionPlace(InjectedLanguage language, PsiLanguageInjectionHost host, Project project) {
         if (host == null) return;
         PsiElement element = host.getOriginalElement();
         if (element != null) element = element.getParent();
@@ -35,8 +28,10 @@ public class InjectLanguage {
             PsiLanguageInjectionHost newHost = getHostFromElementRoot(element);
             host = (newHost == null) ? host : newHost;
         }
-        host.putUserData(MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
-        host.getManager().dropPsiCaches();
+        if (host.isValidHost()) {
+            host.putUserData(MY_TEMPORARY_INJECTED_LANGUAGE, language);
+            host.getManager().dropPsiCaches();
+        }
     }
 
     @Contract(pure = true)
