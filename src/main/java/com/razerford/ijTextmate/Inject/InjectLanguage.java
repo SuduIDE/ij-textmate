@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
 import com.razerford.ijTextmate.PersistentStorage.MyTemporaryPlacesRegistry;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
@@ -13,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InjectLanguage {
+    public static final Key<InjectedLanguage> MY_TEMPORARY_INJECTED_LANGUAGE = Key.create("MY_TEMPORARY_INJECTED_LANGUAGE");
+
     public static void inject(@NotNull PsiLanguageInjectionHost host, InjectedLanguage language, Project project) {
-        InjectedLanguage prevLanguage = host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
+        InjectedLanguage prevLanguage = host.getUserData(MY_TEMPORARY_INJECTED_LANGUAGE);
         SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(host);
         MyTemporaryPlacesRegistry.TemporaryPlace prevPlace = new MyTemporaryPlacesRegistry.TemporaryPlace(prevLanguage, pointer);
         MyTemporaryPlacesRegistry.TemporaryPlace place = new MyTemporaryPlacesRegistry.TemporaryPlace(language, pointer);
@@ -34,7 +35,7 @@ public class InjectLanguage {
             PsiLanguageInjectionHost newHost = getHostFromElementRoot(element);
             host = (newHost == null) ? host : newHost;
         }
-        host.putUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
+        host.putUserData(MY_TEMPORARY_INJECTED_LANGUAGE, place.language);
         host.getManager().dropPsiCaches();
     }
 

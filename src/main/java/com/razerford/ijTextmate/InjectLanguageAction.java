@@ -15,7 +15,6 @@ import com.intellij.util.Processor;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
 import com.razerford.ijTextmate.Helpers.TextMateHelper;
 import com.razerford.ijTextmate.Inject.InjectLanguage;
-import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
@@ -45,7 +44,7 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (host == null || host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
+        if (host == null || host.getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
             e.getPresentation().setEnabledAndVisible(false);
             return;
         }

@@ -4,7 +4,6 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.textmate.TextMateLanguage;
@@ -15,7 +14,7 @@ public class InjectLanguageHighlight implements MultiHostInjector {
     @Override
     public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
         if (!(context instanceof PsiLiteralValue && context instanceof PsiLanguageInjectionHost host)) return;
-        InjectedLanguage language = host.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
+        InjectedLanguage language = host.getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE);
         if (language == null) {
             PsiElement element = host.getOriginalElement();
             language = findLanguageRoot(element);
@@ -42,6 +41,6 @@ public class InjectLanguageHighlight implements MultiHostInjector {
         element = psiReference.resolve();
         element = InjectLanguage.getHostFromElementRoot(element);
         return (element == null) ? null :
-                element.getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
+                element.getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE);
     }
 }

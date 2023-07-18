@@ -7,8 +7,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
+import com.razerford.ijTextmate.Inject.InjectLanguage;
 import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.MyTemporaryLanguageInjectionSupport;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -57,8 +57,8 @@ public class CheckType extends AnAction {
 //        ReferencesSearch.search(element).findAll()
         out.println(element.getText());
         Arrays.stream(element.getReferences()).forEach(x -> out.println(x.getElement().getText()));
-        var x = Objects.requireNonNull(InjectorHelper.findInjectionHost(editor, file)).getUserData(MyTemporaryLanguageInjectionSupport.MY_TEMPORARY_INJECTED_LANGUAGE);
-        if (x != null)
-            System.out.println(x.getSuffix());
+        var x = Objects.requireNonNull(InjectorHelper.findInjectionHost(editor, file)).getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE);
+//        if (x != null)
+//            System.out.println(x.getSuffix());
     }
 }
