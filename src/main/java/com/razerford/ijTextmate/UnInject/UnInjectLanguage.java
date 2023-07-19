@@ -8,7 +8,6 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReference;
 import com.razerford.ijTextmate.Constants;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class UnInjectLanguage {

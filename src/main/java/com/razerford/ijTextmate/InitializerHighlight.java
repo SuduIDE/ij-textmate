@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.Inject.InjectLanguage;
 import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
 import com.razerford.ijTextmate.PersistentStorage.TemporaryPlace;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
