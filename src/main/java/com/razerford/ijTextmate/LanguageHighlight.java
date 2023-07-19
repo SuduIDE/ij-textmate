@@ -1,10 +1,9 @@
-package com.razerford.ijTextmate.Inject;
+package com.razerford.ijTextmate;
 
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.Constants;
 import com.razerford.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import org.jetbrains.plugins.textmate.TextMateLanguage;
 
 import java.util.List;
 
-public class InjectLanguageHighlight implements MultiHostInjector {
+public class LanguageHighlight implements MultiHostInjector {
     @Override
     public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
         if (!(context instanceof PsiLiteralValue && context instanceof PsiLanguageInjectionHost host)) return;

@@ -46,16 +46,23 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (host == null || host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
+        if (!canInjectLanguageToHost(project, editor, file, host)) {
             e.getPresentation().setEnabledAndVisible(false);
             return;
         }
+        host = InjectorHelper.resolveHost(host);
+        e.getPresentation().setEnabledAndVisible(canInjectLanguageToHost(project, editor, file, host));
+    }
+
+    private boolean canInjectLanguageToHost(Project project, Editor editor, PsiFile file, PsiLanguageInjectionHost host) {
+        if (host == null || host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
+            return false;
+        }
         List<Pair<PsiElement, TextRange>> injectedPsi = InjectedLanguageManager.getInstance(project).getInjectedPsiFiles(host);
         if (injectedPsi == null || injectedPsi.isEmpty()) {
-            e.getPresentation().setEnabledAndVisible(!InjectedReferencesContributor.isInjected(file.findReferenceAt(editor.getCaretModel().getOffset())));
-            return;
+            return !InjectedReferencesContributor.isInjected(file.findReferenceAt(editor.getCaretModel().getOffset()));
         }
-        e.getPresentation().setEnabledAndVisible(true);
+        return true;
     }
 
     @Override

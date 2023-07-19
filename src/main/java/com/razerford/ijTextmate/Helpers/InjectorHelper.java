@@ -1,14 +1,21 @@
 package com.razerford.ijTextmate.Helpers;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.razerford.ijTextmate.Constants;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class InjectorHelper {
     @Nullable
@@ -30,7 +37,15 @@ public class InjectorHelper {
     }
 
     public static void resolveInjectLanguage(PsiLanguageInjectionHost host, InjectedLanguage language) {
-        if (host == null) return;
+        host = resolveHost(host);
+        if (host != null && host.isValidHost()) {
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, language);
+            host.getManager().dropPsiCaches();
+        }
+    }
+
+    public static PsiLanguageInjectionHost resolveHost(PsiLanguageInjectionHost host) {
+        if (host == null) return null;
         PsiElement element = host.getOriginalElement();
         if (element != null) element = element.getParent();
         PsiReference psiReference = InjectorHelper.getFirstReference(element);
@@ -39,10 +54,7 @@ public class InjectorHelper {
             PsiLanguageInjectionHost newHost = InjectorHelper.getHostFromElementRoot(element);
             host = (newHost == null) ? host : newHost;
         }
-        if (host.isValidHost()) {
-            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, language);
-            host.getManager().dropPsiCaches();
-        }
+        return host;
     }
 
     @Contract(pure = true)
