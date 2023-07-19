@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.Helpers;
+package org.rri.ijTextmate.Helpers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

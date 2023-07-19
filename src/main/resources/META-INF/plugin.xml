@@ -1,11 +1,11 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>com.razerford.ij-textmate</id>
+    <id>org.rri.ij-textmate</id>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Ij-Textmate</name>
+    <name>Ij Textmate</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
@@ -15,7 +15,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description>
         <![CDATA[
-            Embeds the language using textmate bundles
+            Support of language injection for Textmate bundles
         ]]>
     </description>
 
@@ -28,31 +28,31 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <multiHostInjector implementation="com.razerford.ijTextmate.LanguageHighlight"/>
-        <projectService serviceImplementation="com.razerford.ijTextmate.PersistentStorage.PersistentStorage"/>
+        <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
+        <projectService serviceImplementation="org.rri.ijTextmate.PersistentStorage.PersistentStorage"/>
     </extensions>
     <project-components>
         <!--        <component>-->
-        <!--            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>-->
+        <!--            <implementation-class>PersistentStorage.org.rri.ijTextmate.PersistentStorage</implementation-class>>-->
         <!--        </component>-->
     </project-components>
     <projectListeners>
-        <listener class="com.razerford.ijTextmate.InitializerHighlight"
+        <listener class="org.rri.ijTextmate.InitializerHighlight"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
     </projectListeners>
     >
     <actions>
-        <action id="com.razerford.ijTextmate.InjectLanguageAction"
-                class="com.razerford.ijTextmate.InjectLanguageAction"
+        <action id="org.rri.ijTextmate.InjectLanguageAction"
+                class="org.rri.ijTextmate.InjectLanguageAction"
                 text="Inject Language" description="Introduces injected language">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
         </action>
-        <action id="com.razerford.ijTextmate.UnInjectLanguageAction"
-                class="com.razerford.ijTextmate.UnInjectLanguageAction"
+        <action id="org.rri.ijTextmate.UnInjectLanguageAction"
+                class="org.rri.ijTextmate.UnInjectLanguageAction"
                 text="Delete Injected Language" description="Deletes the injected language">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
         </action>
-        <action id="com.razerford.ijTextmate.CheckType" class="com.razerford.ijTextmate.CheckType" text="Type"
+        <action id="org.rri.ijTextmate.CheckType" class="org.rri.ijTextmate.CheckType" text="Type"
                 description="Type">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl O"/>
         </action>

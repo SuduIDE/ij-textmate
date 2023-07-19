@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.PersistentStorage;
+package org.rri.ijTextmate.PersistentStorage;
 
 import org.jetbrains.annotations.NotNull;
 

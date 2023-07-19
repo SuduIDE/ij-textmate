@@ -1,9 +1,9 @@
-package com.razerford.ijTextmate.UnInject;
+package org.rri.ijTextmate.UnInject;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class UnInjectLanguage {

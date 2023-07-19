@@ -1,13 +1,13 @@
-package com.razerford.ijTextmate;
+package org.rri.ijTextmate;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 

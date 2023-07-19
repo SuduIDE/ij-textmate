@@ -1,22 +1,14 @@
-package com.razerford.ijTextmate;
+package org.rri.ijTextmate;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.Inject.InjectLanguage;
-import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 import static java.lang.System.out;
 

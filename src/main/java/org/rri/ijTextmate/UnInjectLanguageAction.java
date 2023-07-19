@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate;
+package org.rri.ijTextmate;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.UnInject.UnInjectLanguage;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

@@ -1,9 +1,9 @@
-package com.razerford.ijTextmate.Inject;
+package org.rri.ijTextmate.Inject;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 

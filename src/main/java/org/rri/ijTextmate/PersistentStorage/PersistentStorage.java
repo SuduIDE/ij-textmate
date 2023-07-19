@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate.PersistentStorage;
+package org.rri.ijTextmate.PersistentStorage;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;

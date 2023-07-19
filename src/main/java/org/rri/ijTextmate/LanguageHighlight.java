@@ -1,10 +1,10 @@
-package com.razerford.ijTextmate;
+package org.rri.ijTextmate;
 
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.textmate.TextMateLanguage;

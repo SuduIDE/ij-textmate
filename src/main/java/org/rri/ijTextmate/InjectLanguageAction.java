@@ -1,4 +1,4 @@
-package com.razerford.ijTextmate;
+package org.rri.ijTextmate;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.*;
@@ -12,11 +12,11 @@ import com.intellij.psi.*;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Processor;
-import com.razerford.ijTextmate.Helpers.InjectorHelper;
-import com.razerford.ijTextmate.Helpers.TextMateHelper;
-import com.razerford.ijTextmate.Inject.InjectLanguage;
-import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
-import com.razerford.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Helpers.TextMateHelper;
+import org.rri.ijTextmate.Inject.InjectLanguage;
+import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
