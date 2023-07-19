@@ -13,6 +13,11 @@ public class InjectorHelper {
     @Nullable
     public static PsiLanguageInjectionHost findInjectionHost(@NotNull Editor editor, @NotNull PsiFile file) {
         int offset = editor.getCaretModel().getOffset();
+        return findInjectionHost(offset, file);
+    }
+
+    @Nullable
+    public static PsiLanguageInjectionHost findInjectionHost(final int offset, @NotNull PsiFile file) {
         FileViewProvider viewProvider = file.getViewProvider();
         for (Language language : viewProvider.getLanguages()) {
             PsiLanguageInjectionHost host = PsiTreeUtil.getParentOfType(

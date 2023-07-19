@@ -13,10 +13,10 @@ public class InjectLanguage {
     public static final Key<InjectedLanguage> MY_TEMPORARY_INJECTED_LANGUAGE = Key.create("MY_TEMPORARY_INJECTED_LANGUAGE");
 
     public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull InjectedLanguage language, @NotNull Project project) {
-        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(language, host, project));
+        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(language, host));
     }
 
-    private static void addInjectionPlace(InjectedLanguage language, PsiLanguageInjectionHost host, Project project) {
+    private static void addInjectionPlace(InjectedLanguage language, PsiLanguageInjectionHost host) {
         if (host == null) return;
         PsiElement element = host.getOriginalElement();
         if (element != null) element = element.getParent();

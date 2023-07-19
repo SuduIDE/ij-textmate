@@ -32,10 +32,14 @@
         <projectService serviceImplementation="com.razerford.ijTextmate.PersistentStorage.PersistentStorage"/>
     </extensions>
     <project-components>
-        <component>
-            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>
-        </component>
+<!--        <component>-->
+<!--            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>-->
+<!--        </component>-->
     </project-components>
+    <projectListeners>
+        <listener class="com.razerford.ijTextmate.InitializerHighlight"
+        topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </projectListeners>>
     <actions>
         <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"
                 text="Inject Language" description="Introduces inject language">
