@@ -1,14 +1,12 @@
 # Injected language in IDEA CE
 
 # Contents
----
 
 - [Contents](#contents)
     - [Install plugin](#install-plugin)
     - [Usage](#usage)
 
 ## Install plugin
----
 
 1. Go to [github](https://github.com/SuduIDE/ij-textmate)
 2. Go to the `Releases` section
