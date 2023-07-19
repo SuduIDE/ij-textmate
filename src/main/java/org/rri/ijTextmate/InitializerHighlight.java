@@ -1,0 +1,35 @@
+package org.rri.ijTextmate;
+
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.jetbrains.annotations.NotNull;
+
+public class InitializerHighlight implements FileEditorManagerListener {
+    private final Project project;
+
+    public InitializerHighlight(Project project) {
+        this.project = project;
+    }
+
+    @Override
+    public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+        PersistentStorage persistentStorage = PersistentStorage.getInstance(project);
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        if (persistentStorage == null || psiFile == null) return;
+        for (TemporaryPlace p : persistentStorage.getState().getElements()) {
+            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(p.offset, psiFile);
+            host = InjectorHelper.resolveHost(host);
+            if (host != null && host.isValidHost()) {
+                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, InjectedLanguage.create("textmate", p.languageId, p.languageId, false));
+                host.getManager().dropPsiCaches();
+            }
+        }
+    }
+}
