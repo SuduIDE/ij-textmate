@@ -1,18 +1,12 @@
 package com.razerford.ijTextmate.PersistentStorage;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-@State(name = "TemporaryPlace", storages = {@Storage("TemporaryPlace.xml")})
-public class TemporaryPlace implements PersistentStateComponent<TemporaryPlace> {
-    public String languageId = "state";
-    public int offset = 151;
+public class TemporaryPlace {
+    public String languageId;
+    public int offset;
 
     public TemporaryPlace() {
         languageId = "";
@@ -30,15 +24,5 @@ public class TemporaryPlace implements PersistentStateComponent<TemporaryPlace> 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), languageId, offset);
-    }
-
-    @Override
-    public @Nullable TemporaryPlace getState() {
-        return this;
-    }
-
-    @Override
-    public void loadState(@NotNull TemporaryPlace state) {
-        XmlSerializerUtil.copyBean(state, this);
     }
 }

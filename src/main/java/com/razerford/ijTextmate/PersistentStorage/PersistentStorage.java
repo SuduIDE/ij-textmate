@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
@@ -29,16 +30,12 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
     @Override
     public void loadState(@NotNull SetElement state) {
         mySetElement = state;
-        System.out.println("load");
-//        VirtualFile vf = PsiManager.getInstance(ApplicationManager.getApplication().getService(Project.class)).getProject().getProjectFile();
-//        PsiFile file = PsiManager.getInstance(ApplicationManager.getApplication().getService(Project.class)).findFile(vf);
-//        for (TemporaryPlace place : state.getElements()) {
-//            PsiElement element = file.findElementAt(place.offset);
-//            if (element.isValid())
-//                element.putUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE,
-//                        InjectedLanguage.create(place.languageId));
-//        }
     }
+
+    public static PersistentStorage getInstance(@NotNull Project project) {
+        return project.getService(PersistentStorage.class);
+    }
+
 
     public static class SetElement {
         @Property

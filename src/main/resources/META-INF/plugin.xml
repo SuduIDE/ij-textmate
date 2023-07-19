@@ -31,6 +31,11 @@
         <multiHostInjector implementation="com.razerford.ijTextmate.Inject.InjectLanguageHighlight"/>
         <projectService serviceImplementation="com.razerford.ijTextmate.PersistentStorage.PersistentStorage"/>
     </extensions>
+    <project-components>
+        <component>
+            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>
+        </component>
+    </project-components>
     <actions>
         <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"
                 text="Inject Language" description="Introduces inject language">
