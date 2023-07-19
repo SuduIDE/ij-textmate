@@ -4,6 +4,8 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.razerford.ijTextmate.Constants;
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +27,22 @@ public class InjectorHelper {
             if (host != null && host.isValidHost()) return host;
         }
         return null;
+    }
+
+    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, InjectedLanguage language) {
+        if (host == null) return;
+        PsiElement element = host.getOriginalElement();
+        if (element != null) element = element.getParent();
+        PsiReference psiReference = InjectorHelper.getFirstReference(element);
+        if (!(element instanceof PsiNameIdentifierOwner) && psiReference != null) {
+            element = psiReference.resolve();
+            PsiLanguageInjectionHost newHost = InjectorHelper.getHostFromElementRoot(element);
+            host = (newHost == null) ? host : newHost;
+        }
+        if (host.isValidHost()) {
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, language);
+            host.getManager().dropPsiCaches();
+        }
     }
 
     @Contract(pure = true)
