@@ -12,6 +12,7 @@ import com.razerford.ijTextmate.Helpers.InjectorHelper;
 import com.razerford.ijTextmate.Inject.InjectLanguage;
 import com.razerford.ijTextmate.PersistentStorage.PersistentStorage;
 import com.razerford.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -26,9 +27,9 @@ public class CheckType extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
-        var x = new PersistentStorage.SetElement();
-        x.addElement(new TemporaryPlace("lang", 1));
-        project.getService(PersistentStorage.class).loadState(x);
+//        var x = new PersistentStorage.SetElement();
+//        x.addElement(new TemporaryPlace("lang", 1));
+//        project.getService(PersistentStorage.class).loadState(x);
 //        project.getService(TemporaryPlace.class).loadState(new TemporaryPlace("", 124124));
 //        Collection<PsiReference> refs;
 //        ReferencesSearch.search(file.findElementAt(editor.getCaretModel().getOffset()));
@@ -64,5 +65,13 @@ public class CheckType extends AnAction {
 //        var x = Objects.requireNonNull(InjectorHelper.findInjectionHost(editor, file)).getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE);
 //        if (x != null)
 //            System.out.println(x.getSuffix());
+        PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
+        if (host == null) return;
+        InjectedLanguage l = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        if (l == null) {
+            out.println("Nullable");
+            return;
+        }
+        out.println(l.getID());
     }
 }

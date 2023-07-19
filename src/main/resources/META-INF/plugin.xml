@@ -32,17 +32,24 @@
         <projectService serviceImplementation="com.razerford.ijTextmate.PersistentStorage.PersistentStorage"/>
     </extensions>
     <project-components>
-<!--        <component>-->
-<!--            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>-->
-<!--        </component>-->
+        <!--        <component>-->
+        <!--            <implementation-class>com.razerford.ijTextmate.PersistentStorage.PersistentStorage</implementation-class>>-->
+        <!--        </component>-->
     </project-components>
     <projectListeners>
         <listener class="com.razerford.ijTextmate.InitializerHighlight"
-        topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
-    </projectListeners>>
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </projectListeners>
+    >
     <actions>
-        <action id="com.razerford.ijTextmate.InjectLanguageAction" class="com.razerford.ijTextmate.InjectLanguageAction"
-                text="Inject Language" description="Introduces inject language">
+        <action id="com.razerford.ijTextmate.InjectLanguageAction"
+                class="com.razerford.ijTextmate.InjectLanguageAction"
+                text="Inject Language" description="Introduces injected language">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
+        </action>
+        <action id="com.razerford.ijTextmate.UnInjectLanguageAction"
+                class="com.razerford.ijTextmate.UnInjectLanguageAction"
+                text="Delete Injected Language" description="Deletes the injected language">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
         </action>
         <action id="com.razerford.ijTextmate.CheckType" class="com.razerford.ijTextmate.CheckType" text="Type"

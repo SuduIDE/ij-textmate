@@ -12,7 +12,7 @@ import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class UnInjectLanguage {
-    public static void uninject(@NotNull PsiLanguageInjectionHost host, @NotNull InjectedLanguage language, @NotNull Project project) {
+    public static void unInject(@NotNull PsiLanguageInjectionHost host, @NotNull Project project) {
         WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host));
     }
 
