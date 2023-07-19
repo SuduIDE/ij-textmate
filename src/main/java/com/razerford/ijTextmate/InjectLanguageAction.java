@@ -46,7 +46,7 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (host == null || host.getUserData(InjectLanguage.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
+        if (host == null || host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
             e.getPresentation().setEnabledAndVisible(false);
             return;
         }
