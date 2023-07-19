@@ -2,10 +2,14 @@
 
 # Contents
 
-- [Injected language in IDEA CE](#injected-language-in-idea-ce)
 - [Contents](#contents)
+  - [Short description](#short-description)
   - [Install plugin](#install-plugin)
   - [Usage](#usage)
+
+## Short description
+
+Language injection support plugin for Textmate packages
 
 ## Install plugin
 
