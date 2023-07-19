@@ -27,7 +27,7 @@
 
    ![string literal without injection](images/without_injection.png)
 
-2. First press `Ctrl+&#92;` then press `Ctrl+I`. A list of possible injection languages will appear. Use the keys to
+2. First press `Ctrl+\` then press `Ctrl+I`. A list of possible injection languages will appear. Use the keys to
    navigate through the list:
     - `↑` - move up
     - `↓` - move down
@@ -37,7 +37,7 @@
 
    ![with injection](images/with_injection.png)
 
-4. To remove an injection, first press `Ctrl+&#92;` then press `Ctrl+I`
+4. To remove an injection, first press `Ctrl+\` then press `Ctrl+I`
 
 You can also search by name when selecting languages. To do this, just type the name of the language you need.
 
