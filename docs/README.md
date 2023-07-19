@@ -2,9 +2,10 @@
 
 # Contents
 
+- [Injected language in IDEA CE](#injected-language-in-idea-ce)
 - [Contents](#contents)
-    - [Install plugin](#install-plugin)
-    - [Usage](#usage)
+  - [Install plugin](#install-plugin)
+  - [Usage](#usage)
 
 ## Install plugin
 
@@ -33,6 +34,7 @@
 
    ![select language](images/select_language.png)
 3. Press `enter` to confirm your choice
+
    ![with injection](images/with_injection.png)
 
 4. To remove an injection, first press `Ctrl+&#92;` then press `Ctrl+I`
