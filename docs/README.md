@@ -42,3 +42,5 @@
 You can also search by name when selecting languages. To do this, just type the name of the language you need.
 
 ![search_language](images/search_language.png)
+
+> **_NOTE:_** Idea restart injections persist in most cases
