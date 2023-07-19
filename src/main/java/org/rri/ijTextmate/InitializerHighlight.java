@@ -25,6 +25,7 @@ public class InitializerHighlight implements FileEditorManagerListener {
         if (persistentStorage == null || psiFile == null) return;
         for (TemporaryPlace p : persistentStorage.getState().getElements()) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(p.offset, psiFile);
+            host = InjectorHelper.resolveHost(host);
             if (host != null && host.isValidHost()) {
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, InjectedLanguage.create("textmate", p.languageId, p.languageId, false));
                 host.getManager().dropPsiCaches();
