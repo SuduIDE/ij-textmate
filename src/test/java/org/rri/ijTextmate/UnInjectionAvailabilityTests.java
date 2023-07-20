@@ -8,12 +8,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Inject.InjectLanguage;
 
-public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
+public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
+    private final static String INJECTED_LANGUAGE = "sql";
+
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionAvailabilityCases";
@@ -21,27 +25,27 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
 
     @Test
     public void testCaretInTheCenterInsideTheString() {
-        checkInjectionAvailability("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
+        checkUnInjectionAvailability("CaretInTheCenterInsideTheString.java", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
-        checkInjectionAvailability("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
+        checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.java", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
-        checkInjectionAvailability("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
+        checkUnInjectionAvailability("CaretOnTheRightInsideTheString.java", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
-        checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
+        checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", caretOutsideString);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
-        checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
+        checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", caretOutsideString);
     }
 
     @Test
@@ -58,7 +62,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));
                 checkNotNull(project, psiFile, editor);
-                assertTrue(canInjectLanguageToHost(project, psiFile, editor));
+                caretInsideString.check(project, psiFile, editor);
             } while (++i < end);
         }
     }
@@ -70,20 +74,44 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         }
     }
 
-    private void checkInjectionAvailability(final String fileName, @NotNull Assert test) {
+    private void checkUnInjectionAvailability(final String fileName, @NotNull CheckWithInjectedLanguage checker) {
         Project project = getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         checkNotNull(project, psiFile, editor);
-        test.test(canInjectLanguageToHost(project, psiFile, editor));
+        checker.check(project, psiFile, editor);
     }
 
-    private boolean canInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
+    private boolean canUnInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
+        PsiLanguageInjectionHost host = getHost(editor, psiFile);
+        UnInjectLanguageAction action = new UnInjectLanguageAction();
+        return action.canUnInjectLanguageToHost(project, editor, psiFile, host);
+    }
+
+    private void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
+        PsiLanguageInjectionHost host = getHost(editor, psiFile);
+        if (host == null) return;
+        InjectLanguage.inject(host, InjectedLanguage.create(INJECTED_LANGUAGE), project);
+    }
+
+    private PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
-        InjectLanguageAction action = new InjectLanguageAction();
-        if (!action.canInjectLanguageToHost(project, editor, psiFile, host)) return false;
         host = InjectorHelper.resolveHost(host);
-        return action.canInjectLanguageToHost(project, editor, psiFile, host);
+        return host;
+    }
+
+    private final CheckWithInjectedLanguage caretInsideString = (Project project, PsiFile psiFile, Editor editor) -> {
+        injectLanguage(project, editor, psiFile);
+        ASSERT_TRUE.test(canUnInjectLanguageToHost(project, psiFile, editor));
+    };
+
+    private final CheckWithInjectedLanguage caretOutsideString = (Project project, PsiFile psiFile, Editor editor) -> {
+        ASSERT_FALSE.test(canUnInjectLanguageToHost(project, psiFile, editor));
+    };
+
+    @FunctionalInterface
+    private interface CheckWithInjectedLanguage {
+        void check(Project project, PsiFile psiFile, Editor editor);
     }
 
     private static final Assert ASSERT_FALSE = TestCase::assertFalse;
