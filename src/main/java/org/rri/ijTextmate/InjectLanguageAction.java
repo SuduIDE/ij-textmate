@@ -54,7 +54,7 @@ public class InjectLanguageAction extends AnAction {
         e.getPresentation().setEnabledAndVisible(canInjectLanguageToHost(project, editor, file, host));
     }
 
-    private boolean canInjectLanguageToHost(Project project, Editor editor, PsiFile file, PsiLanguageInjectionHost host) {
+    public boolean canInjectLanguageToHost(Project project, Editor editor, PsiFile file, PsiLanguageInjectionHost host) {
         if (host == null || host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
             return false;
         }
