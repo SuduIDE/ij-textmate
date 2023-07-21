@@ -7,17 +7,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.util.FileContentUtil;
 import junit.framework.TestCase;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Inject.InjectLanguage;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
 
-import java.util.Collections;
 import java.util.function.Consumer;
 
 public class TestHelper {
