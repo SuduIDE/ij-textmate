@@ -15,7 +15,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import java.util.function.Consumer;
 
 public class TestHelper {
-    private static final String INJECTED_LANGUAGE = "sql";
+    public static final String INJECTED_LANGUAGE = "sql";
     private static final MultiHostInjector INJECTOR = new LanguageHighlight();
 
     public static final Assert ASSERT_FALSE = TestCase::assertFalse;

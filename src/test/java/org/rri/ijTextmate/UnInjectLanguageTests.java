@@ -10,6 +10,8 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
 
 public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     @Override
@@ -54,6 +56,8 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
         PsiManager.getInstance(project).dropPsiCaches();
         PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
-        return element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+        boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+        PersistentStorage.SetElement elements = PersistentStorage.getInstance(project).getState();
+        return !(resFirst && elements.contains(new TemporaryPlace(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset())));
     }
 }
