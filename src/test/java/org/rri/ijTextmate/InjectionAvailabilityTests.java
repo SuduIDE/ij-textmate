@@ -7,11 +7,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
-import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+
+import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
+import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
 
 public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
@@ -86,7 +88,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         }
     }
 
-    private void checkInjectionAvailability(final String fileName, @NotNull Assert test) {
+    private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert test) {
         Project project = getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
@@ -100,13 +102,5 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         if (!action.canInjectLanguageToHost(project, editor, psiFile, host)) return false;
         host = InjectorHelper.resolveHost(host);
         return action.canInjectLanguageToHost(project, editor, psiFile, host);
-    }
-
-    private static final Assert ASSERT_FALSE = TestCase::assertFalse;
-    private static final Assert ASSERT_TRUE = TestCase::assertTrue;
-
-    @FunctionalInterface
-    private interface Assert {
-        void test(boolean b);
     }
 }
