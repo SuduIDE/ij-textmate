@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.Contract;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
@@ -67,24 +67,17 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         Project project = getProject();
-        checkNotNull(project, psiFile, editor);
+        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         for (CaretState caretState : editor.getCaretModel().getCaretsAndSelections()) {
-            checkNotNull(caretState.getSelectionStart(), caretState.getSelectionEnd());
+            TestHelper.checkWithConsumer(TestCase::assertNotNull, caretState.getSelectionStart(), caretState.getSelectionEnd());
             int i = caretState.getSelectionStart().column;
             int end = caretState.getSelectionEnd().column;
             int line = caretState.getSelectionStart().line;
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));
-                checkNotNull(project, psiFile, editor);
+                TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
                 assertTrue(canInjectLanguageToHost(project, psiFile, editor));
             } while (++i < end);
-        }
-    }
-
-    @Contract(pure = true)
-    private void checkNotNull(Object @NotNull ... args) {
-        for (Object arg : args) {
-            assertNotNull(arg);
         }
     }
 
@@ -92,7 +85,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         Project project = getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
-        checkNotNull(project, psiFile, editor);
+        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         test.test(canInjectLanguageToHost(project, psiFile, editor));
     }
 

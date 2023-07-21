@@ -1,18 +1,14 @@
 package org.rri.ijTextmate;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Inject.InjectLanguage;
 
 import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
 import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
@@ -25,44 +21,45 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
 
     @Test
     public void testCaretInTheCenterInsideTheString() {
-        checkInject("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
-        checkInject("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
-        checkInject("CaretInTheCenterInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
+        checkInjectLanguage("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
+        checkInjectLanguage("CaretInTheCenterInsideTheString.json", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
-        checkInject("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
-        checkInject("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
-        checkInject("CaretOnTheLeftInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheLeftInsideTheString.json", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
-        checkInject("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
-        checkInject("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
-        checkInject("CaretOnTheRightInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheRightInsideTheString.json", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
-        checkInject("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
-        checkInject("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
-        checkInject("CaretOnTheLeftOutsideOfTheString.json", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.json", ASSERT_FALSE);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
-        checkInject("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
-        checkInject("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
-        checkInject("CaretOnTheRightOutsideOfTheString.json", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.json", ASSERT_FALSE);
     }
 
 
-    private void checkInject(String fileName, TestHelper.@NotNull Assert test) {
+    private void checkInjectLanguage(String fileName, TestHelper.@NotNull Assert test) {
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = getProject();
         Editor editor = getEditor();
+        TestHelper.checkWithConsumer(TestCase::assertNotNull, psiFile, project, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
         test.test(isInjected(project, editor, psiFile));
     }

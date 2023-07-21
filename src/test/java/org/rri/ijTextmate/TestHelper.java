@@ -9,8 +9,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import junit.framework.TestCase;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Inject.InjectLanguage;
+
+import java.util.function.Consumer;
 
 public class TestHelper {
     private static final String INJECTED_LANGUAGE = "sql";
@@ -35,5 +39,12 @@ public class TestHelper {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         host = InjectorHelper.resolveHost(host);
         return host;
+    }
+
+    @Contract(pure = true)
+    public static void checkWithConsumer(Consumer<Object> check, Object @NotNull ... args) {
+        for (Object arg : args) {
+            check.accept(arg);
+        }
     }
 }
