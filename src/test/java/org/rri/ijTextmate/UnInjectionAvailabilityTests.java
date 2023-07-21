@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
-import junit.framework.TestCase;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -102,23 +101,15 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
 
     private final CheckWithInjectedLanguage caretInsideString = (Project project, PsiFile psiFile, Editor editor) -> {
         injectLanguage(project, editor, psiFile);
-        ASSERT_TRUE.test(canUnInjectLanguageToHost(project, psiFile, editor));
+        assertTrue(canUnInjectLanguageToHost(project, psiFile, editor));
     };
 
     private final CheckWithInjectedLanguage caretOutsideString = (Project project, PsiFile psiFile, Editor editor) -> {
-        ASSERT_FALSE.test(canUnInjectLanguageToHost(project, psiFile, editor));
+        assertFalse(canUnInjectLanguageToHost(project, psiFile, editor));
     };
 
     @FunctionalInterface
     private interface CheckWithInjectedLanguage {
         void check(Project project, PsiFile psiFile, Editor editor);
-    }
-
-    private static final Assert ASSERT_FALSE = TestCase::assertFalse;
-    private static final Assert ASSERT_TRUE = TestCase::assertTrue;
-
-    @FunctionalInterface
-    private interface Assert {
-        void test(boolean b);
     }
 }
