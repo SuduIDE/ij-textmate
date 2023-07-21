@@ -64,6 +64,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
     }
 
     private void checkSelectionInsideTheString(String fileName) {
+        myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         Project project = getProject();
@@ -83,6 +84,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
 
     private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert test) {
         Project project = getProject();
+        myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);

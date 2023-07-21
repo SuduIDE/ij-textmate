@@ -56,8 +56,9 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
 
 
     private void checkInjectLanguage(String fileName, TestHelper.@NotNull Assert test) {
-        PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = getProject();
+        myFixture.configureByText(fileName, "");
+        PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         TestHelper.checkWithConsumer(TestCase::assertNotNull, psiFile, project, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());

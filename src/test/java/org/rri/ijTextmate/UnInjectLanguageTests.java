@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
@@ -42,6 +41,7 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     private void checkUnInjectLanguage(String fileName) {
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = getProject();
+        myFixture.configureByText(fileName, "");
         Editor editor = myFixture.getEditor();
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());

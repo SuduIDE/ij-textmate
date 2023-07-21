@@ -4,8 +4,12 @@ import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.file.impl.FileManager;
+import com.intellij.psi.impl.file.impl.FileManagerImpl;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +64,7 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     }
 
     private void checkSelectionInsideTheString(String fileName) {
+        myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         Project project = getProject();
@@ -78,7 +83,10 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     }
 
     private void checkUnInjectionAvailability(final String fileName, @NotNull CheckWithInjectedLanguage checker) {
+        getPsiManager().dropPsiCaches();
+        PsiManager.getInstance(getProject()).dropPsiCaches();
         Project project = getProject();
+        myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         TestHelper.checkWithConsumer(TestCase::assertNotNull,  project, psiFile, editor);
