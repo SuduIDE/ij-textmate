@@ -25,31 +25,47 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     @Test
     public void testCaretInTheCenterInsideTheString() {
         checkUnInjectionAvailability("CaretInTheCenterInsideTheString.java", caretInsideString);
+        checkUnInjectionAvailability("CaretInTheCenterInsideTheString.py", caretInsideString);
+        checkUnInjectionAvailability("CaretInTheCenterInsideTheString.json", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.java", caretInsideString);
+        checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.py", caretInsideString);
+        checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.json", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheRightInsideTheString.java", caretInsideString);
+        checkUnInjectionAvailability("CaretOnTheRightInsideTheString.py", caretInsideString);
+        checkUnInjectionAvailability("CaretOnTheRightInsideTheString.json", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", caretOutsideString);
+        checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.py", caretOutsideString);
+        checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.json", caretOutsideString);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", caretOutsideString);
+        checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.py", caretOutsideString);
+        checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.json", caretOutsideString);
     }
 
     @Test
     public void testSelectionInsideTheString() {
-        PsiFile psiFile = myFixture.configureByFile("SelectionInsideTheString.java");
+        checkSelectionInsideTheString("SelectionInsideTheString.java");
+        checkSelectionInsideTheString("SelectionInsideTheString.py");
+        checkSelectionInsideTheString("SelectionInsideTheString.json");
+    }
+
+    private void checkSelectionInsideTheString(String fileName) {
+        PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
         Project project = getProject();
         checkNotNull(project, psiFile, editor);

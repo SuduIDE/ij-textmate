@@ -21,7 +21,7 @@ intellij {
     version.set("2022.2")
     type.set("IC") // Target IDE Platform
 
-    plugins.set(listOf("org.jetbrains.plugins.textmate", "org.intellij.intelliLang", "com.intellij.java"))
+    plugins.set(listOf("org.jetbrains.plugins.textmate", "org.intellij.intelliLang", "com.intellij.java", "PythonCore:222.3345.146"))
 }
 
 tasks {
