@@ -98,25 +98,13 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     }
 
     private boolean canUnInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
-        PsiLanguageInjectionHost host = getHost(editor, psiFile);
+        PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
         UnInjectLanguageAction action = new UnInjectLanguageAction();
         return action.canUnInjectLanguageToHost(project, editor, psiFile, host);
     }
 
-    private void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = getHost(editor, psiFile);
-        if (host == null) return;
-        InjectLanguage.inject(host, InjectedLanguage.create(INJECTED_LANGUAGE), project);
-    }
-
-    private PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
-        host = InjectorHelper.resolveHost(host);
-        return host;
-    }
-
     private final CheckWithInjectedLanguage caretInsideString = (Project project, PsiFile psiFile, Editor editor) -> {
-        injectLanguage(project, editor, psiFile);
+        TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
         assertTrue(canUnInjectLanguageToHost(project, psiFile, editor));
     };
 

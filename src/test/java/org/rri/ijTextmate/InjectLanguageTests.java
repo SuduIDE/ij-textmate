@@ -17,10 +17,7 @@ import org.rri.ijTextmate.Inject.InjectLanguage;
 import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
 import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
 
-public class InjectTests extends LightJavaCodeInsightFixtureTestCase {
-    private static final String INJECTED_LANGUAGE = "sql";
-    private static final MultiHostInjector INJECTOR = new LanguageHighlight();
-
+public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionAvailabilityCases";
@@ -66,21 +63,8 @@ public class InjectTests extends LightJavaCodeInsightFixtureTestCase {
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = getProject();
         Editor editor = getEditor();
-        injectLanguage(project, editor, psiFile);
+        TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
         test.test(isInjected(project, editor, psiFile));
-    }
-
-    private void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = getHost(editor, psiFile);
-        if (host == null) return;
-        InjectedLanguageManager.getInstance(project).registerMultiHostInjector(INJECTOR, getTestRootDisposable());
-        InjectLanguage.inject(host, InjectedLanguage.create(INJECTED_LANGUAGE), project);
-    }
-
-    private PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
-        host = InjectorHelper.resolveHost(host);
-        return host;
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
