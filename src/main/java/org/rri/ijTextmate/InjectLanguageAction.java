@@ -16,7 +16,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Inject.InjectLanguage;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
@@ -89,7 +89,7 @@ public class InjectLanguageAction extends AnAction {
         InjectedLanguage injectedLanguage = InjectableTextMate.create(languageId);
         InjectLanguage.inject(host, injectedLanguage, project);
         PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
-        elements.addElement(new TemporaryPlace(languageId, editor.getCaretModel().getOffset()));
+        elements.add(new PlaceInjection(languageId, editor.getCaretModel().getOffset()));
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 

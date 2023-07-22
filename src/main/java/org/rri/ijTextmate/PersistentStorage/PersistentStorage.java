@@ -10,13 +10,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
-import io.ktor.util.collections.ConcurrentSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.*;
 
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
 public class PersistentStorage implements PersistentStateComponent<PersistentStorage.SetElement> {
@@ -37,42 +36,58 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
     }
 
 
-    public static class SetElement {
+    public static class SetElement extends AbstractSet<PlaceInjection> {
         @Property
         @OptionTag(converter = ConverterSetElement.class)
-        private final Set<TemporaryPlace> set = new ConcurrentSet<>();
+        private final Set<PlaceInjection> set = new HashSet<>();
 
         public SetElement() {
         }
 
-        public boolean addElement(TemporaryPlace place) {
+        @Override
+        public Iterator<PlaceInjection> iterator() {
+            return set.iterator();
+        }
+
+        @Override
+        public int size() {
+            return set.size();
+        }
+
+        @Override
+        public boolean add(PlaceInjection place) {
             return set.add(place);
         }
 
-        public boolean contains(TemporaryPlace place) {
+        public boolean contains(PlaceInjection place) {
             return set.contains(place);
         }
 
-        public boolean remove(TemporaryPlace place) {
+        public boolean remove(PlaceInjection place) {
             return set.remove(place);
         }
 
-        public Set<TemporaryPlace> getElements() {
+        public Set<PlaceInjection> getElements() {
             return set;
+        }
+
+        @Override
+        public void clear() {
+            set.clear();
         }
     }
 
-    public static class ConverterSetElement extends Converter<Set<TemporaryPlace>> {
+    public static class ConverterSetElement extends Converter<Set<PlaceInjection>> {
         @Override
-        public @Nullable Set<TemporaryPlace> fromString(@NotNull String value) {
+        public @Nullable Set<PlaceInjection> fromString(@NotNull String value) {
             GsonBuilder gson = new GsonBuilder();
-            Type collectionType = new TypeToken<Set<TemporaryPlace>>() {
+            Type collectionType = new TypeToken<Set<PlaceInjection>>() {
             }.getType();
             return gson.create().fromJson(value, collectionType);
         }
 
         @Override
-        public @Nullable String toString(@NotNull Set<TemporaryPlace> value) {
+        public @Nullable String toString(@NotNull Set<PlaceInjection> value) {
             Writer writer = new StringWriter();
             Gson gson = new Gson();
             gson.toJson(gson.toJsonTree(value), writer);

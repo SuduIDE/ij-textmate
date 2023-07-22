@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class InitializerHighlight implements FileEditorManagerListener {
         PersistentStorage persistentStorage = PersistentStorage.getInstance(project);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
         if (persistentStorage == null || psiFile == null) return;
-        for (TemporaryPlace p : persistentStorage.getState().getElements()) {
+        for (PlaceInjection p : persistentStorage.getState().getElements()) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(p.offset, psiFile);
             host = InjectorHelper.resolveHost(host);
             if (host != null && host.isValidHost()) {
