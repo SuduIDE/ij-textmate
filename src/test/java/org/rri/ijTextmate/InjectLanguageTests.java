@@ -18,7 +18,7 @@ import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
 public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData/InjectionAvailabilityCases";
+        return "src/test/testData/InjectionCases";
     }
 
     @Test

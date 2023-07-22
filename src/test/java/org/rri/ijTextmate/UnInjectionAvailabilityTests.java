@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData/InjectionAvailabilityCases";
+        return "src/test/testData/InjectionCases";
     }
 
     @Test

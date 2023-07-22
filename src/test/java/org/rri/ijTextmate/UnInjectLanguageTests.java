@@ -16,7 +16,7 @@ import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData/InjectionAvailabilityCases";
+        return "src/test/testData/InjectionCases";
     }
 
     @Test

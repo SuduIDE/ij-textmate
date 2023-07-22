@@ -10,9 +10,14 @@ import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersistentStorageSimpleTest extends BasePlatformTestCase {
     @Test
-    public void test1() {
+    public void test0() {
         PersistentStorage.SetElement elements = PersistentStorage.getInstance(getProject()).getState();
         elements.clear();
+    }
+
+    @Test
+    public void test1() {
+        PersistentStorage.SetElement elements = PersistentStorage.getInstance(getProject()).getState();
         elements.add(new PlaceInjection("sql", 3));
     }
 
