@@ -9,8 +9,10 @@ import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.PersistentStorage.SetElement;
 
 import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
 import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
@@ -70,7 +72,8 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
         PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
-        PersistentStorage.SetElement elements = PersistentStorage.getInstance(project).getState();
+        String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
         return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset()));
     }
 }
