@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class SetElement extends AbstractSet<PlaceInjection> {
-    public static final SetElement INSTANCE = new SetElement();
     private final Object mutex = new Object();
 
     private final Set<PlaceInjection> set = new HashSet<>();
@@ -93,10 +92,12 @@ public class SetElement extends AbstractSet<PlaceInjection> {
         @Override
         public JsonElement serialize(@NotNull SetElement placeInjections, Type type, @NotNull JsonSerializationContext jsonSerializationContext) {
             JsonArray jsonArray = new JsonArray(placeInjections.size());
+            if (placeInjections.isEmpty()) return null;
             for (PlaceInjection placeInjection : placeInjections) {
-                jsonArray.add(jsonSerializationContext.serialize(placeInjection));
+                JsonElement jsonElement = jsonSerializationContext.serialize(placeInjection);
+                if (!jsonElement.isJsonNull()) jsonArray.add(jsonElement);
             }
-            return jsonArray;
+            return jsonArray.isEmpty() ? null : jsonArray;
         }
 
         @Override

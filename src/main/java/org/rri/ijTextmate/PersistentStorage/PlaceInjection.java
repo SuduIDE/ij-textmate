@@ -40,6 +40,7 @@ public class PlaceInjection implements LanguageID {
 
         @Override
         public JsonElement serialize(@NotNull PlaceInjection placeInjection, Type type, JsonSerializationContext jsonSerializationContext) {
+            if (Objects.equals(placeInjection.languageId, "")) return null;
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(LANGUAGE_ID, placeInjection.languageId);
             jsonObject.addProperty(OFFSET, placeInjection.offset);

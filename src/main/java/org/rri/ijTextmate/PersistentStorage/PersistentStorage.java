@@ -81,7 +81,7 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
                     .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
                     .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
                     .create();
-            Type collectionType = new TypeToken<Map<String, SetElement>>() {
+            Type collectionType = new TypeToken<HashMap<String, SetElement>>() {
             }.getType();
             return gson.fromJson(value, collectionType);
         }
