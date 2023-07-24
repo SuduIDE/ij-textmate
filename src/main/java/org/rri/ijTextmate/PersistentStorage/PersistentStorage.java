@@ -37,6 +37,8 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
 
 
     public static class SetElement extends AbstractSet<PlaceInjection> {
+        private final Object mutex = new Object();
+
         @Property
         @OptionTag(converter = ConverterSetElement.class)
         private final Set<PlaceInjection> set = new HashSet<>();
@@ -46,17 +48,33 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
 
         @Override
         public Iterator<PlaceInjection> iterator() {
-            return set.iterator();
+            return new Iterator<>() {
+                private final Iterator<PlaceInjection> iterator = set.iterator();
+
+                @Override
+                public boolean hasNext() {
+                    return iterator.hasNext();
+                }
+
+                @Override
+                public PlaceInjection next() {
+                    return iterator.next();
+                }
+            };
         }
 
         @Override
         public int size() {
-            return set.size();
+            synchronized (mutex) {
+                return set.size();
+            }
         }
 
         @Override
         public boolean add(PlaceInjection place) {
-            return set.add(place);
+            synchronized (mutex) {
+                return set.add(place);
+            }
         }
 
         public boolean contains(PlaceInjection place) {
@@ -64,16 +82,16 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
         }
 
         public boolean remove(PlaceInjection place) {
-            return set.remove(place);
-        }
-
-        public Set<PlaceInjection> getElements() {
-            return set;
+            synchronized (mutex){
+                return set.remove(place);
+            }
         }
 
         @Override
         public void clear() {
-            set.clear();
+            synchronized (mutex){
+                set.clear();
+            }
         }
     }
 

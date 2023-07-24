@@ -53,6 +53,6 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
         elements.remove(new PlaceInjection("cpp", 144));
         elements.remove(new PlaceInjection("php", 87));
         elements.remove(new PlaceInjection("java", 12));
-        assertEquals(0, elements.getElements().size());
+        assertEquals(0, elements.size());
     }
 }
