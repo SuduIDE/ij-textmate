@@ -9,6 +9,8 @@ import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 
 import static java.lang.System.out;
 
@@ -59,7 +61,7 @@ public class CheckType extends AnAction {
 //            System.out.println(x.getSuffix());
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
         if (host == null) return;
-        InjectedLanguage l = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        LanguageID l = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         if (l == null) {
             out.println("Nullable");
             return;

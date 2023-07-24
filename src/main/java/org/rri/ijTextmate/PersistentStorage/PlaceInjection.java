@@ -2,7 +2,7 @@ package org.rri.ijTextmate.PersistentStorage;
 
 import java.util.Objects;
 
-public class PlaceInjection {
+public class PlaceInjection implements LanguageID {
     public String languageId;
     public int offset;
 
@@ -23,5 +23,10 @@ public class PlaceInjection {
     @Override
     public int hashCode() {
         return Objects.hash(languageId, offset);
+    }
+
+    @Override
+    public String getID() {
+        return languageId;
     }
 }
