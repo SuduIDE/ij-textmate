@@ -5,14 +5,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 
 public class InjectLanguage {
-    public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull LanguageID languageID, @NotNull Project project) {
-        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(languageID, host));
+    public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, @NotNull Project project) {
+        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(placeInjection, host, project));
     }
 
-    private static void addInjectionPlace(LanguageID languageID, PsiLanguageInjectionHost host) {
-        InjectorHelper.resolveInjectLanguage(host, languageID);
+    private static void addInjectionPlace(PlaceInjection placeInjection, PsiLanguageInjectionHost host, Project project) {
+        PersistentStorage.SetElement elements = PersistentStorage.getInstance(project).getState();
+        elements.add(placeInjection);
+        InjectorHelper.resolveInjectLanguage(host, placeInjection);
     }
 }

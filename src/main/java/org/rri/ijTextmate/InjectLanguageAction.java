@@ -15,7 +15,6 @@ import com.intellij.util.Processor;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Inject.InjectLanguage;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
@@ -88,8 +87,6 @@ public class InjectLanguageAction extends AnAction {
         if (host == null) return;
         PlaceInjection placeInjection = new PlaceInjection(languageId, offset);
         InjectLanguage.inject(host, placeInjection, project);
-        PersistentStorage.SetElement elements = PersistentStorage.getInstance(project).getState();
-        elements.add(new PlaceInjection(languageId, offset));
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 

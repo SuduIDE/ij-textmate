@@ -10,6 +10,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,12 +51,12 @@ public class UnInjectLanguageAction extends AnAction {
     }
 
     public static void unInjectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
+        int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
-        UnInjectLanguage.unInject(host, project);
-//      Todo: сделать удаление инъекции из PersistentStorage
-//        PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
-//        elements.remove();
+        LanguageID languageID = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        String id = languageID == null ? null : languageID.getID();
+        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset), project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 }
