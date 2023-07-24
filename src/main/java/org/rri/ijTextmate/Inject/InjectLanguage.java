@@ -7,14 +7,16 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.PersistentStorage.SetElement;
 
 public class InjectLanguage {
-    public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, @NotNull Project project) {
-        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(placeInjection, host, project));
+    public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, PsiFile psiFile, @NotNull Project project) {
+        WriteCommandAction.runWriteCommandAction(project, () -> addInjectionPlace(placeInjection, host, psiFile, project));
     }
 
-    private static void addInjectionPlace(PlaceInjection placeInjection, PsiLanguageInjectionHost host, Project project) {
-        PersistentStorage.SetElement elements = PersistentStorage.getInstance(project).getState();
+    private static void addInjectionPlace(PlaceInjection placeInjection, PsiLanguageInjectionHost host, PsiFile psiFile, Project project) {
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        SetElement elements = PersistentStorage.getInstance(project).getState().get(relativePath);
         elements.add(placeInjection);
         InjectorHelper.resolveInjectLanguage(host, placeInjection);
     }

@@ -13,103 +13,86 @@ import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
-public class PersistentStorage implements PersistentStateComponent<PersistentStorage.SetElement> {
-    private SetElement mySetElement = new SetElement();
+public class PersistentStorage implements PersistentStateComponent<PersistentStorage.MapFileToSetElement> {
+    private MapFileToSetElement myMapToSetElement = new MapFileToSetElement();
 
     @Override
-    public @NotNull SetElement getState() {
-        return mySetElement;
+    public @NotNull MapFileToSetElement getState() {
+        return myMapToSetElement;
     }
 
     @Override
-    public void loadState(@NotNull SetElement state) {
-        mySetElement = state;
+    public void loadState(@NotNull MapFileToSetElement state) {
+        myMapToSetElement = state;
     }
 
     public static PersistentStorage getInstance(@NotNull Project project) {
         return project.getService(PersistentStorage.class);
     }
 
-
-    public static class SetElement extends AbstractSet<PlaceInjection> {
+    public static class MapFileToSetElement {
         private final Object mutex = new Object();
 
         @Property
-        @OptionTag(converter = ConverterSetElement.class)
-        private final Set<PlaceInjection> set = new HashSet<>();
+        @OptionTag(converter = ConverterMapFileToSetElement.class)
+        private final Map<String, SetElement> map = new HashMap<>();
 
-        public SetElement() {
+        public MapFileToSetElement() {
         }
 
-        @Override
-        public Iterator<PlaceInjection> iterator() {
-            return new Iterator<>() {
-                private final Iterator<PlaceInjection> iterator = set.iterator();
-
-                @Override
-                public boolean hasNext() {
-                    return iterator.hasNext();
+        public SetElement get(String key) {
+            synchronized (mutex) {
+                SetElement setElement = map.get(key);
+                if (setElement == null) {
+                    setElement = new SetElement();
+                    map.put(key, setElement);
                 }
-
-                @Override
-                public PlaceInjection next() {
-                    return iterator.next();
-                }
-            };
+                return setElement;
+            }
         }
 
-        @Override
+        public SetElement put(String key, SetElement value) {
+            synchronized (mutex) {
+                return map.put(key, value);
+            }
+        }
+
         public int size() {
             synchronized (mutex) {
-                return set.size();
+                return map.size();
             }
         }
 
-        @Override
-        public boolean add(PlaceInjection place) {
-            synchronized (mutex) {
-                return set.add(place);
-            }
-        }
-
-        public boolean contains(PlaceInjection place) {
-            return set.contains(place);
-        }
-
-        public boolean remove(PlaceInjection place) {
-            synchronized (mutex){
-                return set.remove(place);
-            }
-        }
-
-        @Override
         public void clear() {
-            synchronized (mutex){
-                set.clear();
+            synchronized (mutex) {
+                map.clear();
             }
         }
     }
 
-    public static class ConverterSetElement extends Converter<Set<PlaceInjection>> {
+    public static class ConverterMapFileToSetElement extends Converter<Map<String, SetElement>> {
         @Override
-        public @Nullable Set<PlaceInjection> fromString(@NotNull String value) {
-            GsonBuilder gson = new GsonBuilder();
-            Type collectionType = new TypeToken<Set<PlaceInjection>>() {
+        public @Nullable Map<String, SetElement> fromString(@NotNull String value) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
+                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
+                    .create();
+            Type collectionType = new TypeToken<Map<String, SetElement>>() {
             }.getType();
-            return gson.create().fromJson(value, collectionType);
+            return gson.fromJson(value, collectionType);
         }
 
         @Override
-        public @Nullable String toString(@NotNull Set<PlaceInjection> value) {
-            Writer writer = new StringWriter();
-            Gson gson = new Gson();
-            gson.toJson(gson.toJsonTree(value), writer);
-            return writer.toString();
+        public @Nullable String toString(@NotNull Map<String, SetElement> value) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
+                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
+                    .create();
+            return gson.toJson(value);
         }
     }
 }

@@ -54,9 +54,10 @@ public class UnInjectLanguageAction extends AnAction {
         int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
-        LanguageID languageID = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
+        LanguageID languageID = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         String id = languageID == null ? null : languageID.getID();
-        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset), project);
+        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset), psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 }

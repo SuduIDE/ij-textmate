@@ -86,7 +86,7 @@ public class InjectLanguageAction extends AnAction {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(offset, psiFile);
         if (host == null) return;
         PlaceInjection placeInjection = new PlaceInjection(languageId, offset);
-        InjectLanguage.inject(host, placeInjection, project);
+        InjectLanguage.inject(host, placeInjection, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 

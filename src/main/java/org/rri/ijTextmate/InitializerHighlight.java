@@ -22,7 +22,8 @@ public class InitializerHighlight implements FileEditorManagerListener {
         PersistentStorage persistentStorage = PersistentStorage.getInstance(project);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
         if (persistentStorage == null || psiFile == null) return;
-        for (PlaceInjection placeInjection : persistentStorage.getState()) {
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        for (PlaceInjection placeInjection : persistentStorage.getState().get(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.offset, psiFile);
             host = InjectorHelper.resolveHost(host);
             if (host != null && host.isValidHost()) {
