@@ -27,35 +27,35 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     public void testCaretInTheCenterInsideTheString() {
         checkInjectLanguage("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
-        checkInjectLanguage("CaretInTheCenterInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretInTheCenterInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkInjectLanguage("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
-        checkInjectLanguage("CaretOnTheLeftInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheLeftInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
         checkInjectLanguage("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
-        checkInjectLanguage("CaretOnTheRightInsideTheString.json", ASSERT_TRUE);
+        checkInjectLanguage("CaretOnTheRightInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
-        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.json", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.ts", ASSERT_FALSE);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkInjectLanguage("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectLanguage("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
-        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.json", ASSERT_FALSE);
+        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.ts", ASSERT_FALSE);
     }
 
 
