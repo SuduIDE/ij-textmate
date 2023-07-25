@@ -40,11 +40,16 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         Project project = getProject();
         myFixture.configureByText(fileName, "");
         Editor editor = myFixture.getEditor();
+
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
+
         assertTrue(isInjected(project, editor, psiFile));
+
         UnInjectLanguageAction.unInjectLanguage(project, editor, psiFile);
-        assertFalse(isInjected(project, editor, psiFile));
+
+        String message = String.format("\nFile: %s\nMessage: the literal must not contain an injection after deletion\n", fileName);
+        assertFalse(message, isInjected(project, editor, psiFile));
     }
 
 

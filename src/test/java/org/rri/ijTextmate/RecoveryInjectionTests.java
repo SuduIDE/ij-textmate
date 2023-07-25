@@ -21,37 +21,55 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
     }
 
     public void testWithoutMoving() {
-        checkRecoveryInjection("WithoutMoving.before.java", "WithoutMoving.after.java", "WithoutMoving.java");
+        checkRecoveryInjection("WithoutMoving.before.java",
+                "WithoutMoving.after.java",
+                "WithoutMoving.java",
+                getMessage("testWithoutMoving"));
     }
 
     public void testWithMovingExpressionSimple() {
-        checkRecoveryInjection("WithMovingExpressionSimple.before.java", "WithMovingExpressionSimple.after.java", "WithMovingExpressionSimple.java");
+        checkRecoveryInjection("WithMovingExpressionSimple.before.java",
+                "WithMovingExpressionSimple.after.java",
+                "WithMovingExpressionSimple.java",
+                getMessage("testWithMovingExpressionSimple"));
     }
 
     public void testWithMovingExpressionHard() {
-        checkRecoveryInjection("WithMovingExpressionHard.before.java", "WithMovingExpressionHard.after.java", "WithMovingExpressionHard.java");
+        checkRecoveryInjection("WithMovingExpressionHard.before.java",
+                "WithMovingExpressionHard.after.java",
+                "WithMovingExpressionHard.java",
+                getMessage("testWithMovingExpressionHard"));
     }
 
     public void testWithRename() {
-        checkRecoveryInjection("WithRename.before.java", "WithRename.after.java", "WithRename.java");
+        checkRecoveryInjection("WithRename.before.java",
+                "WithRename.after.java",
+                "WithRename.java",
+                getMessage("testWithRename"));
     }
 
-    private void checkRecoveryInjection(String beforeName, String afterName, String baseName) {
+    private void checkRecoveryInjection(String beforeName, String afterName, String baseName, String message) {
         PsiFile[] psiFiles = myFixture.configureByFiles(beforeName, afterName);
         myFixture.renameElement(psiFiles[0], baseName);
         assertFalse(isInjected(getProject(), myFixture.getEditor(), psiFiles[0]));
+
         TestHelper.injectLanguage(getProject(), myFixture.getEditor(), psiFiles[0], getTestRootDisposable());
         assertTrue(isInjected(getProject(), myFixture.getEditor(), psiFiles[0]));
+
         myFixture.renameElement(psiFiles[0], beforeName);
         myFixture.renameElement(psiFiles[1], baseName);
+
         new InitializerHighlight(getProject()).fileOpened(FileEditorManager.getInstance(getProject()), psiFiles[1].getVirtualFile());
         myFixture.openFileInEditor(psiFiles[1].getVirtualFile());
-        isInjected(getProject(), myFixture.getEditor(), psiFiles[1]);
-        assertTrue(isInjected(getProject(), myFixture.getEditor(), psiFiles[1]));
+        assertTrue(message, isInjected(getProject(), myFixture.getEditor(), psiFiles[1]));
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
         PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
         return element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+    }
+
+    private String getMessage(String testName) {
+        return String.format("\nTest name: %s\nMessage: Injection for literal must persist after modification in another editor\n", testName);
     }
 }

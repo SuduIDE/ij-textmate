@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -55,11 +54,14 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
         Editor editor = getEditor();
         Project project = getProject();
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
+
         for (CaretState caretState : editor.getCaretModel().getCaretsAndSelections()) {
             TestHelper.checkWithConsumer(TestCase::assertNotNull, caretState.getSelectionStart(), caretState.getSelectionEnd());
+
             int i = Objects.requireNonNull(caretState.getSelectionStart()).column;
             int end = Objects.requireNonNull(caretState.getSelectionEnd()).column;
             int line = caretState.getSelectionStart().line;
+
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));
                 TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
@@ -69,13 +71,11 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     }
 
     private void checkUnInjectionAvailability(final String fileName, @NotNull CheckWithInjectedLanguage checker) {
-        getPsiManager().dropPsiCaches();
-        PsiManager.getInstance(getProject()).dropPsiCaches();
         Project project = getProject();
         myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
-        TestHelper.checkWithConsumer(TestCase::assertNotNull,  project, psiFile, editor);
+        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         checker.check(project, psiFile, editor);
     }
 
@@ -87,10 +87,14 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
 
     private final CheckWithInjectedLanguage caretInsideString = (Project project, PsiFile psiFile, Editor editor) -> {
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
-        assertTrue(canUnInjectLanguageToHost(project, psiFile, editor));
+        String message = String.format("\nFile: %s\nMessage: you can to inject language into a literal\n", psiFile.getName());
+        assertTrue(message, canUnInjectLanguageToHost(project, psiFile, editor));
     };
 
-    private final CheckWithInjectedLanguage caretOutsideString = (Project project, PsiFile psiFile, Editor editor) -> assertFalse(canUnInjectLanguageToHost(project, psiFile, editor));
+    private final CheckWithInjectedLanguage caretOutsideString = (Project project, PsiFile psiFile, Editor editor) -> {
+        String message = String.format("\nFile: %s\nMessage: you can't to inject language into a literal\n", psiFile.getName());
+        assertFalse(message, canUnInjectLanguageToHost(project, psiFile, editor));
+    };
 
     @FunctionalInterface
     private interface CheckWithInjectedLanguage {

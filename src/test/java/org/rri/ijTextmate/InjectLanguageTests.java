@@ -13,9 +13,6 @@ import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.PersistentStorage.SetElement;
 
-import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
-import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
-
 public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
@@ -23,28 +20,71 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     }
 
     public void testCaretInTheCenterInsideTheString() {
-        checkInjectLanguage("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
-        checkInjectLanguage("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
+        String testName = "testCaretInTheCenterInsideTheString";
+        String javaFileName = "CaretInTheCenterInsideTheString.java";
+        String pythonFileName = "CaretInTheCenterInsideTheString.py";
+
+        String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
+        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
+
+        checkInjectLanguage(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
+        checkInjectLanguage(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheLeftInsideTheString() {
-        checkInjectLanguage("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
-        checkInjectLanguage("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
+        String testName = "testCaretOnTheLeftInsideTheString";
+        String javaFileName = "CaretOnTheLeftInsideTheString.java";
+        String pythonFileName = "CaretOnTheLeftInsideTheString.py";
+
+        String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
+        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
+
+        checkInjectLanguage(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
+        checkInjectLanguage(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheRightInsideTheString() {
-        checkInjectLanguage("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
-        checkInjectLanguage("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
+        String testName = "testCaretOnTheRightInsideTheString";
+        String javaFileName = "CaretOnTheRightInsideTheString.java";
+        String pythonFileName = "CaretOnTheRightInsideTheString.py";
+
+        String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
+        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
+
+        checkInjectLanguage(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
+        checkInjectLanguage(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheLeftOutsideOfTheString() {
-        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
-        checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
+        String testName = "testCaretOnTheLeftOutsideOfTheString";
+        String javaFileName = "CaretOnTheLeftOutsideOfTheString.java";
+        String pythonFileName = "CaretOnTheLeftOutsideOfTheString.py";
+
+        String messageForJava = getMessageIfLanguageCanNotBeInjected(testName, javaFileName);
+        String messageForPython = getMessageIfLanguageCanNotBeInjected(testName, pythonFileName);
+
+        checkInjectLanguage(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
+        checkInjectLanguage(pythonFileName, TestHelper.createAssertFalseWithMessage(messageForPython));
     }
 
     public void testCaretOnTheRightOutsideOfTheString() {
-        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
-        checkInjectLanguage("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
+        String testName = "testCaretOnTheRightOutsideOfTheString";
+        String javaFileName = "CaretOnTheRightOutsideOfTheString.java";
+        String pythonFileName = "CaretOnTheRightOutsideOfTheString.py";
+
+        String messageForJava = getMessageIfLanguageCanNotBeInjected(testName, javaFileName);
+        String messageForPython = getMessageIfLanguageCanNotBeInjected(testName, pythonFileName);
+
+        checkInjectLanguage(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
+        checkInjectLanguage(pythonFileName, TestHelper.createAssertFalseWithMessage(messageForPython));
+    }
+
+    private String getMessageIfLanguageCanNotBeInjected(String testName, String fileName) {
+        return TestHelper.getMessage(testName, fileName, "Language can not be injected in this literal. But the test says it can");
+    }
+
+    private String getMessageIfLanguageCanBeInjected(String testName, String fileName) {
+        return TestHelper.getMessage(testName, fileName, "Language can be injected in this literal. But the test says it can't");
     }
 
 

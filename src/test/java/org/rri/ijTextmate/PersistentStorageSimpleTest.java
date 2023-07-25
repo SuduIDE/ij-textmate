@@ -58,12 +58,15 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
     public void test6CheckElements() {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
+
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
+
         setElement.remove(new PlaceInjection("sql", 3));
         setElement.remove(new PlaceInjection("python", 42));
         setElement.remove(new PlaceInjection("cpp", 144));
         setElement.remove(new PlaceInjection("php", 87));
         setElement.remove(new PlaceInjection("java", 12));
+
         assertEquals(0, setElement.size());
     }
 }

@@ -27,6 +27,7 @@ public class SetElementSerializationTest extends LightJavaCodeInsightFixtureTest
         PersistentStorage.ConverterMapFileToSetElement converterMapFileToSetElement = new PersistentStorage.ConverterMapFileToSetElement();
         String json = converterMapFileToSetElement.toString(map);
         assertNotNull(json);
+
         Map<String, SetElement> newMap = converterMapFileToSetElement.fromString(json);
         assertEquals(answer, newMap);
     }

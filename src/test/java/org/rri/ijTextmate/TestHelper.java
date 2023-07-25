@@ -18,18 +18,24 @@ public class TestHelper {
     public static final String INJECTED_LANGUAGE = "sql";
     private static final MultiHostInjector INJECTOR = new LanguageHighlight();
 
-    public static final Assert ASSERT_FALSE = TestCase::assertFalse;
-    public static final Assert ASSERT_TRUE = TestCase::assertTrue;
-
     @FunctionalInterface
     public interface Assert {
         void test(boolean b);
     }
 
+    @Contract(pure = true)
+    public static @NotNull Assert createAssertTrueWithMessage(String message) {
+        return (boolean b) -> TestCase.assertTrue(message, b);
+    }
+
+    @Contract(pure = true)
+    public static @NotNull Assert createAssertFalseWithMessage(String message) {
+        return (boolean b) -> TestCase.assertFalse(message, b);
+    }
+
     public static void injectLanguage(Project project, Editor editor, PsiFile psiFile, Disposable disposable) {
         PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
         if (host == null) return;
-        InjectedLanguageManager.getInstance(project).registerMultiHostInjector(INJECTOR, disposable);
         InjectLanguageAction.injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE);
     }
 
@@ -44,5 +50,9 @@ public class TestHelper {
         for (Object arg : args) {
             check.accept(arg);
         }
+    }
+
+    public static String getMessage(String testName, String fileName, String message) {
+        return String.format("\nName test: %s\nFile: %s\nMessage: %s", testName, fileName, message);
     }
 }
