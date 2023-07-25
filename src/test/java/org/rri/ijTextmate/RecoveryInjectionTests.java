@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 
 public class RecoveryInjectionTests extends BasePlatformTestCase {
@@ -17,27 +16,22 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
         return "src/test/testData/PersistentStorageCases";
     }
 
-    @Test
     public void test0Clear() {
         PersistentStorage.getInstance(getProject()).getState().clear();
     }
 
-    @Test
     public void testWithoutMoving() {
         checkRecoveryInjection("WithoutMoving.before.java", "WithoutMoving.after.java", "WithoutMoving.java");
     }
 
-    @Test
     public void testWithMovingExpressionSimple() {
         checkRecoveryInjection("WithMovingExpressionSimple.before.java", "WithMovingExpressionSimple.after.java", "WithMovingExpressionSimple.java");
     }
 
-    @Test
     public void testWithMovingExpressionHard() {
         checkRecoveryInjection("WithMovingExpressionHard.before.java", "WithMovingExpressionHard.after.java", "WithMovingExpressionHard.java");
     }
 
-    @Test
     public void testWithRename() {
         checkRecoveryInjection("WithRename.before.java", "WithRename.after.java", "WithRename.java");
     }

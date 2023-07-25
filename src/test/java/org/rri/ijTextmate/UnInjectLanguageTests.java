@@ -9,7 +9,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
@@ -21,19 +20,16 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         return "src/test/testData/InjectionCases";
     }
 
-    @Test
     public void testCaretInTheCenterInsideTheString() {
         checkUnInjectLanguage("CaretInTheCenterInsideTheString.java");
         checkUnInjectLanguage("CaretInTheCenterInsideTheString.py");
     }
 
-    @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkUnInjectLanguage("CaretOnTheLeftInsideTheString.java");
         checkUnInjectLanguage("CaretOnTheLeftInsideTheString.py");
     }
 
-    @Test
     public void testCaretOnTheRightInsideTheString() {
         checkUnInjectLanguage("CaretOnTheRightInsideTheString.java");
         checkUnInjectLanguage("CaretOnTheRightInsideTheString.py");

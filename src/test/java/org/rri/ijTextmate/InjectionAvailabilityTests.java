@@ -9,8 +9,9 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+
+import java.util.Objects;
 
 import static org.rri.ijTextmate.TestHelper.ASSERT_TRUE;
 import static org.rri.ijTextmate.TestHelper.ASSERT_FALSE;
@@ -21,37 +22,31 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         return "src/test/testData/InjectionCases";
     }
 
-    @Test
     public void testCaretInTheCenterInsideTheString() {
         checkInjectionAvailability("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkInjectionAvailability("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheRightInsideTheString() {
         checkInjectionAvailability("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
     }
 
-    @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
     }
 
-    @Test
     public void testSelectionInsideTheString() {
         checkSelectionInsideTheString("SelectionInsideTheString.java");
         checkSelectionInsideTheString("SelectionInsideTheString.py");
@@ -65,8 +60,8 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
         for (CaretState caretState : editor.getCaretModel().getCaretsAndSelections()) {
             TestHelper.checkWithConsumer(TestCase::assertNotNull, caretState.getSelectionStart(), caretState.getSelectionEnd());
-            int i = caretState.getSelectionStart().column;
-            int end = caretState.getSelectionEnd().column;
+            int i = Objects.requireNonNull(caretState.getSelectionStart()).column;
+            int end = Objects.requireNonNull(caretState.getSelectionEnd()).column;
             int line = caretState.getSelectionStart().line;
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));

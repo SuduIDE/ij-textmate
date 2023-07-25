@@ -8,7 +8,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
@@ -23,31 +22,26 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         return "src/test/testData/InjectionCases";
     }
 
-    @Test
     public void testCaretInTheCenterInsideTheString() {
         checkInjectLanguage("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkInjectLanguage("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheRightInsideTheString() {
         checkInjectLanguage("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
         checkInjectLanguage("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
     }
 
-    @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectLanguage("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
     }
 
-    @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkInjectLanguage("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectLanguage("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
