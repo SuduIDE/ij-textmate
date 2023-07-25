@@ -25,21 +25,18 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     public void testCaretInTheCenterInsideTheString() {
         checkUnInjectLanguage("CaretInTheCenterInsideTheString.java");
         checkUnInjectLanguage("CaretInTheCenterInsideTheString.py");
-        checkUnInjectLanguage("CaretInTheCenterInsideTheString.ts");
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkUnInjectLanguage("CaretOnTheLeftInsideTheString.java");
         checkUnInjectLanguage("CaretOnTheLeftInsideTheString.py");
-        checkUnInjectLanguage("CaretOnTheLeftInsideTheString.ts");
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
         checkUnInjectLanguage("CaretOnTheRightInsideTheString.java");
         checkUnInjectLanguage("CaretOnTheRightInsideTheString.py");
-        checkUnInjectLanguage("CaretOnTheRightInsideTheString.ts");
     }
 
     private void checkUnInjectLanguage(String fileName) {

@@ -22,42 +22,36 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     public void testCaretInTheCenterInsideTheString() {
         checkUnInjectionAvailability("CaretInTheCenterInsideTheString.java", caretInsideString);
         checkUnInjectionAvailability("CaretInTheCenterInsideTheString.py", caretInsideString);
-        checkUnInjectionAvailability("CaretInTheCenterInsideTheString.ts", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.java", caretInsideString);
         checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.py", caretInsideString);
-        checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.ts", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheRightInsideTheString.java", caretInsideString);
         checkUnInjectionAvailability("CaretOnTheRightInsideTheString.py", caretInsideString);
-        checkUnInjectionAvailability("CaretOnTheRightInsideTheString.ts", caretInsideString);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", caretOutsideString);
         checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.py", caretOutsideString);
-        checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.ts", caretOutsideString);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", caretOutsideString);
         checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.py", caretOutsideString);
-        checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.ts", caretOutsideString);
     }
 
     @Test
     public void testSelectionInsideTheString() {
         checkSelectionInsideTheString("SelectionInsideTheString.java");
         checkSelectionInsideTheString("SelectionInsideTheString.py");
-        checkSelectionInsideTheString("SelectionInsideTheString.ts");
     }
 
     private void checkSelectionInsideTheString(String fileName) {

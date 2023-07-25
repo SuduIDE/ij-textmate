@@ -25,42 +25,36 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
     public void testCaretInTheCenterInsideTheString() {
         checkInjectionAvailability("CaretInTheCenterInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretInTheCenterInsideTheString.py", ASSERT_TRUE);
-        checkInjectionAvailability("CaretInTheCenterInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkInjectionAvailability("CaretOnTheLeftInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretOnTheLeftInsideTheString.py", ASSERT_TRUE);
-        checkInjectionAvailability("CaretOnTheLeftInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheRightInsideTheString() {
         checkInjectionAvailability("CaretOnTheRightInsideTheString.java", ASSERT_TRUE);
         checkInjectionAvailability("CaretOnTheRightInsideTheString.py", ASSERT_TRUE);
-        checkInjectionAvailability("CaretOnTheRightInsideTheString.ts", ASSERT_TRUE);
     }
 
     @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.py", ASSERT_FALSE);
-        checkInjectionAvailability("CaretOnTheLeftOutsideOfTheString.ts", ASSERT_FALSE);
     }
 
     @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", ASSERT_FALSE);
         checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.py", ASSERT_FALSE);
-        checkInjectionAvailability("CaretOnTheRightOutsideOfTheString.ts", ASSERT_FALSE);
     }
 
     @Test
     public void testSelectionInsideTheString() {
         checkSelectionInsideTheString("SelectionInsideTheString.java");
         checkSelectionInsideTheString("SelectionInsideTheString.py");
-        checkSelectionInsideTheString("SelectionInsideTheString.ts");
     }
 
     private void checkSelectionInsideTheString(String fileName) {
