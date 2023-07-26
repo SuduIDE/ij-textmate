@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -100,6 +101,7 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
+        PsiManager.getInstance(project).dropPsiCaches();
         final int offset = editor.getCaretModel().getOffset();
         PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
@@ -107,6 +109,9 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
         PsiElement psiElement = psiFile.findElementAt(offset);
+
+        String message = String.format("\nFile: %s\nMessage: psiElemens is null", psiFile.getName());
+        assertNotNull(message, psiElement);
 
         return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset(), psiElement.getTextRange()));
     }

@@ -36,9 +36,9 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
     }
 
     private void checkUnInjectLanguage(String fileName) {
+        myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = getProject();
-        myFixture.configureByText(fileName, "");
         Editor editor = myFixture.getEditor();
 
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
@@ -55,11 +55,17 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
         PsiManager.getInstance(project).dropPsiCaches();
-        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
+        final int offset = editor.getCaretModel().getOffset();
+        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
 
         String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
-        return !(resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset(), element.getTextRange())));
+        PsiElement psiElement = psiFile.findElementAt(offset);
+
+        String message = String.format("\nFile: %s\nMessage: psiElemens is null", psiFile.getName());
+        assertNotNull(message, psiElement);
+
+        return resFirst || elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, offset, psiElement.getTextRange()));
     }
 }

@@ -15,10 +15,10 @@ public class UnInjectLanguage {
         WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host, placeInjection, psiFile, project));
     }
 
-    private static void removeInjectionPlace(PsiLanguageInjectionHost host, PlaceInjection placeInjection, PsiFile psiFile, Project project) {
+    private static void removeInjectionPlace(PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, PsiFile psiFile, Project project) {
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relativePath);
-        elements.remove(placeInjection);
+        elements.remove(placeInjection.getCenter());
         InjectorHelper.resolveInjectLanguage(host, null);
     }
 }

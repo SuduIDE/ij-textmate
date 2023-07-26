@@ -13,7 +13,7 @@ public class PlaceInjection implements LanguageID {
     public static String END = "end";
     public static String OFFSET = "offset";
     public String languageId;
-    public TextRange textRange;
+    public TextRange textRange = TextRange.EMPTY_RANGE;
     public int offset;
 
     public PlaceInjection() {
@@ -34,6 +34,10 @@ public class PlaceInjection implements LanguageID {
     @Override
     public int hashCode() {
         return Objects.hash(languageId, offset, textRange);
+    }
+
+    public int getCenter() {
+        return (textRange.getStartOffset() + textRange.getEndOffset()) / 2;
     }
 
     @Override
