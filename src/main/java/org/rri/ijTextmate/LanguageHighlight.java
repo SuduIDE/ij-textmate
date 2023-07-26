@@ -7,6 +7,7 @@ import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.textmate.TextMateLanguage;
+import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.PersistentStorage.LanguageID;
 
 import java.util.List;
@@ -27,7 +28,8 @@ public class LanguageHighlight implements MultiHostInjector {
         while (text.charAt(start) == '"' && start < end) start++;
         while (text.charAt(end) == '"' && end > start) end--;
         TextRange range = new TextRange(start, end + 1);
-        registrar.startInjecting(TextMateLanguage.LANGUAGE, languageID.getID()).addPlace(null, null, host, range).doneInjecting();
+        String fileExtension = TextMateHelper.getInstance(context.getProject()).getExtension(languageID.getID());
+        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
     }
 
     @Override
