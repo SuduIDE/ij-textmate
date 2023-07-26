@@ -1,13 +1,7 @@
 package org.rri.ijTextmate.PersistentStorage;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.intellij.util.xmlb.Converter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.AbstractSet;
 import java.util.HashSet;
@@ -67,24 +61,6 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     public void clear() {
         synchronized (mutex) {
             set.clear();
-        }
-    }
-
-    public static class SetElementConverter extends Converter<Set<PlaceInjection>> {
-        @Override
-        public @Nullable Set<PlaceInjection> fromString(@NotNull String value) {
-            GsonBuilder gson = new GsonBuilder();
-            Type collectionType = new TypeToken<Set<PlaceInjection>>() {
-            }.getType();
-            return gson.create().fromJson(value, collectionType);
-        }
-
-        @Override
-        public @Nullable String toString(@NotNull Set<PlaceInjection> value) {
-            Writer writer = new StringWriter();
-            Gson gson = new Gson();
-            gson.toJson(gson.toJsonTree(value), writer);
-            return writer.toString();
         }
     }
 

@@ -57,7 +57,7 @@ public class UnInjectLanguageAction extends AnAction {
         PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
         LanguageID languageID = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         String id = languageID == null ? null : languageID.getID();
-        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset), psiFile, project);
+        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset, host.getTextRange()), psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 }

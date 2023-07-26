@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
@@ -25,9 +26,9 @@ public class CheckType extends AnAction {
         assert project != null && editor != null && file != null;
 
         SetElement element = new SetElement();
-        element.add(new PlaceInjection("sql", 20));
-        element.add(new PlaceInjection("php", 24));
-        element.add(new PlaceInjection("cpp", 48));
+        element.add(new PlaceInjection("sql", 20, new TextRange(1, 102)));
+        element.add(new PlaceInjection("php", 24, new TextRange(1, 102)));
+        element.add(new PlaceInjection("cpp", 48, new TextRange(1, 102)));
 
         PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
         mapFileToSetElement.put("key", element);

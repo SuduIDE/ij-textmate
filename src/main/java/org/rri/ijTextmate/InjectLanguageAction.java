@@ -85,7 +85,7 @@ public class InjectLanguageAction extends AnAction {
         int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(offset, psiFile);
         if (host == null) return;
-        PlaceInjection placeInjection = new PlaceInjection(languageId, offset);
+        PlaceInjection placeInjection = new PlaceInjection(languageId, offset, host.getTextRange());
         InjectLanguage.inject(host, placeInjection, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }

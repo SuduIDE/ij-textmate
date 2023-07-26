@@ -93,16 +93,21 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
+
         TestHelper.checkWithConsumer(TestCase::assertNotNull, psiFile, project, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
         test.test(isInjected(project, editor, psiFile));
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
-        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
+        final int offset = editor.getCaretModel().getOffset();
+        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+
         String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
-        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset()));
+        PsiElement psiElement = psiFile.findElementAt(offset);
+
+        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset(), psiElement.getTextRange()));
     }
 }

@@ -57,8 +57,9 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         PsiManager.getInstance(project).dropPsiCaches();
         PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+
         String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
-        return !(resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset())));
+        return !(resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset(), element.getTextRange())));
     }
 }

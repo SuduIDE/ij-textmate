@@ -1,7 +1,5 @@
 package org.rri.ijTextmate;
 
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -16,7 +14,6 @@ import java.util.function.Consumer;
 
 public class TestHelper {
     public static final String INJECTED_LANGUAGE = "sql";
-    private static final MultiHostInjector INJECTOR = new LanguageHighlight();
 
     @FunctionalInterface
     public interface Assert {

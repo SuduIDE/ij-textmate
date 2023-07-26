@@ -1,5 +1,6 @@
 package org.rri.ijTextmate;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.junit.FixMethodOrder;
@@ -24,35 +25,35 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("sql", 3));
+        setElement.add(new PlaceInjection("sql", 3, new TextRange(1, 10)));
     }
 
     public void test2() {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("python", 42));
+        setElement.add(new PlaceInjection("python", 42, new TextRange(1, 10)));
     }
 
     public void test3() {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("cpp", 144));
+        setElement.add(new PlaceInjection("cpp", 144, new TextRange(1, 10)));
     }
 
     public void test4() {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("php", 87));
+        setElement.add(new PlaceInjection("php", 87, new TextRange(1, 10)));
     }
 
     public void test5() {
         PsiFile psiFile = myFixture.configureByText(FILE_NAME, TEXT_PROGRAM);
         String relativePath = InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("java", 12));
+        setElement.add(new PlaceInjection("java", 12, new TextRange(1, 10)));
     }
 
     public void test6CheckElements() {
@@ -61,11 +62,11 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
 
-        setElement.remove(new PlaceInjection("sql", 3));
-        setElement.remove(new PlaceInjection("python", 42));
-        setElement.remove(new PlaceInjection("cpp", 144));
-        setElement.remove(new PlaceInjection("php", 87));
-        setElement.remove(new PlaceInjection("java", 12));
+        setElement.remove(new PlaceInjection("sql", 3, new TextRange(1, 10)));
+        setElement.remove(new PlaceInjection("python", 42, new TextRange(1, 10)));
+        setElement.remove(new PlaceInjection("cpp", 144, new TextRange(1, 10)));
+        setElement.remove(new PlaceInjection("php", 87, new TextRange(1, 10)));
+        setElement.remove(new PlaceInjection("java", 12, new TextRange(1, 10)));
 
         assertEquals(0, setElement.size());
     }
