@@ -10,73 +10,89 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
-import io.ktor.util.collections.ConcurrentSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.*;
 
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
-public class PersistentStorage implements PersistentStateComponent<PersistentStorage.SetElement> {
-    private SetElement mySetElement = new SetElement();
+public class PersistentStorage implements PersistentStateComponent<PersistentStorage.MapFileToSetElement> {
+    private MapFileToSetElement myMapToSetElement = new MapFileToSetElement();
 
     @Override
-    public @NotNull SetElement getState() {
-        return mySetElement;
+    public @NotNull MapFileToSetElement getState() {
+        return myMapToSetElement;
     }
 
     @Override
-    public void loadState(@NotNull SetElement state) {
-        mySetElement = state;
+    public void loadState(@NotNull MapFileToSetElement state) {
+        myMapToSetElement = state;
     }
 
     public static PersistentStorage getInstance(@NotNull Project project) {
         return project.getService(PersistentStorage.class);
     }
 
+    public static class MapFileToSetElement {
+        private final Object mutex = new Object();
 
-    public static class SetElement {
         @Property
-        @OptionTag(converter = ConverterSetElement.class)
-        private final Set<TemporaryPlace> set = new ConcurrentSet<>();
+        @OptionTag(converter = ConverterMapFileToSetElement.class)
+        private final Map<String, SetElement> map = new HashMap<>();
 
-        public SetElement() {
+        public MapFileToSetElement() {
         }
 
-        public boolean addElement(TemporaryPlace place) {
-            return set.add(place);
+        public SetElement get(String key) {
+            synchronized (mutex) {
+                SetElement setElement = map.get(key);
+                if (setElement == null) {
+                    setElement = new SetElement();
+                    map.put(key, setElement);
+                }
+                return setElement;
+            }
         }
 
-        public boolean contains(TemporaryPlace place) {
-            return set.contains(place);
+        public SetElement put(String key, SetElement value) {
+            synchronized (mutex) {
+                return map.put(key, value);
+            }
         }
 
-        public boolean remove(TemporaryPlace place) {
-            return set.remove(place);
+        public int size() {
+            synchronized (mutex) {
+                return map.size();
+            }
         }
 
-        public Set<TemporaryPlace> getElements() {
-            return set;
+        public void clear() {
+            synchronized (mutex) {
+                map.clear();
+            }
         }
     }
 
-    public static class ConverterSetElement extends Converter<Set<TemporaryPlace>> {
+    public static class ConverterMapFileToSetElement extends Converter<Map<String, SetElement>> {
         @Override
-        public @Nullable Set<TemporaryPlace> fromString(@NotNull String value) {
-            GsonBuilder gson = new GsonBuilder();
-            Type collectionType = new TypeToken<Set<TemporaryPlace>>() {
+        public @Nullable Map<String, SetElement> fromString(@NotNull String value) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
+                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
+                    .create();
+            Type collectionType = new TypeToken<HashMap<String, SetElement>>() {
             }.getType();
-            return gson.create().fromJson(value, collectionType);
+            return gson.fromJson(value, collectionType);
         }
 
         @Override
-        public @Nullable String toString(@NotNull Set<TemporaryPlace> value) {
-            Writer writer = new StringWriter();
-            Gson gson = new Gson();
-            gson.toJson(gson.toJsonTree(value), writer);
-            return writer.toString();
+        public @Nullable String toString(@NotNull Map<String, SetElement> value) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
+                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
+                    .create();
+            return gson.toJson(value);
         }
     }
 }

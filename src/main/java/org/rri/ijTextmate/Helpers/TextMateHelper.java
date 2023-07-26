@@ -15,6 +15,7 @@ import java.util.*;
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
     private final Map<String, String> languages = new HashMap<>();
+    private final Map<String, String> languageToFileExtension = new HashMap<>();
     private static final Path FILE_WITH_EXTENSION = Path.of("package.json");
     private static final String CONTRIBUTES = "contributes";
     private static final String LANGUAGES = "languages";
@@ -40,23 +41,35 @@ public final class TextMateHelper {
     }
 
     public @NotNull String getExtension(String language) {
+        String fileExtension = languageToFileExtension.get(language);
+        if (fileExtension != null) return fileExtension;
+
         Path path = getPath(language).resolve(FILE_WITH_EXTENSION);
         try {
             String text = FileUtils.readFileToString(path.toFile(), UTF8);
             JsonElement root = JsonParser.parseString(text);
-            String extension = root.getAsJsonObject().get(CONTRIBUTES)
+
+            fileExtension = root.getAsJsonObject().get(CONTRIBUTES)
                     .getAsJsonObject().get(LANGUAGES)
                     .getAsJsonArray().get(0)
                     .getAsJsonObject().get(EXTENSIONS)
-                    .getAsJsonArray().get(0).toString();
-            if (extension.length() > 3) return extension.substring(2, extension.length() - 1);
+                    .getAsJsonArray().get(0).getAsString();
+            if (fileExtension.startsWith(".")) fileExtension = fileExtension.substring(1);
         } catch (Throwable ignore) {
+            fileExtension = "";
         }
-        return "";
+
+        languageToFileExtension.put(language, fileExtension);
+
+        return fileExtension;
+    }
+
+    public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
+        return project.getService(TextMateHelper.class);
     }
 
     public static @NotNull TextMateHelper upateLanguagesAndGetTextMateHelper(@NotNull Project project) {
-        TextMateHelper textMateHelper = project.getService(TextMateHelper.class);
+        TextMateHelper textMateHelper = getInstance(project);
         textMateHelper.updateLanguages();
         return textMateHelper;
     }

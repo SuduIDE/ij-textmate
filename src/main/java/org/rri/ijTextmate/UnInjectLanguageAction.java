@@ -10,6 +10,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,11 +38,11 @@ public class UnInjectLanguageAction extends AnAction {
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
         host = InjectorHelper.resolveHost(host);
-        if (host == null || host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null) {
-            e.getPresentation().setEnabledAndVisible(true);
-            return;
-        }
-        e.getPresentation().setEnabledAndVisible(false);
+        e.getPresentation().setEnabledAndVisible(canUnInjectLanguageToHost(project, editor, file, host));
+    }
+
+    public boolean canUnInjectLanguageToHost(Project project, Editor editor, PsiFile file, PsiLanguageInjectionHost host) {
+        return host != null && host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null;
     }
 
     @Override
@@ -49,12 +51,13 @@ public class UnInjectLanguageAction extends AnAction {
     }
 
     public static void unInjectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
+        int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
-        UnInjectLanguage.unInject(host, project);
-//      Todo: сделать удаление инъекции из PersistentStorage
-//        PersistentStorage.SetElement elements = project.getService(PersistentStorage.class).getState();
-//        elements.remove();
+        PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
+        LanguageID languageID = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        String id = languageID == null ? null : languageID.getID();
+        UnInjectLanguage.unInject(host, new PlaceInjection(id, offset), psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 }

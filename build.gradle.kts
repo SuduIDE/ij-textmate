@@ -9,6 +9,11 @@ version = "0.1-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+dependencies {
+    implementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+}
+
+
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -16,7 +21,7 @@ intellij {
     version.set("2022.2")
     type.set("IC") // Target IDE Platform
 
-    plugins.set(listOf("org.jetbrains.plugins.textmate", "org.intellij.intelliLang"))
+    plugins.set(listOf("org.jetbrains.plugins.textmate", "org.intellij.intelliLang", "com.intellij.java", "PythonCore:222.3345.146"))
 }
 
 tasks {

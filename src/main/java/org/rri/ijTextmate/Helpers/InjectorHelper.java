@@ -2,13 +2,17 @@ package org.rri.ijTextmate.Helpers;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.rri.ijTextmate.Constants;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rri.ijTextmate.PersistentStorage.LanguageID;
+
+import java.nio.file.Path;
+import java.util.Objects;
 
 public class InjectorHelper {
     @Nullable
@@ -29,10 +33,10 @@ public class InjectorHelper {
         return null;
     }
 
-    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, InjectedLanguage language) {
+    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, LanguageID languageID) {
         host = resolveHost(host);
         if (host != null && host.isValidHost()) {
-            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, language);
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
             host.getManager().dropPsiCaches();
         }
     }
@@ -70,5 +74,9 @@ public class InjectorHelper {
             }
         }
         return null;
+    }
+
+    public static @NotNull Path gitRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
+        return Path.of(Objects.requireNonNull(project.getBasePath())).relativize(Path.of(psiFile.getVirtualFile().getPath()));
     }
 }

@@ -7,8 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.TemporaryPlace;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.jetbrains.annotations.NotNull;
 
 public class InitializerHighlight implements FileEditorManagerListener {
@@ -23,11 +22,12 @@ public class InitializerHighlight implements FileEditorManagerListener {
         PersistentStorage persistentStorage = PersistentStorage.getInstance(project);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
         if (persistentStorage == null || psiFile == null) return;
-        for (TemporaryPlace p : persistentStorage.getState().getElements()) {
-            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(p.offset, psiFile);
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        for (PlaceInjection placeInjection : persistentStorage.getState().get(relativePath)) {
+            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.offset, psiFile);
             host = InjectorHelper.resolveHost(host);
             if (host != null && host.isValidHost()) {
-                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, InjectedLanguage.create("textmate", p.languageId, p.languageId, false));
+                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, placeInjection);
                 host.getManager().dropPsiCaches();
             }
         }

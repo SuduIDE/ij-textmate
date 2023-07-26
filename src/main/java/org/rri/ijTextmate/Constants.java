@@ -1,8 +1,8 @@
 package org.rri.ijTextmate;
 
 import com.intellij.openapi.util.Key;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import org.rri.ijTextmate.PersistentStorage.LanguageID;
 
 public class Constants {
-    public static final Key<InjectedLanguage> MY_TEMPORARY_INJECTED_LANGUAGE = Key.create("MY_TEMPORARY_INJECTED_LANGUAGE");
+    public static final Key<LanguageID> MY_TEMPORARY_INJECTED_LANGUAGE = Key.create("MY_TEMPORARY_INJECTED_LANGUAGE");
 }
