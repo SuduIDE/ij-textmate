@@ -113,6 +113,6 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         String message = String.format("\nFile: %s\nMessage: psiElemens is null", psiFile.getName());
         assertNotNull(message, psiElement);
 
-        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset(), psiElement.getTextRange()));
+        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, psiElement.getTextRange()));
     }
 }

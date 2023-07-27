@@ -66,6 +66,6 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         String message = String.format("\nFile: %s\nMessage: psiElemens is null", psiFile.getName());
         assertNotNull(message, psiElement);
 
-        return resFirst || elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, offset, psiElement.getTextRange()));
+        return resFirst || elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, psiElement.getTextRange()));
     }
 }

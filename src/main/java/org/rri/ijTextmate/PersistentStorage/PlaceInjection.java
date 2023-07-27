@@ -11,29 +11,26 @@ public class PlaceInjection implements LanguageID {
     public static String LANGUAGE_ID = "languageId";
     public static String START = "start";
     public static String END = "end";
-    public static String OFFSET = "offset";
     public String languageId;
     public TextRange textRange = TextRange.EMPTY_RANGE;
-    public int offset;
 
     public PlaceInjection() {
         languageId = "";
     }
 
-    public PlaceInjection(String languageId, final int offset, @NotNull TextRange textRange) {
+    public PlaceInjection(String languageId, @NotNull TextRange textRange) {
         this.languageId = languageId;
-        this.textRange = new TextRange(textRange.getStartOffset(), textRange.getEndOffset());
-        this.offset = offset;
+        this.textRange = textRange;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof PlaceInjection place && languageId.equals(place.languageId) && offset == place.offset;
+        return obj instanceof PlaceInjection place && languageId.equals(place.languageId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(languageId, offset, textRange);
+        return Objects.hash(languageId, textRange);
     }
 
     public int getCenter() {
@@ -54,7 +51,6 @@ public class PlaceInjection implements LanguageID {
             jsonObject.addProperty(LANGUAGE_ID, placeInjection.languageId);
             jsonObject.addProperty(START, placeInjection.textRange.getStartOffset());
             jsonObject.addProperty(END, placeInjection.textRange.getEndOffset());
-            jsonObject.addProperty(OFFSET, placeInjection.offset);
             return jsonObject;
         }
 
@@ -63,14 +59,12 @@ public class PlaceInjection implements LanguageID {
             if (!jsonElement.isJsonObject()) return null;
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            if (!jsonObject.has(LANGUAGE_ID) || !jsonObject.has(OFFSET) ||
-                    !jsonObject.has(START) || !jsonObject.has(END)) return null;
+            if (!jsonObject.has(LANGUAGE_ID) || !jsonObject.has(START) || !jsonObject.has(END)) return null;
 
             String languageID = jsonObject.get(LANGUAGE_ID).getAsString();
-            int offset = jsonObject.get(OFFSET).getAsInt();
             TextRange textRange = createTextRangeFromJsonObject(jsonObject);
 
-            return new PlaceInjection(languageID, offset, textRange);
+            return new PlaceInjection(languageID, textRange);
         }
 
         private @NotNull TextRange createTextRangeFromJsonObject(@NotNull JsonObject jsonObject) {

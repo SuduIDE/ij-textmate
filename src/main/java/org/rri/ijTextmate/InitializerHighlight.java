@@ -27,7 +27,7 @@ public class InitializerHighlight implements FileEditorManagerListener {
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
 
         for (PlaceInjection placeInjection : persistentStorage.getState().get(relativePath)) {
-            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.offset, psiFile);
+            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.getCenter(), psiFile);
             host = InjectorHelper.resolveHost(host);
 
             if (host != null && host.isValidHost()) {

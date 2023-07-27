@@ -18,7 +18,7 @@ public class UnInjectLanguage {
     private static void removeInjectionPlace(PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, PsiFile psiFile, Project project) {
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relativePath);
-        elements.remove(placeInjection.getCenter());
+        elements.remove(placeInjection);
         InjectorHelper.resolveInjectLanguage(host, null);
     }
 }

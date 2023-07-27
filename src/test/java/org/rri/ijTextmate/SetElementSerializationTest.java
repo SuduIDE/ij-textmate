@@ -12,16 +12,16 @@ import java.util.Map;
 
 public class SetElementSerializationTest extends LightJavaCodeInsightFixtureTestCase {
     Map<String, SetElement> map = Map.of(
-            "file1", createSetElement(new PlaceInjection("php", 15, new TextRange(1, 10))),
-            "file2", createSetElement(new PlaceInjection("cpp", 68, new TextRange(1, 10)), new PlaceInjection("go", 79, new TextRange(1, 10))),
+            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
+            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10))),
             "file3", createSetElement(),
             "file4", createSetElement(),
             "file5", createSetElement(new PlaceInjection())
     );
 
     Map<String, SetElement> answer = Map.of(
-            "file1", createSetElement(new PlaceInjection("php", 15, new TextRange(1, 10))),
-            "file2", createSetElement(new PlaceInjection("cpp", 68, new TextRange(1, 10)), new PlaceInjection("go", 79, new TextRange(1, 10)))
+            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
+            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10)))
     );
 
     public void testSerialization() {

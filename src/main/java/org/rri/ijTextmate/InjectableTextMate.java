@@ -31,7 +31,7 @@ public class InjectableTextMate extends Injectable {
 
     public static @NotNull InjectedLanguage create(@NotNull String languageId) {
         String innerId = INSTANCE.getId();
-        if (languageId.length() == 0) return InjectedLanguage.create(innerId);
+        if (languageId.isEmpty()) return InjectedLanguage.create(innerId);
         return InjectedLanguage.create(String.format("%s->%s", innerId, languageId), innerId, languageId, false);
     }
 }

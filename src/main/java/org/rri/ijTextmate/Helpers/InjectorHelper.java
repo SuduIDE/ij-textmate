@@ -9,7 +9,7 @@ import org.rri.ijTextmate.Constants;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -33,10 +33,10 @@ public class InjectorHelper {
         return null;
     }
 
-    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, LanguageID languageID) {
+    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, PlaceInjection placeInjection) {
         host = resolveHost(host);
         if (host != null && host.isValidHost()) {
-            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, placeInjection);
             host.getManager().dropPsiCaches();
         }
     }

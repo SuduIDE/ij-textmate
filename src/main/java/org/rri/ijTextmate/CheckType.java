@@ -7,15 +7,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
 import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.PersistentStorage.SetElement;
-
-import static java.lang.System.out;
 
 public class CheckType extends AnAction {
     @Override
@@ -26,9 +21,9 @@ public class CheckType extends AnAction {
         assert project != null && editor != null && file != null;
 
         SetElement element = new SetElement();
-        element.add(new PlaceInjection("sql", 20, new TextRange(1, 102)));
-        element.add(new PlaceInjection("php", 24, new TextRange(1, 102)));
-        element.add(new PlaceInjection("cpp", 48, new TextRange(1, 102)));
+        element.add(new PlaceInjection("sql", new TextRange(1, 102)));
+        element.add(new PlaceInjection("php", new TextRange(1, 102)));
+        element.add(new PlaceInjection("cpp", new TextRange(1, 102)));
 
         PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
         mapFileToSetElement.put("key", element);

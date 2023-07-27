@@ -26,35 +26,35 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
         String relativePath = getRelativePath();
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("sql", 3, new TextRange(1, 10)));
+        setElement.add(new PlaceInjection("sql", new TextRange(1, 10)));
     }
 
     public void test2() {
         String relativePath = getRelativePath();
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("python", 42, new TextRange(40, 43)));
+        setElement.add(new PlaceInjection("python", new TextRange(40, 43)));
     }
 
     public void test3() {
         String relativePath = getRelativePath();
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("cpp", 144, new TextRange(143, 145)));
+        setElement.add(new PlaceInjection("cpp", new TextRange(143, 145)));
     }
 
     public void test4() {
         String relativePath = getRelativePath();
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("php", 87, new TextRange(85, 88)));
+        setElement.add(new PlaceInjection("php", new TextRange(85, 88)));
     }
 
     public void test5() {
         String relativePath = getRelativePath();
 
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
-        setElement.add(new PlaceInjection("java", 12, new TextRange(11, 13)));
+        setElement.add(new PlaceInjection("java", new TextRange(11, 13)));
     }
 
     public void test6PutPlaceInjectionIntersects() {
@@ -63,7 +63,7 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
         SetElement setElement = PersistentStorage.getInstance(getProject()).getState().get(relativePath);
 
         final int expectedSize = setElement.size();
-        setElement.add(new PlaceInjection("java", 12, new TextRange(11, 13)));
+        setElement.add(new PlaceInjection("java", new TextRange(11, 13)));
 
         String message = "Elements with moving TextRange replaces are equivalent";
         assertEquals(message, expectedSize, setElement.size());
@@ -89,8 +89,8 @@ public class PersistentStorageSimpleTest extends BasePlatformTestCase {
         assertTrue(setElement.remove(5));
         assertTrue(setElement.remove(40));
         assertTrue(setElement.remove(145));
-        assertTrue(setElement.remove(new PlaceInjection("php", 87, new TextRange(85, 88))));
-        assertTrue(setElement.remove(new PlaceInjection("java", 12, new TextRange(11, 13))));
+        assertTrue(setElement.remove(new PlaceInjection("php", new TextRange(85, 88))));
+        assertTrue(setElement.remove(new PlaceInjection("java", new TextRange(11, 13))));
 
         assertEquals(0, setElement.size());
     }
