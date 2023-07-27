@@ -8,7 +8,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.textmate.TextMateLanguage;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
+import org.rri.ijTextmate.Storage.PersistentStorage.LanguageID;
 
 import java.util.List;
 

@@ -10,9 +10,9 @@ import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     @Override

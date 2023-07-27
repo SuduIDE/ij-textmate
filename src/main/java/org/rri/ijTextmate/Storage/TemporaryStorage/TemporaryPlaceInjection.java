@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.TemporaryStorage;
+package org.rri.ijTextmate.Storage.TemporaryStorage;
 
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.SmartPsiElementPointer;

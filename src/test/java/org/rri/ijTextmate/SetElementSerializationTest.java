@@ -3,9 +3,9 @@ package org.rri.ijTextmate;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 import java.util.Collections;
 import java.util.Map;

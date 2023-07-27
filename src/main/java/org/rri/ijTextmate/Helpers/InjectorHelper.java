@@ -9,7 +9,7 @@ import org.rri.ijTextmate.Constants;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 
 import java.nio.file.Path;
 import java.util.Objects;

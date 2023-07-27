@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.PersistentStorage;
+package org.rri.ijTextmate.Storage.PersistentStorage;
 
 import com.google.gson.*;
 import com.intellij.openapi.util.TextRange;

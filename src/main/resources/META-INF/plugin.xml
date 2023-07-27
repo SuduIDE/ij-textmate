@@ -30,7 +30,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
-        <projectService serviceImplementation="org.rri.ijTextmate.PersistentStorage.PersistentStorage"/>
+        <projectService serviceImplementation="org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage"/>
     </extensions>
     <project-components>
         <!--        <component>-->

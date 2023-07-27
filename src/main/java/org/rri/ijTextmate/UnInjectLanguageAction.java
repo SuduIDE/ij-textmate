@@ -10,8 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
 

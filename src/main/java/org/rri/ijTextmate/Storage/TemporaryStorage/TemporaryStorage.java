@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.TemporaryStorage;
+package org.rri.ijTextmate.Storage.TemporaryStorage;
 
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
@@ -9,23 +9,23 @@ import java.util.Map;
 
 @Service(Service.Level.PROJECT)
 public final class TemporaryStorage {
-    private final Map<String, TemporaryMapPointerToString> map = new HashMap<>();
+    private final Map<String, TemporaryMapPointerToLanguage> map = new HashMap<>();
     private final Object mutex = new Object();
     public TemporaryStorage() {
     }
 
-    public @NotNull TemporaryMapPointerToString get(String key) {
+    public @NotNull TemporaryMapPointerToLanguage get(String key) {
         synchronized (mutex) {
-            TemporaryMapPointerToString temporarySetPointer = map.get(key);
+            TemporaryMapPointerToLanguage temporarySetPointer = map.get(key);
             if (temporarySetPointer == null) {
-                temporarySetPointer = new TemporaryMapPointerToString();
+                temporarySetPointer = new TemporaryMapPointerToLanguage();
                 map.put(key, temporarySetPointer);
             }
             return temporarySetPointer;
         }
     }
 
-    public TemporaryMapPointerToString put(String key, TemporaryMapPointerToString value) {
+    public TemporaryMapPointerToLanguage put(String key, TemporaryMapPointerToLanguage value) {
         synchronized (mutex) {
             return map.put(key, value);
         }

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 
 public class RecoveryInjectionTests extends BasePlatformTestCase {
     @Override

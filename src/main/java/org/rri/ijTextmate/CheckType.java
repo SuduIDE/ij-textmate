@@ -8,9 +8,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 public class CheckType extends AnAction {
     @Override

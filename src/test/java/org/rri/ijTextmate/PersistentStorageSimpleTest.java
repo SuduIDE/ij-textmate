@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersistentStorageSimpleTest extends BasePlatformTestCase {

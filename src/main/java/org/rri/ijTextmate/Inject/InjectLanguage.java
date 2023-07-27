@@ -5,9 +5,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 public class InjectLanguage {
     public static void inject(@NotNull PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, PsiFile psiFile, @NotNull Project project) {
