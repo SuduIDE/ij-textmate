@@ -5,16 +5,23 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
-import static java.lang.System.out;
+import java.util.List;
+import java.util.function.Supplier;
+
+/*
+ * Этот Action только для тестов
+ */
 
 public class CheckType extends AnAction {
     @Override
@@ -23,16 +30,25 @@ public class CheckType extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
+        FileContentUtil.reparseFiles(project, List.of(file.getVirtualFile()), true);
 
-        SetElement element = new SetElement();
-        element.add(new PlaceInjection("sql", 20));
-        element.add(new PlaceInjection("php", 24));
-        element.add(new PlaceInjection("cpp", 48));
+//        Supplier<String> supplier = () -> {
+//            System.out.println("supplier");
+//            return "";
+//        };
+//        System.out.println(new Object().hashCode());
+//        System.out.println(file.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE));
+//        System.out.println(CacheListTemporaryPlaceInjection.getInstance(project).getSimpleModificationTracker().getModificationCount());
 
-        PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
-        mapFileToSetElement.put("key", element);
-        mapFileToSetElement.put("key3", element);
-        PersistentStorage.getInstance(project).loadState(mapFileToSetElement);
+//        SetElement element = new SetElement();
+//        element.add(new PlaceInjection("sql", new TextRange(1, 102)));
+//        element.add(new PlaceInjection("php", new TextRange(1, 102)));
+//        element.add(new PlaceInjection("cpp", new TextRange(1, 102)));
+//
+//        PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
+//        mapFileToSetElement.put("key", element);
+//        mapFileToSetElement.put("key3", element);
+//        PersistentStorage.getInstance(project).loadState(mapFileToSetElement);
 
 //        String basePath = project.getBasePath();
 //

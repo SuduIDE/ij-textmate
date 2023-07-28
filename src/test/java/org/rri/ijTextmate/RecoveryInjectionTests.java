@@ -8,7 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Listeners.InitializerHighlightListener;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 
 public class RecoveryInjectionTests extends BasePlatformTestCase {
     @Override
@@ -59,7 +60,7 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
         myFixture.renameElement(psiFiles[0], beforeName);
         myFixture.renameElement(psiFiles[1], baseName);
 
-        new InitializerHighlight(getProject()).fileOpened(FileEditorManager.getInstance(getProject()), psiFiles[1].getVirtualFile());
+        new InitializerHighlightListener(getProject()).fileOpened(FileEditorManager.getInstance(getProject()), psiFiles[1].getVirtualFile());
         myFixture.openFileInEditor(psiFiles[1].getVirtualFile());
         assertTrue(message, isInjected(getProject(), myFixture.getEditor(), psiFiles[1]));
     }

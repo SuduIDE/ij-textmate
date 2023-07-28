@@ -1,23 +1,22 @@
-package org.rri.ijTextmate.PersistentStorage;
+package org.rri.ijTextmate.Storage.PersistentStorage;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.intellij.util.xmlb.Converter;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Type;
-import java.util.AbstractSet;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class SetElement extends AbstractSet<PlaceInjection> {
     private final Object mutex = new Object();
 
     private final Set<PlaceInjection> set = new HashSet<>();
+    public static final Comparator<TextRange> COMPARATOR = (rangeLeft, rangeRight) -> {
+        if (rangeLeft.intersects(rangeRight)) return 0;
+        return rangeLeft.getStartOffset() - rangeRight.getStartOffset();
+    };
+    Map<TextRange, PlaceInjection> mapTextRange = new TreeMap<>(COMPARATOR);
+
 
     public SetElement() {
     }
@@ -49,6 +48,8 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     @Override
     public boolean add(PlaceInjection place) {
         synchronized (mutex) {
+            PlaceInjection oldPlace = mapTextRange.put(place.textRange, place);
+            if (oldPlace != null) set.remove(oldPlace);
             return set.add(place);
         }
     }
@@ -57,8 +58,25 @@ public class SetElement extends AbstractSet<PlaceInjection> {
         return set.contains(place);
     }
 
-    public boolean remove(PlaceInjection place) {
+    public boolean contains(final int offset) {
         synchronized (mutex) {
+            TextRange textRange = new TextRange(offset, offset);
+            PlaceInjection placeInjection = mapTextRange.get(textRange);
+            return set.contains(placeInjection);
+        }
+    }
+
+    public boolean remove(final int offset) {
+        synchronized (mutex) {
+            TextRange textRange = new TextRange(offset, offset);
+            PlaceInjection placeInjection = mapTextRange.remove(textRange);
+            return set.remove(placeInjection);
+        }
+    }
+
+    public boolean remove(@NotNull PlaceInjection place) {
+        synchronized (mutex) {
+            mapTextRange.remove(place.textRange);
             return set.remove(place);
         }
     }
@@ -66,25 +84,8 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     @Override
     public void clear() {
         synchronized (mutex) {
+            mapTextRange.clear();
             set.clear();
-        }
-    }
-
-    public static class SetElementConverter extends Converter<Set<PlaceInjection>> {
-        @Override
-        public @Nullable Set<PlaceInjection> fromString(@NotNull String value) {
-            GsonBuilder gson = new GsonBuilder();
-            Type collectionType = new TypeToken<Set<PlaceInjection>>() {
-            }.getType();
-            return gson.create().fromJson(value, collectionType);
-        }
-
-        @Override
-        public @Nullable String toString(@NotNull Set<PlaceInjection> value) {
-            Writer writer = new StringWriter();
-            Gson gson = new Gson();
-            gson.toJson(gson.toJsonTree(value), writer);
-            return writer.toString();
         }
     }
 

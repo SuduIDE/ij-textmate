@@ -5,13 +5,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
@@ -93,16 +94,25 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         myFixture.configureByText(fileName, "");
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = getEditor();
+
         TestHelper.checkWithConsumer(TestCase::assertNotNull, psiFile, project, editor);
         TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
         test.test(isInjected(project, editor, psiFile));
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
-        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
+        PsiManager.getInstance(project).dropPsiCaches();
+        final int offset = editor.getCaretModel().getOffset();
+        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
         boolean resFirst = element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
+
         String relivePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
-        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, editor.getCaretModel().getOffset()));
+        PsiElement psiElement = psiFile.findElementAt(offset);
+
+        String message = String.format("\nFile: %s\nMessage: psiElements is null", psiFile.getName());
+        assertNotNull(message, psiElement);
+
+        return resFirst && elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, psiElement.getTextRange()));
     }
 }

@@ -5,11 +5,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.rri.ijTextmate.Constants;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rri.ijTextmate.PersistentStorage.LanguageID;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -31,14 +29,6 @@ public class InjectorHelper {
             if (host != null && host.isValidHost()) return host;
         }
         return null;
-    }
-
-    public static void resolveInjectLanguage(PsiLanguageInjectionHost host, LanguageID languageID) {
-        host = resolveHost(host);
-        if (host != null && host.isValidHost()) {
-            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
-            host.getManager().dropPsiCaches();
-        }
     }
 
     public static PsiLanguageInjectionHost resolveHost(PsiLanguageInjectionHost host) {
