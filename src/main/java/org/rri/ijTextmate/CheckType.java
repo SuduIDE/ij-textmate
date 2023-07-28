@@ -7,10 +7,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.util.FileContentUtil;
+import org.apache.xmlrpc.Echo;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class CheckType extends AnAction {
     @Override
@@ -19,16 +24,30 @@ public class CheckType extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
+        FileContentUtil.reparseFiles(project, List.of(file.getVirtualFile()), true);
+        Supplier<String> supplier = () -> {
+            System.out.println("supplier");
+            return "";
+        };
+        class Echoa {
+            public Echoa() {
+            }
 
-        SetElement element = new SetElement();
-        element.add(new PlaceInjection("sql", new TextRange(1, 102)));
-        element.add(new PlaceInjection("php", new TextRange(1, 102)));
-        element.add(new PlaceInjection("cpp", new TextRange(1, 102)));
-
-        PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
-        mapFileToSetElement.put("key", element);
-        mapFileToSetElement.put("key3", element);
-        PersistentStorage.getInstance(project).loadState(mapFileToSetElement);
+            public void test(Supplier<String> s) {
+                System.out.println("test");
+                s.get();
+            }
+        }
+        new Echoa().test(supplier);
+//        SetElement element = new SetElement();
+//        element.add(new PlaceInjection("sql", new TextRange(1, 102)));
+//        element.add(new PlaceInjection("php", new TextRange(1, 102)));
+//        element.add(new PlaceInjection("cpp", new TextRange(1, 102)));
+//
+//        PersistentStorage.MapFileToSetElement mapFileToSetElement = new PersistentStorage.MapFileToSetElement();
+//        mapFileToSetElement.put("key", element);
+//        mapFileToSetElement.put("key3", element);
+//        PersistentStorage.getInstance(project).loadState(mapFileToSetElement);
 
 //        String basePath = project.getBasePath();
 //

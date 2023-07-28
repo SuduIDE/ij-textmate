@@ -63,7 +63,7 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         SetElement elements = PersistentStorage.getInstance(project).getState().get(relivePath);
         PsiElement psiElement = psiFile.findElementAt(offset);
 
-        String message = String.format("\nFile: %s\nMessage: psiElemens is null", psiFile.getName());
+        String message = String.format("\nFile: %s\nMessage: psiElements is null", psiFile.getName());
         assertNotNull(message, psiElement);
 
         return resFirst || elements.contains(new PlaceInjection(TestHelper.INJECTED_LANGUAGE, psiElement.getTextRange()));

@@ -4,21 +4,27 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 public class UnInjectLanguage {
-    public static void unInject(@NotNull PsiLanguageInjectionHost host, PlaceInjection placeInjection, PsiFile psiFile, @NotNull Project project) {
-        WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host, placeInjection, psiFile, project));
+    public static void unInject(@NotNull PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, @NotNull Project project) {
+        WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host, temporaryPlaceInjection, psiFile, project));
     }
 
-    private static void removeInjectionPlace(PsiLanguageInjectionHost host, @NotNull PlaceInjection placeInjection, PsiFile psiFile, Project project) {
+    private static void removeInjectionPlace(PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, Project project) {
+        host = InjectorHelper.resolveHost(host);
+        if (!host.isValidHost()) return;
+
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
-        SetElement elements = PersistentStorage.getInstance(project).getState().get(relativePath);
-        elements.remove(placeInjection);
-        InjectorHelper.resolveInjectLanguage(host, null);
+        TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+        mapPointerToLanguage.remove(temporaryPlaceInjection);
+
+        host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, null);
+        host.getManager().dropPsiCaches();
     }
 }

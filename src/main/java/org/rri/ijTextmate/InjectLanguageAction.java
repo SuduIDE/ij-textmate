@@ -15,7 +15,6 @@ import com.intellij.util.Processor;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Inject.InjectLanguage;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -85,8 +84,7 @@ public class InjectLanguageAction extends AnAction {
         int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(offset, psiFile);
         if (host == null) return;
-        PlaceInjection placeInjection = new PlaceInjection(languageId, host.getTextRange());
-        InjectLanguage.inject(host, placeInjection, psiFile, project);
+        InjectLanguage.inject(host, languageId, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 

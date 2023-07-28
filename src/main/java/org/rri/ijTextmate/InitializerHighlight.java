@@ -9,6 +9,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
 public class InitializerHighlight implements FileEditorManagerListener {
     private final Project project;
@@ -31,7 +32,9 @@ public class InitializerHighlight implements FileEditorManagerListener {
             host = InjectorHelper.resolveHost(host);
 
             if (host != null && host.isValidHost()) {
-                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, placeInjection);
+                SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
+                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, placeInjection.languageId);
+                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }
         }

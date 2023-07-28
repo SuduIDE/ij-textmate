@@ -7,33 +7,38 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class TemporaryMapPointerToLanguage {
     private final Object mutex = new Object();
-    private volatile long myModificationTracker;
     private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map = new HashMap<>();
 
     public TemporaryMapPointerToLanguage() {
     }
 
     public String add(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
-        return map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection.languageID);
+        return synchronizedSupplier(() -> map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection.languageID));
     }
 
     public String remove(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
-        return map.remove(temporaryPlaceInjection.hostPointer);
+        return synchronizedSupplier(() -> map.remove(temporaryPlaceInjection.hostPointer));
     }
 
     public String remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
-        return map.remove(psiElementPointer);
+        return synchronizedSupplier(() -> map.remove(psiElementPointer));
     }
 
     public String get(SmartPsiElementPointer<PsiLanguageInjectionHost> key) {
-        return map.get(key);
+        return synchronizedSupplier(() -> map.get(key));
     }
 
     public String get(PsiLanguageInjectionHost psiLanguageInjectionHost) {
-        var key = SmartPointerManager.createPointer(psiLanguageInjectionHost);
-        return map.get(key);
+        return synchronizedSupplier(() ->  map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost)));
+    }
+
+    private <T> T synchronizedSupplier(@NotNull Supplier<T> supplier) {
+        synchronized (mutex) {
+            return supplier.get();
+        }
     }
 }

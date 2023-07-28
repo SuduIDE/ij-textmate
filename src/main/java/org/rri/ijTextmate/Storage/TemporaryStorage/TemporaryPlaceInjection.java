@@ -2,10 +2,11 @@ package org.rri.ijTextmate.Storage.TemporaryStorage;
 
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.SmartPsiElementPointer;
+import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 
 import java.util.Objects;
 
-public class TemporaryPlaceInjection {
+public class TemporaryPlaceInjection implements LanguageID {
     public SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer;
     public final String languageID;
 
@@ -22,5 +23,10 @@ public class TemporaryPlaceInjection {
     @Override
     public int hashCode() {
         return Objects.hash(languageID, hostPointer);
+    }
+
+    @Override
+    public String getID() {
+        return languageID;
     }
 }

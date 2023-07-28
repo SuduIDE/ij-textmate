@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,11 +50,10 @@ public class UnInjectLanguageAction extends AnAction {
     }
 
     public static void unInjectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
-        int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
         PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
-        PlaceInjection placeInjection = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        TemporaryPlaceInjection placeInjection = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         if (placeInjection == null) return;
         UnInjectLanguage.unInject(host, placeInjection, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);

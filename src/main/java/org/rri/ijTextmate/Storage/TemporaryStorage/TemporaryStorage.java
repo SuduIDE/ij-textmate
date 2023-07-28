@@ -16,12 +16,12 @@ public final class TemporaryStorage {
 
     public @NotNull TemporaryMapPointerToLanguage get(String key) {
         synchronized (mutex) {
-            TemporaryMapPointerToLanguage temporarySetPointer = map.get(key);
-            if (temporarySetPointer == null) {
-                temporarySetPointer = new TemporaryMapPointerToLanguage();
-                map.put(key, temporarySetPointer);
+            TemporaryMapPointerToLanguage temporaryMap = map.get(key);
+            if (temporaryMap == null) {
+                temporaryMap = new TemporaryMapPointerToLanguage();
+                map.put(key, temporaryMap);
             }
-            return temporarySetPointer;
+            return temporaryMap;
         }
     }
 
