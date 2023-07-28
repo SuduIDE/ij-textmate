@@ -20,29 +20,42 @@ import java.util.Map;
 public class FileChangeListener implements BulkFileListener {
     public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (VFileEvent vfe : events) {
+
             VirtualFile vf = vfe.getFile();
             if (vf == null) continue;
+
             Collection<Project> projects = ProjectLocator.getInstance().getProjectsForFile(vf);
+
             for (Project project : projects) {
-                PsiFile psiFile = PsiManager.getInstance(project).findFile(vf);
-                if (psiFile == null || psiFile.getUserData(Constants.MY_LANGUAGE_INJECTED) != null) continue;
-
-                String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
-                if (!TemporaryStorage.getInstance(project).contains(relativePath)) continue;
-
-                TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
-
-                for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> entry : mapPointerToLanguage.getMap().entrySet()) {
-                    SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
-                    String language = entry.getValue();
-                    PsiElement psiElement = smartPsiElementPointer.getElement();
-                    if (psiElement == null) continue;
-                    TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(smartPsiElementPointer, language);
-                    psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
-                }
-
-                psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
+                addInjectedLanguageIntoProjectFiles(project, vf);
             }
+        }
+    }
+
+    void addInjectedLanguageIntoProjectFiles(Project project, VirtualFile vf) {
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(vf);
+        if (psiFile == null || psiFile.getUserData(Constants.MY_LANGUAGE_INJECTED) != null) return;
+
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        if (!TemporaryStorage.getInstance(project).contains(relativePath)) return;
+
+        TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+
+        insertInjectedLanguageIntoFileStringLiterals(mapPointerToLanguage);
+
+        psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
+    }
+
+    void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToLanguage mapPointerToLanguage) {
+        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> entry : mapPointerToLanguage.getMap().entrySet()) {
+            SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
+
+            PsiElement psiElement = smartPsiElementPointer.getElement();
+            if (psiElement == null) continue;
+
+            String language = entry.getValue();
+            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(smartPsiElementPointer, language);
+            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
         }
     }
 }
