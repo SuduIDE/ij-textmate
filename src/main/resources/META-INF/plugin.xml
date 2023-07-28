@@ -38,8 +38,10 @@
         <!--        </component>-->
     </project-components>
     <projectListeners>
-        <listener class="org.rri.ijTextmate.InitializerHighlight"
+        <listener class="org.rri.ijTextmate.Listeners.InitializerHighlightListener"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+        <listener class="org.rri.ijTextmate.Listeners.FileChangeListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
     >
     <actions>

@@ -5,8 +5,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.FileContentUtil;
 import org.apache.xmlrpc.Echo;
 import org.jetbrains.annotations.NotNull;
@@ -25,20 +28,15 @@ public class CheckType extends AnAction {
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
         FileContentUtil.reparseFiles(project, List.of(file.getVirtualFile()), true);
-        Supplier<String> supplier = () -> {
-            System.out.println("supplier");
-            return "";
-        };
-        class Echoa {
-            public Echoa() {
-            }
 
-            public void test(Supplier<String> s) {
-                System.out.println("test");
-                s.get();
-            }
-        }
-        new Echoa().test(supplier);
+//        Supplier<String> supplier = () -> {
+//            System.out.println("supplier");
+//            return "";
+//        };
+//        System.out.println(new Object().hashCode());
+//        System.out.println(file.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE));
+//        System.out.println(CacheListTemporaryPlaceInjection.getInstance(project).getSimpleModificationTracker().getModificationCount());
+
 //        SetElement element = new SetElement();
 //        element.add(new PlaceInjection("sql", new TextRange(1, 102)));
 //        element.add(new PlaceInjection("php", new TextRange(1, 102)));

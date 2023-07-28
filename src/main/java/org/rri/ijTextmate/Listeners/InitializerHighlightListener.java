@@ -1,20 +1,21 @@
-package org.rri.ijTextmate;
+package org.rri.ijTextmate.Listeners;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
-public class InitializerHighlight implements FileEditorManagerListener {
+public class InitializerHighlightListener implements FileEditorManagerListener {
     private final Project project;
 
-    public InitializerHighlight(Project project) {
+    public InitializerHighlightListener(Project project) {
         this.project = project;
     }
 

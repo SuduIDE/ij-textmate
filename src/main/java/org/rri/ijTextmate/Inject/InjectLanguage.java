@@ -25,6 +25,8 @@ public class InjectLanguage {
         TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, languageID);
         mapPointerToLanguage.add(temporaryPlaceInjection);
 
+        psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
+
         host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
         host.getManager().dropPsiCaches();
     }

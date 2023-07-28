@@ -5,6 +5,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -34,6 +35,10 @@ public class TemporaryMapPointerToLanguage {
 
     public String get(PsiLanguageInjectionHost psiLanguageInjectionHost) {
         return synchronizedSupplier(() ->  map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost)));
+    }
+
+    public Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> getMap() {
+        return Collections.unmodifiableMap(map);
     }
 
     private <T> T synchronizedSupplier(@NotNull Supplier<T> supplier) {

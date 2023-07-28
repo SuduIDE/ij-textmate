@@ -11,6 +11,7 @@ import java.util.Map;
 public final class TemporaryStorage {
     private final Map<String, TemporaryMapPointerToLanguage> map = new HashMap<>();
     private final Object mutex = new Object();
+
     public TemporaryStorage() {
     }
 
@@ -22,6 +23,12 @@ public final class TemporaryStorage {
                 map.put(key, temporaryMap);
             }
             return temporaryMap;
+        }
+    }
+
+    public boolean contains(String key) {
+        synchronized (mutex) {
+            return map.get(key) != null;
         }
     }
 
