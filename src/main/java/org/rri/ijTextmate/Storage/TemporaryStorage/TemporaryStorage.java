@@ -3,9 +3,12 @@ package org.rri.ijTextmate.Storage.TemporaryStorage;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Service(Service.Level.PROJECT)
 public final class TemporaryStorage {
@@ -30,6 +33,10 @@ public final class TemporaryStorage {
         synchronized (mutex) {
             return map.get(key) != null;
         }
+    }
+
+    public @NotNull @UnmodifiableView Set<Map.Entry<String, TemporaryMapPointerToLanguage>> entrySet() {
+        return Collections.unmodifiableSet(map.entrySet());
     }
 
     public TemporaryMapPointerToLanguage put(String key, TemporaryMapPointerToLanguage value) {

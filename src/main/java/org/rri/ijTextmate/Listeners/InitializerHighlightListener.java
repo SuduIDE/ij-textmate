@@ -10,7 +10,9 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 public class InitializerHighlightListener implements FileEditorManagerListener {
     private final Project project;
@@ -28,6 +30,8 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
 
+        TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+
         for (PlaceInjection placeInjection : persistentStorage.getState().get(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.getCenter(), psiFile);
             host = InjectorHelper.resolveHost(host);
@@ -35,9 +39,11 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
             if (host != null && host.isValidHost()) {
                 SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
                 TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, placeInjection.languageId);
+                temporaryMapPointerToLanguage.add(temporaryPlaceInjection);
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }
         }
+        persistentStorage.getState().get(relativePath).clear();
     }
 }
