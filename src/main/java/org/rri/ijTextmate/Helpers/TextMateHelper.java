@@ -4,10 +4,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.Queryable;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.textmate.configuration.BundleConfigBean;
-import org.jetbrains.plugins.textmate.configuration.TextMateSettings;
+import org.jetbrains.plugins.textmate.TextMateFileType;
+import org.jetbrains.plugins.textmate.TextMateService;
+import org.jetbrains.plugins.textmate.TextMateServiceImpl;
+import org.jetbrains.plugins.textmate.bundles.TextMateBundleReader;
+import org.jetbrains.plugins.textmate.bundles.TextMateFileNameMatcher;
+import org.jetbrains.plugins.textmate.configuration.*;
+import org.jetbrains.plugins.textmate.psi.TextMateFile;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -28,8 +35,22 @@ public final class TextMateHelper {
 
     public void updateLanguages() {
         languages.clear();
-        Collection<BundleConfigBean> bundles = TextMateSettings.getInstance().getBundles();
-        bundles.forEach((bundle) -> languages.put(bundle.getName(), bundle.getPath()));
+        languages.put("textmate", "");
+
+        Map<String, TextMatePersistentBundle> userBundles = Objects.requireNonNull(TextMateUserBundlesSettings.getInstance()).getBundles();
+
+        for (Map.Entry<String, TextMatePersistentBundle> entry : userBundles.entrySet()) {
+            languages.put(entry.getValue().getName(), entry.getKey());
+        }
+
+        List<Path> builtinBundles = Objects.requireNonNull(TextMateBuiltinBundlesSettings.getInstance()).getBuiltinBundles();
+        Set<String> offBundles = Objects.requireNonNull(TextMateBuiltinBundlesSettings.getInstance()).getTurnedOffBundleNames();
+
+        for (Path path : builtinBundles) {
+            TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
+            if (textMateBundleReader == null || offBundles.contains(textMateBundleReader.getBundleName())) continue;
+            languages.put(textMateBundleReader.getBundleName(), path.toString());
+        }
     }
 
     public List<String> getLanguages() {

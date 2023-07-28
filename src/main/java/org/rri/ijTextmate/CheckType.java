@@ -11,7 +11,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.FileContentUtil;
-import org.apache.xmlrpc.Echo;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
@@ -19,6 +18,10 @@ import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 
 import java.util.List;
 import java.util.function.Supplier;
+
+/*
+ * Этот Action только для тестов
+ */
 
 public class CheckType extends AnAction {
     @Override
