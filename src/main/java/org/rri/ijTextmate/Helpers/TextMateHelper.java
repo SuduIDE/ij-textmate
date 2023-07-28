@@ -4,17 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.Queryable;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.textmate.TextMateFileType;
 import org.jetbrains.plugins.textmate.TextMateService;
-import org.jetbrains.plugins.textmate.TextMateServiceImpl;
 import org.jetbrains.plugins.textmate.bundles.TextMateBundleReader;
-import org.jetbrains.plugins.textmate.bundles.TextMateFileNameMatcher;
 import org.jetbrains.plugins.textmate.configuration.*;
-import org.jetbrains.plugins.textmate.psi.TextMateFile;
 
 import java.nio.file.Path;
 import java.util.*;
