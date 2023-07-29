@@ -30,10 +30,17 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
         this.project = project;
     }
 
+    public SetElement getSetElementAndClear(String relativePath) {
+        SetElement setElement = myMapToSetElement.get(relativePath);
+        myMapToSetElement.put(relativePath, new SetElement());
+        return setElement;
+    }
+
     @Override
     public @NotNull MapFileToSetElement getState() {
-        for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()){
+        for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()) {
             SetElement setElement = myMapToSetElement.get(entry.getKey());
+            setElement.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
                 String language = entryInner.getValue();
