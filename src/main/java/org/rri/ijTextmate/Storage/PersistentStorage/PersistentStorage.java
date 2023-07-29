@@ -7,11 +7,16 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -19,9 +24,24 @@ import java.util.*;
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
 public class PersistentStorage implements PersistentStateComponent<PersistentStorage.MapFileToSetElement> {
     private MapFileToSetElement myMapToSetElement = new MapFileToSetElement();
+    private final Project project;
+
+    public PersistentStorage(Project project) {
+        this.project = project;
+    }
 
     @Override
     public @NotNull MapFileToSetElement getState() {
+        for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()){
+            SetElement setElement = myMapToSetElement.get(entry.getKey());
+
+            for (var entryInner : entry.getValue().getMap().entrySet()) {
+                String language = entryInner.getValue();
+                PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
+                if (psiElement == null || !psiElement.isValidHost()) continue;
+                setElement.add(new PlaceInjection(language, psiElement.getTextRange()));
+            }
+        }
         return myMapToSetElement;
     }
 
