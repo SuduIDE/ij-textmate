@@ -24,26 +24,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew buildPlugin
 
-# Create Release:
-# 
-#       - name: Create Release
-#         id: create_release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           tag_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
-#           release_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
-# 
-
-      - name: Upload release
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          file: "./build/libs/ij-textmate*.jar"
-          tag_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
