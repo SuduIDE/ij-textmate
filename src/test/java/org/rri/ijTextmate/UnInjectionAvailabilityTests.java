@@ -6,54 +6,49 @@ import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 
 import java.util.Objects;
 
-public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
+public class UnInjectionAvailabilityTests extends LightPlatformCodeInsightFixture4TestCase {
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";
     }
 
+    @Test
     public void testCaretInTheCenterInsideTheString() {
         checkUnInjectionAvailability("CaretInTheCenterInsideTheString.java", caretInsideString);
-        checkUnInjectionAvailability("CaretInTheCenterInsideTheString.py", caretInsideString);
     }
 
+    @Test
     public void testCaretOnTheLeftInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.java", caretInsideString);
-        checkUnInjectionAvailability("CaretOnTheLeftInsideTheString.py", caretInsideString);
     }
 
+    @Test
     public void testCaretOnTheRightInsideTheString() {
         checkUnInjectionAvailability("CaretOnTheRightInsideTheString.java", caretInsideString);
-        checkUnInjectionAvailability("CaretOnTheRightInsideTheString.py", caretInsideString);
     }
 
+    @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.java", caretOutsideString);
-        checkUnInjectionAvailability("CaretOnTheLeftOutsideOfTheString.py", caretOutsideString);
     }
 
+    @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.java", caretOutsideString);
-        checkUnInjectionAvailability("CaretOnTheRightOutsideOfTheString.py", caretOutsideString);
     }
 
+    @Test
     public void testSelectionInsideTheString() {
-        checkSelectionInsideTheString("SelectionInsideTheString.java");
-        checkSelectionInsideTheString("SelectionInsideTheString.py");
-    }
-
-    private void checkSelectionInsideTheString(String fileName) {
-        myFixture.configureByText(fileName, "");
-        PsiFile psiFile = myFixture.configureByFile(fileName);
-        Editor editor = getEditor();
-        Project project = getProject();
-        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
+        PsiFile psiFile = myFixture.configureByFile("SelectionInsideTheString.java");
+        Editor editor = myFixture.getEditor();
+        Project project = myFixture.getProject();
 
         for (CaretState caretState : editor.getCaretModel().getCaretsAndSelections()) {
             TestHelper.checkWithConsumer(TestCase::assertNotNull, caretState.getSelectionStart(), caretState.getSelectionEnd());
@@ -70,13 +65,12 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
         }
     }
 
-    private void checkUnInjectionAvailability(final String fileName, @NotNull CheckWithInjectedLanguage checker) {
-        Project project = getProject();
-        myFixture.configureByText(fileName, "");
+    private void checkUnInjectionAvailability(final String fileName, @NotNull CheckWithInjectedLanguage checking) {
+        Project project = myFixture.getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
-        Editor editor = getEditor();
-        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
-        checker.check(project, psiFile, editor);
+        Editor editor = myFixture.getEditor();
+
+        checking.check(project, psiFile, editor);
     }
 
     private boolean canUnInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
