@@ -1,4 +1,4 @@
-name: Continues Integration
+name: Build
 
 on: [ push ]
 
@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [ '17', '19' ]
+        java: [ '19' ]
         os: [ ubuntu-latest, windows-latest ]
     
     runs-on: ${{ matrix.os }}
@@ -23,26 +23,6 @@ jobs:
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
       - name: Build with Gradle
         run: ./gradlew buildPlugin
-
-# Create Release:
-# 
-#       - name: Create Release
-#         id: create_release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           tag_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
-#           release_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
-# 
-
-      - name: Upload release
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          file: "./build/libs/ij-textmate*.jar"
-          tag_name: ij-textmate-plugin-${{ matrix.os }}-java-${{ matrix.java }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
