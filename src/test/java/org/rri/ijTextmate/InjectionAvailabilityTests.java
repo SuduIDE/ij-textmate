@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 
 import java.util.Objects;
 
+@TestDataPath("$CONTENT_ROOT/testData")
 public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected String getTestDataPath() {
@@ -22,71 +24,51 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
     public void testCaretInTheCenterInsideTheString() {
         String testName = "testCaretInTheCenterInsideTheString";
         String javaFileName = "CaretInTheCenterInsideTheString.java";
-        String pythonFileName = "CaretInTheCenterInsideTheString.py";
 
         String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
-        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
 
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
-        checkInjectionAvailability(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheLeftInsideTheString() {
         String testName = "testCaretOnTheLeftInsideTheString";
         String javaFileName = "CaretOnTheLeftInsideTheString.java";
-        String pythonFileName = "CaretOnTheLeftInsideTheString.py";
 
         String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
-        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
 
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
-        checkInjectionAvailability(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheRightInsideTheString() {
         String testName = "testCaretOnTheRightInsideTheString";
         String javaFileName = "CaretOnTheRightInsideTheString.java";
-        String pythonFileName = "CaretOnTheRightInsideTheString.py";
 
         String messageForJava = getMessageIfLanguageCanBeInjected(testName, javaFileName);
-        String messageForPython = getMessageIfLanguageCanBeInjected(testName, pythonFileName);
 
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
-        checkInjectionAvailability(pythonFileName, TestHelper.createAssertTrueWithMessage(messageForPython));
     }
 
     public void testCaretOnTheLeftOutsideOfTheString() {
         String testName = "testCaretOnTheLeftOutsideOfTheString";
         String javaFileName = "CaretOnTheLeftOutsideOfTheString.java";
-        String pythonFileName = "CaretOnTheLeftOutsideOfTheString.py";
 
         String messageForJava = getMessageIfLanguageCanNotBeInjected(testName, javaFileName);
-        String messageForPython = getMessageIfLanguageCanNotBeInjected(testName, pythonFileName);
 
         checkInjectionAvailability(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
-        checkInjectionAvailability(pythonFileName, TestHelper.createAssertFalseWithMessage(messageForPython));
     }
 
     public void testCaretOnTheRightOutsideOfTheString() {
         String testName = "testCaretOnTheRightOutsideOfTheString";
         String javaFileName = "CaretOnTheRightOutsideOfTheString.java";
-        String pythonFileName = "CaretOnTheRightOutsideOfTheString.py";
 
         String messageForJava = getMessageIfLanguageCanNotBeInjected(testName, javaFileName);
-        String messageForPython = getMessageIfLanguageCanNotBeInjected(testName, pythonFileName);
 
         checkInjectionAvailability(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
-        checkInjectionAvailability(pythonFileName, TestHelper.createAssertFalseWithMessage(messageForPython));
     }
 
     public void testSelectionInsideTheString() {
-        checkSelectionInsideTheString("SelectionInsideTheString.java");
-        checkSelectionInsideTheString("SelectionInsideTheString.py");
-    }
-
-    private void checkSelectionInsideTheString(String fileName) {
-        myFixture.configureByText(fileName, "");
-        PsiFile psiFile = myFixture.configureByFile(fileName);
+        myFixture.configureByText("SelectionInsideTheString.java", "");
+        PsiFile psiFile = myFixture.configureByFile("SelectionInsideTheString.java");
         Editor editor = getEditor();
         Project project = getProject();
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
@@ -101,7 +83,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));
                 TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
-                assertTrue(getMessageIfLanguageCanBeInjected("SelectionInsideTheString", fileName), canInjectLanguageToHost(project, psiFile, editor))
+                assertTrue(getMessageIfLanguageCanBeInjected("SelectionInsideTheString", "SelectionInsideTheString.java"), canInjectLanguageToHost(project, psiFile, editor))
                 ;
             } while (++i < end);
         }

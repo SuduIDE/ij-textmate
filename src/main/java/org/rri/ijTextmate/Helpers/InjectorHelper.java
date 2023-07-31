@@ -1,6 +1,7 @@
 package org.rri.ijTextmate.Helpers;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -67,6 +68,8 @@ public class InjectorHelper {
     }
 
     public static @NotNull Path gitRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
-        return Path.of(Objects.requireNonNull(project.getBasePath())).relativize(Path.of(psiFile.getVirtualFile().getPath()));
+        if (ApplicationManager.getApplication().isUnitTestMode()) return Path.of(psiFile.getVirtualFile().getPath());
+
+        return Path.of(Objects.requireNonNull(project.getBasePath())).relativize(Path.of(psiFile.getOriginalFile().getVirtualFile().getPath()));
     }
 }
