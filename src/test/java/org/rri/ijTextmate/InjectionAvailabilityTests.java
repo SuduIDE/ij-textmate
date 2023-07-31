@@ -69,9 +69,8 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
     public void testSelectionInsideTheString() {
         myFixture.configureByText("SelectionInsideTheString.java", "");
         PsiFile psiFile = myFixture.configureByFile("SelectionInsideTheString.java");
-        Editor editor = getEditor();
-        Project project = getProject();
-        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
+        Editor editor = myFixture.getEditor();
+        Project project = myFixture.getProject();
 
         for (CaretState caretState : editor.getCaretModel().getCaretsAndSelections()) {
             TestHelper.checkWithConsumer(TestCase::assertNotNull, caretState.getSelectionStart(), caretState.getSelectionEnd());
@@ -83,25 +82,27 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
             do {
                 editor.getCaretModel().moveToVisualPosition(new VisualPosition(line, i));
                 TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
-                assertTrue(getMessageIfLanguageCanBeInjected("SelectionInsideTheString", "SelectionInsideTheString.java"), canInjectLanguageToHost(project, psiFile, editor))
-                ;
+
+                String message = getMessageIfLanguageCanBeInjected("SelectionInsideTheString", "SelectionInsideTheString.java");
+                assertTrue(message, canInjectLanguageToHost(project, psiFile, editor));
             } while (++i < end);
         }
     }
 
-    private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert test) {
-        Project project = getProject();
-        myFixture.configureByText(fileName, "");
+    private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert check) {
+        Project project = myFixture.getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
-        Editor editor = getEditor();
-        TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
-        test.test(canInjectLanguageToHost(project, psiFile, editor));
+        Editor editor = myFixture.getEditor();
+
+        check.test(canInjectLanguageToHost(project, psiFile, editor));
     }
 
     private boolean canInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
+
         InjectLanguageAction action = new InjectLanguageAction();
         if (!action.canInjectLanguageToHost(project, editor, psiFile, host)) return false;
+
         host = InjectorHelper.resolveHost(host);
         return action.canInjectLanguageToHost(project, editor, psiFile, host);
     }
