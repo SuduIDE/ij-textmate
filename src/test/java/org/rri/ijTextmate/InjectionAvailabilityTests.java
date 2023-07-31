@@ -6,21 +6,21 @@ import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.testFramework.TestDataPath;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 
 import java.util.Objects;
 
-@TestDataPath("$CONTENT_ROOT/testData")
-public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestCase {
+public class InjectionAvailabilityTests extends LightPlatformCodeInsightFixture4TestCase {
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";
     }
 
+    @Test
     public void testCaretInTheCenterInsideTheString() {
         String testName = "testCaretInTheCenterInsideTheString";
         String javaFileName = "CaretInTheCenterInsideTheString.java";
@@ -30,6 +30,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
     }
 
+    @Test
     public void testCaretOnTheLeftInsideTheString() {
         String testName = "testCaretOnTheLeftInsideTheString";
         String javaFileName = "CaretOnTheLeftInsideTheString.java";
@@ -39,6 +40,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
     }
 
+    @Test
     public void testCaretOnTheRightInsideTheString() {
         String testName = "testCaretOnTheRightInsideTheString";
         String javaFileName = "CaretOnTheRightInsideTheString.java";
@@ -48,6 +50,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         checkInjectionAvailability(javaFileName, TestHelper.createAssertTrueWithMessage(messageForJava));
     }
 
+    @Test
     public void testCaretOnTheLeftOutsideOfTheString() {
         String testName = "testCaretOnTheLeftOutsideOfTheString";
         String javaFileName = "CaretOnTheLeftOutsideOfTheString.java";
@@ -57,6 +60,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         checkInjectionAvailability(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
     }
 
+    @Test
     public void testCaretOnTheRightOutsideOfTheString() {
         String testName = "testCaretOnTheRightOutsideOfTheString";
         String javaFileName = "CaretOnTheRightOutsideOfTheString.java";
@@ -66,6 +70,7 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         checkInjectionAvailability(javaFileName, TestHelper.createAssertFalseWithMessage(messageForJava));
     }
 
+    @Test
     public void testSelectionInsideTheString() {
         myFixture.configureByText("SelectionInsideTheString.java", "");
         PsiFile psiFile = myFixture.configureByFile("SelectionInsideTheString.java");
@@ -89,12 +94,12 @@ public class InjectionAvailabilityTests extends LightJavaCodeInsightFixtureTestC
         }
     }
 
-    private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert check) {
+    private void checkInjectionAvailability(final String fileName, @NotNull TestHelper.Assert checking) {
         Project project = myFixture.getProject();
         PsiFile psiFile = myFixture.configureByFile(fileName);
         Editor editor = myFixture.getEditor();
 
-        check.test(canInjectLanguageToHost(project, psiFile, editor));
+        checking.test(canInjectLanguageToHost(project, psiFile, editor));
     }
 
     private boolean canInjectLanguageToHost(Project project, PsiFile psiFile, Editor editor) {
