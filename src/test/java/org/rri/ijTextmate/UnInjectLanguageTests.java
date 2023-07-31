@@ -42,7 +42,7 @@ public class UnInjectLanguageTests extends JavaCodeInsightFixtureTestCase {
         Editor editor = myFixture.getEditor();
 
         TestHelper.checkWithConsumer(TestCase::assertNotNull, project, psiFile, editor);
-        TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
+        TestHelper.injectLanguage(project, editor, psiFile);
 
         assertTrue(isInjected(project, editor, psiFile));
 

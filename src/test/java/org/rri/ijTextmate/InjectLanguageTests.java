@@ -96,7 +96,7 @@ public class InjectLanguageTests extends LightJavaCodeInsightFixtureTestCase {
         Editor editor = getEditor();
 
         TestHelper.checkWithConsumer(TestCase::assertNotNull, psiFile, project, editor);
-        TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
+        TestHelper.injectLanguage(project, editor, psiFile);
         test.test(isInjected(project, editor, psiFile));
     }
 

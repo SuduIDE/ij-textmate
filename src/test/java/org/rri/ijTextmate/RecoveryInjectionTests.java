@@ -54,7 +54,7 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
         myFixture.renameElement(psiFiles[0], baseName);
         assertFalse(isInjected(getProject(), myFixture.getEditor(), psiFiles[0]));
 
-        TestHelper.injectLanguage(getProject(), myFixture.getEditor(), psiFiles[0], getTestRootDisposable());
+        TestHelper.injectLanguage(getProject(), myFixture.getEditor(), psiFiles[0]);
         assertTrue(isInjected(getProject(), myFixture.getEditor(), psiFiles[0]));
 
         myFixture.renameElement(psiFiles[0], beforeName);

@@ -86,7 +86,7 @@ public class UnInjectionAvailabilityTests extends LightJavaCodeInsightFixtureTes
     }
 
     private final CheckWithInjectedLanguage caretInsideString = (Project project, PsiFile psiFile, Editor editor) -> {
-        TestHelper.injectLanguage(project, editor, psiFile, getTestRootDisposable());
+        TestHelper.injectLanguage(project, editor, psiFile);
         String message = String.format("\nFile: %s\nMessage: you can to inject language into a literal\n", psiFile.getName());
         assertTrue(message, canUnInjectLanguageToHost(project, psiFile, editor));
     };
