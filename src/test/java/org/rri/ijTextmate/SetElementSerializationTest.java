@@ -1,8 +1,9 @@
 package org.rri.ijTextmate;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
@@ -10,7 +11,7 @@ import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
 import java.util.Collections;
 import java.util.Map;
 
-public class SetElementSerializationTest extends LightJavaCodeInsightFixtureTestCase {
+public class SetElementSerializationTest extends LightPlatformCodeInsightFixture4TestCase {
     Map<String, SetElement> map = Map.of(
             "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
             "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10))),
@@ -24,6 +25,7 @@ public class SetElementSerializationTest extends LightJavaCodeInsightFixtureTest
             "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10)))
     );
 
+    @Test
     public void testSerialization() {
         PersistentStorage.ConverterMapFileToSetElement converterMapFileToSetElement = new PersistentStorage.ConverterMapFileToSetElement();
         String json = converterMapFileToSetElement.toString(map);

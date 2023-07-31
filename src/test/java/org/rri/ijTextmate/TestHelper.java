@@ -1,8 +1,10 @@
 package org.rri.ijTextmate;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import junit.framework.TestCase;
@@ -30,10 +32,16 @@ public class TestHelper {
         return (boolean b) -> TestCase.assertFalse(message, b);
     }
 
-    public static void injectLanguage(Project project, Editor editor, PsiFile psiFile, Disposable disposable) {
+    public static void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
         PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
         if (host == null) return;
         InjectLanguageAction.injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE);
+    }
+
+    public static boolean isInjected(Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
+        psiFile.getManager().dropPsiCaches();
+        PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
+        return element != null && InjectedLanguageManager.getInstance(project).isInjectedFragment(element.getContainingFile());
     }
 
     public static PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
