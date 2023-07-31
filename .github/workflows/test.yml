@@ -1,0 +1,23 @@
+name: Testing
+
+on: [ push ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [ '19']
+        os: [ ubuntu-latest, windows-latest ]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Testing
+        run: ./gradlew test
