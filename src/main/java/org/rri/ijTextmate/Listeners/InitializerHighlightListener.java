@@ -32,7 +32,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
 
-        for (PlaceInjection placeInjection : persistentStorage.getState().get(relativePath)) {
+        for (PlaceInjection placeInjection : persistentStorage.getSetElementAndClear(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.getCenter(), psiFile);
             host = InjectorHelper.resolveHost(host);
 
@@ -44,6 +44,5 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
                 host.getManager().dropPsiCaches();
             }
         }
-        persistentStorage.getState().get(relativePath).clear();
     }
 }
