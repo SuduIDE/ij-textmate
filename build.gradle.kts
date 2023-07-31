@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.14.2"
+    id("org.jetbrains.intellij") version "1.15.0"
 }
 
 group = "com.example"
@@ -10,7 +10,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
 
@@ -32,7 +32,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
+        sinceBuild.set("232")
         untilBuild.set("232.*")
     }
 
