@@ -2,7 +2,6 @@ package org.rri.ijTextmate;
 
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
@@ -16,7 +15,7 @@ import java.util.List;
 public class LanguageHighlight implements MultiHostInjector {
     @Override
     public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-        if (!(context instanceof PsiLiteralValue && context instanceof PsiLanguageInjectionHost host)) return;
+        if (!(context instanceof PsiLanguageInjectionHost host)) return;
         LanguageID languageID = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
 
         if (languageID == null) {
@@ -33,12 +32,13 @@ public class LanguageHighlight implements MultiHostInjector {
         while (text.charAt(end) == '"' && end > start) end--;
         TextRange range = new TextRange(start, end + 1);
         String fileExtension = TextMateHelper.getInstance(context.getProject()).getExtension(languageID.getID());
-        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
+        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension)
+                .addPlace(null, null, host, range).doneInjecting();
     }
 
     @Override
     public @NotNull List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-        return List.of(PsiLiteralValue.class);
+        return List.of(PsiLanguageInjectionHost.class);
     }
 
     public LanguageID findLanguageRoot(PsiElement element) {
