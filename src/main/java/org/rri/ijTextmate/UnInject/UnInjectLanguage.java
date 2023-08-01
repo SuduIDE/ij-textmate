@@ -20,7 +20,7 @@ public class UnInjectLanguage {
         host = InjectorHelper.resolveHost(host);
         if (!host.isValidHost()) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
         mapPointerToLanguage.remove(temporaryPlaceInjection);
 
