@@ -12,7 +12,7 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.util.Map;
 
-public class InjectLanguageTests extends LightPlatformCodeInsightFixture4TestCase {
+public class LanguageInjectorMainTests extends LightPlatformCodeInsightFixture4TestCase {
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";
