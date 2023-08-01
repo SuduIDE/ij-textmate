@@ -87,6 +87,6 @@ public class StorageSimpleTest extends BasePlatformTestCase {
 
     private @NotNull String getRelativePath() {
         PsiFile psiFile = myFixture.configureByFile(FILE_NAME);
-        return InjectorHelper.gitRelativePath(getProject(), psiFile).toString();
+        return InjectorHelper.gitRelativePath(getProject(), psiFile);
     }
 }

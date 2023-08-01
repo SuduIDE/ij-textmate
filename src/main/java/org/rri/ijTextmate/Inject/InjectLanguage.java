@@ -19,7 +19,7 @@ public class InjectLanguage {
         host = InjectorHelper.resolveHost(host);
         if (!host.isValidHost()) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
         SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
         TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, languageID);
