@@ -9,7 +9,7 @@
 
 ## Short description
 
-Language injection support plugin for Textmate packages
+Plugin for language injection. Provides language injection in string literals. The injected languages can be those for which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-textmate-bundles.html) are available.
 
 ## Install plugin
 
@@ -47,4 +47,4 @@ You can also search by name when selecting languages. To do this, just type the 
 
 ![search_language](images/search_language.png)
 
-> **_NOTE:_** Idea restart injections persist in most cases
+
