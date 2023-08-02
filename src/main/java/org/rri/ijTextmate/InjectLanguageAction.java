@@ -59,7 +59,7 @@ public class InjectLanguageAction extends AnAction {
         if (injectedPsi == null || injectedPsi.isEmpty()) {
             return !InjectedReferencesContributor.isInjected(file.findReferenceAt(editor.getCaretModel().getOffset()));
         }
-        return true;
+        return false;
     }
 
     @Override
