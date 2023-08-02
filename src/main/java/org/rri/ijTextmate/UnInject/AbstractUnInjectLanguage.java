@@ -16,11 +16,11 @@ public abstract class AbstractUnInjectLanguage {
         WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host, temporaryPlaceInjection, psiFile, project));
     }
 
-    public abstract  PsiLanguageInjectionHost getHost(PsiLanguageInjectionHost host);
+    public abstract PsiLanguageInjectionHost getHost(PsiLanguageInjectionHost host);
 
     private void removeInjectionPlace(PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, Project project) {
-        host = InjectorHelper.resolveHost(host);
-        if (!host.isValidHost()) return;
+        host = getHost(host);
+        if (host == null) return;
 
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
