@@ -24,7 +24,7 @@ public abstract class AbstractInjectLanguage {
         host = getHost(host);
         if (host == null) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
         SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
         TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, languageID);

@@ -4,6 +4,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Contract;
@@ -67,9 +68,13 @@ public class InjectorHelper {
         return null;
     }
 
-    public static @NotNull Path gitRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) return Path.of(psiFile.getVirtualFile().getPath());
+    public static @NotNull String gitRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
+        VirtualFile vf = psiFile.getOriginalFile().getVirtualFile();
 
-        return Path.of(Objects.requireNonNull(project.getBasePath())).relativize(Path.of(psiFile.getOriginalFile().getVirtualFile().getPath()));
+        if (ApplicationManager.getApplication().isUnitTestMode()) return Path.of(vf.getPath()).toString();
+
+        if (!vf.isInLocalFileSystem()) return String.format("virtual: %s", vf.getPath());
+
+        return Path.of(Objects.requireNonNull(project.getBasePath())).relativize(Path.of(vf.getPath())).toString();
     }
 }

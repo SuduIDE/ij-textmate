@@ -36,7 +36,7 @@ public class FileChangeListener implements BulkFileListener {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(vf);
         if (psiFile == null || psiFile.getUserData(Constants.MY_LANGUAGE_INJECTED) != null) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile).toString();
+        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
         if (!TemporaryStorage.getInstance(project).contains(relativePath)) return;
 
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
