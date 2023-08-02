@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /*
- * Этот Action только для тестов
+ * This action is for tests only.
  */
 
 public class CheckType extends AnAction {
