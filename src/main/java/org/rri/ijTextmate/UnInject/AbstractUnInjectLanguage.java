@@ -11,14 +11,16 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-public class UnInjectLanguage {
-    public static void unInject(@NotNull PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, @NotNull Project project) {
+public abstract class AbstractUnInjectLanguage {
+    public void unInject(@NotNull PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, @NotNull Project project) {
         WriteCommandAction.runWriteCommandAction(project, () -> removeInjectionPlace(host, temporaryPlaceInjection, psiFile, project));
     }
 
-    private static void removeInjectionPlace(PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, Project project) {
-        host = InjectorHelper.resolveHost(host);
-        if (!host.isValidHost()) return;
+    public abstract PsiLanguageInjectionHost getHost(PsiLanguageInjectionHost host);
+
+    private void removeInjectionPlace(PsiLanguageInjectionHost host, TemporaryPlaceInjection temporaryPlaceInjection, PsiFile psiFile, Project project) {
+        host = getHost(host);
+        if (host == null) return;
 
         String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);

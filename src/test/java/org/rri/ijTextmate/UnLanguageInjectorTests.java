@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
 import org.junit.Test;
 
-public class UnInjectLanguageTests extends LightPlatformCodeInsightFixture4TestCase {
+public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4TestCase {
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";

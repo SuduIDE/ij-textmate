@@ -1,13 +1,13 @@
 package org.rri.ijTextmate.Helpers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.textmate.TextMateService;
 import org.jetbrains.plugins.textmate.bundles.TextMateBundleReader;
+import org.jetbrains.plugins.textmate.bundles.TextMateFileNameMatcher;
+import org.jetbrains.plugins.textmate.bundles.TextMateGrammar;
 import org.jetbrains.plugins.textmate.configuration.*;
 
 import java.nio.file.Path;
@@ -15,13 +15,8 @@ import java.util.*;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
-    private final Map<String, String> languages = new HashMap<>();
-    private final Map<String, String> languageToFileExtension = new HashMap<>();
-    private static final Path FILE_WITH_EXTENSION = Path.of("package.json");
-    private static final String CONTRIBUTES = "contributes";
-    private static final String LANGUAGES = "languages";
-    private static final String EXTENSIONS = "extensions";
-    private static final String UTF8 = "UTF8";
+    private final Map<String, Path> languages = new HashMap<>();
+    private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
 
     public TextMateHelper() {
         updateLanguages();
@@ -29,12 +24,14 @@ public final class TextMateHelper {
 
     public void updateLanguages() {
         languages.clear();
-        languages.put("textmate", "");
+        languages.put("textmate", Path.of(""));
 
         Map<String, TextMatePersistentBundle> userBundles = Objects.requireNonNull(TextMateUserBundlesSettings.getInstance()).getBundles();
 
         for (Map.Entry<String, TextMatePersistentBundle> entry : userBundles.entrySet()) {
-            languages.put(entry.getValue().getName(), entry.getKey());
+            if (entry.getValue().getEnabled()) {
+                languages.put(entry.getValue().getName(), Path.of(entry.getKey()));
+            }
         }
 
         List<Path> builtinBundles = Objects.requireNonNull(TextMateBuiltinBundlesSettings.getInstance()).getBuiltinBundles();
@@ -43,7 +40,7 @@ public final class TextMateHelper {
         for (Path path : builtinBundles) {
             TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
             if (textMateBundleReader == null || offBundles.contains(textMateBundleReader.getBundleName())) continue;
-            languages.put(textMateBundleReader.getBundleName(), path.toString());
+            languages.put(textMateBundleReader.getBundleName(), path);
         }
     }
 
@@ -52,31 +49,40 @@ public final class TextMateHelper {
     }
 
     public @NotNull Path getPath(String language) {
-        return Path.of(languages.get(language));
+        return languages.get(language);
     }
 
     public @NotNull String getExtension(String language) {
         String fileExtension = languageToFileExtension.get(language);
         if (fileExtension != null) return fileExtension;
 
-        Path path = getPath(language).resolve(FILE_WITH_EXTENSION);
-        try {
-            String text = FileUtils.readFileToString(path.toFile(), UTF8);
-            JsonElement root = JsonParser.parseString(text);
+        synchronized (this) {
+            fileExtension = languageToFileExtension.get(language);
+            if (fileExtension == null) {
+                fileExtension = calcExtension(getPath(language));
 
-            fileExtension = root.getAsJsonObject().get(CONTRIBUTES)
-                    .getAsJsonObject().get(LANGUAGES)
-                    .getAsJsonArray().get(0)
-                    .getAsJsonObject().get(EXTENSIONS)
-                    .getAsJsonArray().get(0).getAsString();
-            if (fileExtension.startsWith(".")) fileExtension = fileExtension.substring(1);
-        } catch (Throwable ignore) {
-            fileExtension = "";
+                languageToFileExtension.put(language, fileExtension);
+            }
         }
 
-        languageToFileExtension.put(language, fileExtension);
-
         return fileExtension;
+    }
+
+    private @NotNull String calcExtension(@Nullable Path path) {
+        TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
+        if (textMateBundleReader == null) return "";
+
+        Iterator<TextMateGrammar> iterator = textMateBundleReader.readGrammars().iterator();
+        while (iterator.hasNext()) {
+            TextMateGrammar grammar = iterator.next();
+            for (TextMateFileNameMatcher fileNameMatcher : grammar.getFileNameMatchers()) {
+                if (fileNameMatcher instanceof TextMateFileNameMatcher.Extension extension) {
+                    return extension.getExtension();
+                }
+            }
+        }
+
+        return "";
     }
 
     public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
