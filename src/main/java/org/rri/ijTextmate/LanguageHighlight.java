@@ -30,7 +30,9 @@ public class LanguageHighlight implements MultiHostInjector {
         String text = host.getText();
         while (text.charAt(start) == '"' && start < end) start++;
         while (text.charAt(end) == '"' && end > start) end--;
-        TextRange range = new TextRange(start, end + 1);
+        int count = Math.min(start, host.getTextLength() - end);
+
+        TextRange range = new TextRange(count, host.getTextLength() - count);
         String fileExtension = TextMateHelper.getInstance(context.getProject()).getExtension(languageID.getID());
         registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension)
                 .addPlace(null, null, host, range).doneInjecting();
