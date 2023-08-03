@@ -9,14 +9,24 @@ import org.jetbrains.plugins.textmate.bundles.TextMateBundleReader;
 import org.jetbrains.plugins.textmate.bundles.TextMateFileNameMatcher;
 import org.jetbrains.plugins.textmate.bundles.TextMateGrammar;
 import org.jetbrains.plugins.textmate.configuration.*;
+import org.jetbrains.plugins.textmate.plist.PListValue;
+import org.jetbrains.plugins.textmate.plist.Plist;
+import org.jetbrains.plugins.textmate.plist.PlistValueType;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
     private final Map<String, Path> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
+    private final Map<String, List<String>> languageToKeywords = new HashMap<>(Map.of("textmate", Collections.emptyList()));
+    private final static String MATCH = "match";
+    private final static String PATTERNS = "patterns";
+    private final static String REPOSITORY = "repository";
 
     public TextMateHelper() {
         updateLanguages();
@@ -59,16 +69,18 @@ public final class TextMateHelper {
         synchronized (this) {
             fileExtension = languageToFileExtension.get(language);
             if (fileExtension == null) {
-                fileExtension = calcExtension(getPath(language));
+                fileExtension = getExtension(getPath(language));
 
                 languageToFileExtension.put(language, fileExtension);
             }
+            // run in thread from IJ
+            new Thread(() -> languageToKeywords.put(language, calcKeywords(getPath(language)))).start();
         }
 
         return fileExtension;
     }
 
-    private @NotNull String calcExtension(@Nullable Path path) {
+    private @NotNull String getExtension(@Nullable Path path) {
         TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
         if (textMateBundleReader == null) return "";
 
@@ -83,6 +95,55 @@ public final class TextMateHelper {
         }
 
         return "";
+    }
+
+    private @NotNull List<String> calcKeywords(@Nullable Path path) {
+        ArrayList<String> keywords = new ArrayList<>();
+        if (path == null) return keywords;
+
+        TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
+        if (textMateBundleReader == null) return keywords;
+
+        Iterator<TextMateGrammar> textMateGrammarIterator = textMateBundleReader.readGrammars().iterator();
+        while (textMateGrammarIterator.hasNext()) {
+            Plist plist = textMateGrammarIterator.next().getPlist().getValue();
+
+            PListValue pListValue = plist.getPlistValue(PATTERNS);
+            if (pListValue != null) recursiveExtraction(pListValue, keywords);
+
+            pListValue = plist.getPlistValue(REPOSITORY);
+            if (pListValue != null) recursiveExtraction(pListValue, keywords);
+        }
+
+        Pattern pattern = Pattern.compile(".*\\(([a-z_]*|)\\).*", Pattern.CASE_INSENSITIVE);
+        Set<String> set = new HashSet<>();
+        for (String str : keywords) {
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                String res = str.substring(matcher.start(), matcher.end());
+                set.addAll(Arrays.stream(res.split("\\|")).toList());
+            }
+        }
+        keywords = new ArrayList<>(set);
+        return keywords;
+    }
+
+    private void recursiveExtraction(@NotNull PListValue pListValue, @NotNull ArrayList<String> values) {
+        if (PlistValueType.ARRAY.equals(pListValue.getType())) {
+            for (PListValue value : pListValue.getArray()) {
+                recursiveExtraction(value, values);
+            }
+        }
+        if (!PlistValueType.DICT.equals(pListValue.getType())) return;
+        PListValue value = pListValue.getPlist().getPlistValue(MATCH);
+        if (value != null) {
+            String regex = value.getString();
+            values.add(regex);
+            return;
+        }
+        for (Map.Entry<String, PListValue> entry : pListValue.getPlist().entries()) {
+            recursiveExtraction(entry.getValue(), values);
+        }
     }
 
     public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
