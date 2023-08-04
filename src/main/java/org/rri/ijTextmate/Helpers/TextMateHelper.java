@@ -80,6 +80,10 @@ public final class TextMateHelper {
         return fileExtension;
     }
 
+    public @NotNull List<String> getKeywords(String language) {
+        return languageToKeywords.get(language);
+    }
+
     private @NotNull String getExtension(@Nullable Path path) {
         TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
         if (textMateBundleReader == null) return "";

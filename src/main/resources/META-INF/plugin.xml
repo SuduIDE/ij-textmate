@@ -39,6 +39,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
         <projectService serviceImplementation="org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage"/>
+        <completion.contributor language="any" implementationClass="org.rri.ijTextmate.LanguageCompletion.LanguageCompletion"/>
     </extensions>
     <project-components>
         <!--        <component>-->

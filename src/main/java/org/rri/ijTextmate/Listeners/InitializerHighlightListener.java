@@ -43,6 +43,8 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }
+
+            psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
         }
     }
 }
