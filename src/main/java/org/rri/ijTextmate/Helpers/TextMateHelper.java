@@ -24,6 +24,8 @@ public final class TextMateHelper {
     private final Map<String, Path> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
     private final Map<String, List<String>> languageToKeywords = new HashMap<>(Map.of("textmate", Collections.emptyList()));
+    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>();
+    private final List<String> UPPER_CASE_LANGUAGES = List.of("docker", "sql");
     private final static String MATCH = "match";
     private final static String PATTERNS = "patterns";
     private final static String REPOSITORY = "repository";
@@ -119,7 +121,12 @@ public final class TextMateHelper {
             if (pListValue != null) recursiveExtraction(pListValue, keywords);
         }
 
-        return splitRegex(keywords);
+        return splitRegex(keywords, getStrategy(textMateBundleReader.getBundleName()));
+    }
+
+    private StrategySelectingRegisters getStrategy(String language) {
+        if (UPPER_CASE_LANGUAGES.contains(language)) return StrategySelectingRegisters.UPPER;
+        return StrategySelectingRegisters.DEFAULT;
     }
 
     private void recursiveExtraction(@NotNull PListValue pListValue, @NotNull ArrayList<String> values) {
@@ -140,7 +147,7 @@ public final class TextMateHelper {
         }
     }
 
-    private @NotNull List<String> splitRegex(@NotNull List<String> keywords) {
+    private @NotNull List<String> splitRegex(@NotNull List<String> keywords, final StrategySelectingRegisters selectingRegisters) {
         Pattern pattern = Pattern.compile("([a-z]+[a-z_]*)", Pattern.CASE_INSENSITIVE);
         Set<String> set = new HashSet<>();
 
@@ -153,7 +160,7 @@ public final class TextMateHelper {
 
         List<String> result = new ArrayList<>();
         for (String word : set) {
-            if (word.length() > 1) result.add(word);
+            if (word.length() > 1) result.add(selectingRegisters.apply(word));
         }
 
         return result;
@@ -167,5 +174,36 @@ public final class TextMateHelper {
         TextMateHelper textMateHelper = getInstance(project);
         textMateHelper.updateLanguages();
         return textMateHelper;
+    }
+
+    @FunctionalInterface
+    private interface StrategySelectingRegisters {
+        String apply(String word);
+
+        StrategySelectingRegisters DEFAULT = new DefaultStrategySelectingRegisters();
+        StrategySelectingRegisters UPPER = new UpperStrategySelectingRegisters();
+        StrategySelectingRegisters LOWER = new LowerStrategySelectingRegisters();
+
+        class DefaultStrategySelectingRegisters implements StrategySelectingRegisters {
+            @Override
+            public String apply(@NotNull String word) {
+                return word;
+            }
+        }
+
+
+        class UpperStrategySelectingRegisters implements StrategySelectingRegisters {
+            @Override
+            public String apply(@NotNull String word) {
+                return word.toUpperCase();
+            }
+        }
+
+        class LowerStrategySelectingRegisters implements StrategySelectingRegisters {
+            @Override
+            public String apply(@NotNull String word) {
+                return word.toLowerCase();
+            }
+        }
     }
 }
