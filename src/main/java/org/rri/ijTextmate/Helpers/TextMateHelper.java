@@ -1,5 +1,6 @@
 package org.rri.ijTextmate.Helpers;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -71,9 +72,9 @@ public final class TextMateHelper {
                 fileExtension = getExtension(getPath(language));
 
                 languageToFileExtension.put(language, fileExtension);
+
+                ReadAction.run(() -> languageToKeywords.put(language, calcKeywords(getPath(language))));
             }
-            // TODO: run in thread from IJ
-            new Thread(() -> languageToKeywords.put(language, calcKeywords(getPath(language)))).start();
         }
 
         return fileExtension;
