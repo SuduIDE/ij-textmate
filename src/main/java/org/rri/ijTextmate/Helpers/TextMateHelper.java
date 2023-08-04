@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
@@ -73,7 +72,7 @@ public final class TextMateHelper {
 
                 languageToFileExtension.put(language, fileExtension);
             }
-            // run in thread from IJ
+            // TODO: run in thread from IJ
             new Thread(() -> languageToKeywords.put(language, calcKeywords(getPath(language)))).start();
         }
 
@@ -115,17 +114,7 @@ public final class TextMateHelper {
             if (pListValue != null) recursiveExtraction(pListValue, keywords);
         }
 
-        Pattern pattern = Pattern.compile(".*\\(([a-z_]*|)\\).*", Pattern.CASE_INSENSITIVE);
-        Set<String> set = new HashSet<>();
-        for (String str : keywords) {
-            Matcher matcher = pattern.matcher(str);
-            while (matcher.find()) {
-                String res = str.substring(matcher.start(), matcher.end());
-                set.addAll(Arrays.stream(res.split("\\|")).toList());
-            }
-        }
-        keywords = new ArrayList<>(set);
-        return keywords;
+        return splitRegex(keywords);
     }
 
     private void recursiveExtraction(@NotNull PListValue pListValue, @NotNull ArrayList<String> values) {
@@ -144,6 +133,25 @@ public final class TextMateHelper {
         for (Map.Entry<String, PListValue> entry : pListValue.getPlist().entries()) {
             recursiveExtraction(entry.getValue(), values);
         }
+    }
+
+    private @NotNull List<String> splitRegex(@NotNull List<String> keywords) {
+        Pattern pattern = Pattern.compile("([a-z]+[a-z_]*)", Pattern.CASE_INSENSITIVE);
+        Set<String> set = new HashSet<>();
+
+        for (String word : keywords) {
+            Matcher matcher = pattern.matcher(word);
+            while (matcher.find()) {
+                set.add(word.substring(matcher.start(), matcher.end()));
+            }
+        }
+
+        List<String> result = new ArrayList<>();
+        for (String word : set) {
+            if (word.length() > 1) result.add(word);
+        }
+
+        return result;
     }
 
     public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
