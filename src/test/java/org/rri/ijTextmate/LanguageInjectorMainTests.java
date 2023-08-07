@@ -88,7 +88,7 @@ public class LanguageInjectorMainTests extends LightPlatformCodeInsightFixture4T
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {
         boolean resultFirst = TestHelper.isInjected(project, editor, psiFile);
 
-        String relivePath = InjectorHelper.gitRelativePath(project, psiFile);
+        String relivePath = InjectorHelper.getRelativePath(project, psiFile);
         var map = TemporaryStorage.getInstance(project).get(relivePath).getMap();
 
         PsiElement psiElement = psiFile.findElementAt(editor.getCaretModel().getOffset());

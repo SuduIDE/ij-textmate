@@ -70,7 +70,7 @@ public class LanguageHighlight implements MultiHostInjector {
 
         Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map = TemporaryStorage
                 .getInstance(project)
-                .get(InjectorHelper.gitRelativePath(project, psiFile))
+                .get(InjectorHelper.getRelativePath(project, psiFile))
                 .getMap();
 
         host = InjectorHelper.resolveHost(host);
