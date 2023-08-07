@@ -59,4 +59,8 @@ public class TestHelper {
     public static String getMessage(String testName, String fileName, String message) {
         return String.format("\nName test: %s\nFile: %s\nMessage: %s", testName, fileName, message);
     }
+
+    public static String getMessage(String fileName, String message) {
+        return String.format("\nFile: %s\nMessage: %s", fileName, message);
+    }
 }
