@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class LanguageInjectorMainTests extends LightPlatformCodeInsightFixture4TestCase {
     private static final int CENTER_INSIDE_OFFSET = 131;
-    private static final int LEFT_INSIDE_OFFSET = 105;
-    private static final int RIGHT_INSIDE_OFFSET = 159;
-    private static final int LEFT_OUTSIDE_OFFSET = 99;
+    private static final int LEFT_INSIDE_OFFSET = 99;
+    private static final int RIGHT_INSIDE_OFFSET = 153;
+    private static final int LEFT_OUTSIDE_OFFSET = 98;
     private static final int RIGHT_OUTSIDE_OFFSET = 160;
     private static final String JAVA_FILE = "LanguageInjectionTestCase.java";
 

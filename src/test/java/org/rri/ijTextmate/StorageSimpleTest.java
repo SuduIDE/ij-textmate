@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase {
-    private final static String FILE_NAME = "SimpleJavaCode.java";
+    private final static String JAVA_FILE = "SimpleJavaCode.java";
 
     @Override
     protected String getTestDataPath() {
@@ -27,14 +27,14 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
     @Test
     public void test0() {
-        myFixture.configureByFile(FILE_NAME);
+        myFixture.configureByFile(JAVA_FILE);
         PersistentStorage.MapFileToSetElement mapFileToSetElement = PersistentStorage.getInstance(getProject()).getState();
         mapFileToSetElement.clear();
     }
 
     @Test
     public void test1() {
-        PsiFile psiFile = myFixture.configureByFile(FILE_NAME);
+        PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
@@ -44,7 +44,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
     @Test
     public void test2() {
-        PsiFile psiFile = myFixture.configureByFile(FILE_NAME);
+        PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
@@ -54,7 +54,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
     @Test
     public void test3() {
-        PsiFile psiFile = myFixture.configureByFile(FILE_NAME);
+        PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
@@ -64,7 +64,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
     @Test
     public void test4ContainsElements() {
-        PsiFile psiFile = myFixture.configureByFile(FILE_NAME);
+        PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 

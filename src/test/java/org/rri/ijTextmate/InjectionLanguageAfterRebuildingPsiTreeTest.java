@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.List;
 
 public class InjectionLanguageAfterRebuildingPsiTreeTest extends LightPlatformCodeInsightFixture4TestCase {
+    private static final String JAVA_FILE = "InjectionLanguageAfterRebuildingPsiTreeTestCase.java";
+
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";
@@ -17,11 +19,7 @@ public class InjectionLanguageAfterRebuildingPsiTreeTest extends LightPlatformCo
 
     @Test
     public void testInjectionLanguageAfterRebuildingPsiTree() {
-        checkInjectionLanguageAfterRebuildingPsiTree("CaretInTheCenterInsideTheString.java");
-
-        checkInjectionLanguageAfterRebuildingPsiTree("CaretOnTheLeftInsideTheString.java");
-
-        checkInjectionLanguageAfterRebuildingPsiTree("CaretOnTheRightInsideTheString.java");
+        checkInjectionLanguageAfterRebuildingPsiTree(JAVA_FILE);
     }
 
     public void checkInjectionLanguageAfterRebuildingPsiTree(String fileName) {

@@ -9,7 +9,8 @@ import org.junit.Test;
 public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4TestCase {
     private static final int CENTER_INSIDE_OFFSET = 131;
     private static final int LEFT_INSIDE_OFFSET = 105;
-    private static final int RIGHT_INSIDE_OFFSET = 159;
+    private static final int RIGHT_INSIDE_OFFSET = 155;
+    private static final String JAVA_FILE = "LanguageUnInjectionTestCase.java";
 
     @Override
     protected String getTestDataPath() {
@@ -29,7 +30,7 @@ public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4Tes
         PsiFile psiFile = myFixture.getFile();
 
         if (psiFile == null) {
-            psiFile = myFixture.configureByFile("LanguageUnInjectionTestCase.java");
+            psiFile = myFixture.configureByFile(JAVA_FILE);
         }
 
         Project project = myFixture.getProject();
