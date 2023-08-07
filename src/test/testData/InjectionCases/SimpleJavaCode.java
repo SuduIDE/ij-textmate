@@ -1,4 +1,4 @@
-public class SimpleJavaCode {
+<caret>public class SimpleJavaCode {
     public static void main(String[] args) {
         String sql = "SELECT * FROM users";
 
@@ -7,7 +7,7 @@ public class SimpleJavaCode {
         String go = """
             package main
             
-            impor<caret>t "fmt"
+            import "fmt"
             
             func main() {
                 fmt.Println("Hello, world)
