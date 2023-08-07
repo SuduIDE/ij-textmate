@@ -7,6 +7,10 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestC
 import org.junit.Test;
 
 public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4TestCase {
+    private static final int CENTER_INSIDE_OFFSET = 131;
+    private static final int LEFT_INSIDE_OFFSET = 105;
+    private static final int RIGHT_INSIDE_OFFSET = 159;
+
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/InjectionCases";
@@ -14,23 +18,24 @@ public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4Tes
 
     @Test
     public void testCaretInTheCenterInsideTheString() {
-        checkUnInjectLanguage("CaretInTheCenterInsideTheString.java");
+        checkUnInjectLanguage(CENTER_INSIDE_OFFSET);
+
+        checkUnInjectLanguage(LEFT_INSIDE_OFFSET);
+
+        checkUnInjectLanguage(RIGHT_INSIDE_OFFSET);
     }
 
-    @Test
-    public void testCaretOnTheLeftInsideTheString() {
-        checkUnInjectLanguage("CaretOnTheLeftInsideTheString.java");
-    }
+    private void checkUnInjectLanguage(int offset) {
+        PsiFile psiFile = myFixture.getFile();
 
-    @Test
-    public void testCaretOnTheRightInsideTheString() {
-        checkUnInjectLanguage("CaretOnTheRightInsideTheString.java");
-    }
+        if (psiFile == null) {
+            psiFile = myFixture.configureByFile("LanguageUnInjectionTestCase.java");
+        }
 
-    private void checkUnInjectLanguage(String fileName) {
-        PsiFile psiFile = myFixture.configureByFile(fileName);
         Project project = myFixture.getProject();
         Editor editor = myFixture.getEditor();
+
+        editor.getCaretModel().moveToOffset(offset);
 
         TestHelper.injectLanguage(project, editor, psiFile);
 
@@ -38,7 +43,7 @@ public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4Tes
 
         UnInjectLanguageAction.unInjectLanguage(project, editor, psiFile);
 
-        String message = String.format("\nFile: %s\nMessage: the literal must not contain an injection after deletion\n", fileName);
+        String message = String.format("\nFile: %s\nMessage: the literal must not contain an injection after deletion\n", "LanguageUnInjectionTestCase.java");
         assertFalse(message, TestHelper.isInjected(project, editor, psiFile));
     }
 }
