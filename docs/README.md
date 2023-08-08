@@ -6,6 +6,8 @@
     - [Short description](#short-description)
     - [Install plugin](#install-plugin)
     - [Usage](#usage)
+    - [Features](#features)
+    - [Bugs](#bugs)
 
 ## Short description
 
