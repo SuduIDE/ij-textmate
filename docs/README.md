@@ -60,10 +60,12 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`
 ## Features
 
 - You can also search by name when selecting languages. To do this, just type the name of the language you need
+
   ![search_language](images/search_language.png)
 
 - Support completion for injected language
-  ![variant_completion](images/variant_completion.png)
+
+- ![variant_completion](images/variant_completion.png)
 
 - Injections are saved when the IDE is restarted
 
