@@ -31,8 +31,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222.2")
-        untilBuild.set("232.1.5")
+        sinceBuild.set("222.3345.118")
+        untilBuild.set("231.9392.1")
     }
 
     signPlugin {
