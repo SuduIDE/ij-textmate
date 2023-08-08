@@ -22,7 +22,7 @@ public abstract class AbstractUnInjectLanguage {
         host = getHost(host);
         if (host == null) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
+        String relativePath = InjectorHelper.getRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
         mapPointerToLanguage.remove(temporaryPlaceInjection);
 

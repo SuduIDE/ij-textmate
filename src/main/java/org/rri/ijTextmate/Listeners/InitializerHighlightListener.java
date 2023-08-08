@@ -28,7 +28,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         if (persistentStorage == null || psiFile == null) return;
 
-        String relativePath = InjectorHelper.gitRelativePath(project, psiFile);
+        String relativePath = InjectorHelper.getRelativePath(project, psiFile);
 
         TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
 
@@ -43,6 +43,8 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }
+
+            psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
         }
     }
 }

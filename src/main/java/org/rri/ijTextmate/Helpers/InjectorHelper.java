@@ -68,7 +68,7 @@ public class InjectorHelper {
         return null;
     }
 
-    public static @NotNull String gitRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
+    public static @NotNull String getRelativePath(@NotNull Project project, @NotNull PsiFile psiFile) {
         VirtualFile vf = psiFile.getOriginalFile().getVirtualFile();
 
         if (ApplicationManager.getApplication().isUnitTestMode()) return Path.of(vf.getPath()).toString();
