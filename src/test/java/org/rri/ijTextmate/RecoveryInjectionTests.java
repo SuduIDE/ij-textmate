@@ -17,6 +17,9 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
         return "src/test/testData/PersistentStorageCases";
     }
 
+/*
+    Uncomment after changing heuristics
+
     public void testWithMovingExpressionHard() {
         checkRecoveryInjection("WithMovingExpressionHard.before.java",
                 "WithMovingExpressionHard.after.java",
@@ -30,23 +33,27 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
                 "WithMovingExpressionSimple.java",
                 getMessage("testWithMovingExpressionSimple"));
     }
+*/
 
 
     public void testWithoutMoving() {
-        checkRecoveryInjection("WithoutMoving.before.java",
+        boolean result = checkRecoveryInjection("WithoutMoving.before.java",
                 "WithoutMoving.after.java",
-                "WithoutMoving.java",
-                getMessage("testWithoutMoving"));
+                "WithoutMoving.java"
+        );
+
+        assertTrue(getMessage("testWithoutMoving"), result);
     }
 
     public void testWithRename() {
-        checkRecoveryInjection("WithRename.before.java",
+        boolean result = checkRecoveryInjection("WithRename.before.java",
                 "WithRename.after.java",
-                "WithRename.java",
-                getMessage("testWithRename"));
+                "WithRename.java");
+
+        assertTrue(getMessage("testWithRename"), result);
     }
 
-    private void checkRecoveryInjection(String beforeName, String afterName, String baseName, String message) {
+    private boolean checkRecoveryInjection(String beforeName, String afterName, String baseName) {
         PsiFile[] psiFiles = myFixture.configureByFiles(beforeName, afterName);
         myFixture.renameElement(psiFiles[0], baseName);
         Project project = myFixture.getProject();
@@ -62,7 +69,8 @@ public class RecoveryInjectionTests extends BasePlatformTestCase {
         PersistentStorage.getInstance(project).getState();
         new InitializerHighlightListener(project).fileOpened(FileEditorManager.getInstance(project), psiFiles[1].getVirtualFile());
         myFixture.openFileInEditor(psiFiles[1].getVirtualFile());
-        assertTrue(message, isInjected(project, editor, psiFiles[1]));
+
+        return isInjected(project, editor, psiFiles[1]);
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {

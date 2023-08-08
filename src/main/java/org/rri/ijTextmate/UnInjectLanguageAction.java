@@ -11,8 +11,8 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.FileContentUtil;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
-import org.rri.ijTextmate.UnInject.UnInjectLanguage;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.UnInject.UnInjectLanguageMain;
 
 import java.util.Collections;
 
@@ -55,7 +55,7 @@ public class UnInjectLanguageAction extends AnAction {
         PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
         TemporaryPlaceInjection placeInjection = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         if (placeInjection == null) return;
-        UnInjectLanguage.unInject(host, placeInjection, psiFile, project);
+        UnInjectLanguageMain.INSTANCE.unInject(host, placeInjection, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 }

@@ -39,6 +39,10 @@
     <extensions defaultExtensionNs="com.intellij">
         <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
         <projectService serviceImplementation="org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage"/>
+        <completion.contributor language="textmate"
+                                implementationClass="org.rri.ijTextmate.LanguageCompletion.LanguageCompletion"
+                                order="before wordCompletion"
+        />
     </extensions>
     <project-components>
         <!--        <component>-->

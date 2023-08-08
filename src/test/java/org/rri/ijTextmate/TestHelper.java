@@ -1,7 +1,6 @@
 package org.rri.ijTextmate;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -50,6 +49,7 @@ public class TestHelper {
         return host;
     }
 
+    @SuppressWarnings("unused")
     @Contract(pure = true)
     public static void checkWithConsumer(Consumer<Object> check, Object @NotNull ... args) {
         for (Object arg : args) {
@@ -57,7 +57,12 @@ public class TestHelper {
         }
     }
 
+    @SuppressWarnings("unused")
     public static String getMessage(String testName, String fileName, String message) {
         return String.format("\nName test: %s\nFile: %s\nMessage: %s", testName, fileName, message);
+    }
+
+    public static String getMessage(String fileName, String message) {
+        return String.format("\nFile: %s\nMessage: %s", fileName, message);
     }
 }
