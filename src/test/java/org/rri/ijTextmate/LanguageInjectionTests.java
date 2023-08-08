@@ -12,50 +12,71 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.util.Map;
 
-public class LanguageInjectorMainTests extends LightPlatformCodeInsightFixture4TestCase {
+public class LanguageInjectionTests extends LightPlatformCodeInsightFixture4TestCase {
     private static final int CENTER_INSIDE_OFFSET = 131;
     private static final int LEFT_INSIDE_OFFSET = 99;
     private static final int RIGHT_INSIDE_OFFSET = 153;
     private static final int LEFT_OUTSIDE_OFFSET = 98;
     private static final int RIGHT_OUTSIDE_OFFSET = 160;
-    private static final String JAVA_FILE = "LanguageInjectionTestCase.java";
+    private static final String JAVA_FILE_SUCCESS = "LanguageInjectionTestCaseSuccess.java";
+    private static final String JAVA_FILE_FAIL = "LanguageInjectionTestCaseFail.java";
 
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData/InjectionCases";
+        return "src/test/testData/InjectionCases/LanguageInjectionTestCases";
     }
 
     @Test
-    public void testLanguageInjector() {
-        String messageForJava = getMessageIfLanguageCanBeInjected();
+    public void testCaretInsideStringLiteralCentered() {
+        String message = getMessageIfLanguageCanBeInjected(JAVA_FILE_SUCCESS);
 
-        checkInjectLanguage(TestHelper.createAssertTrueWithMessage(messageForJava), CENTER_INSIDE_OFFSET);
-
-        checkInjectLanguage(TestHelper.createAssertTrueWithMessage(messageForJava), LEFT_INSIDE_OFFSET);
-
-        checkInjectLanguage(TestHelper.createAssertTrueWithMessage(messageForJava), RIGHT_INSIDE_OFFSET);
-
-
-        messageForJava = getMessageIfLanguageCanNotBeInjected();
-
-        checkInjectLanguage(TestHelper.createAssertFalseWithMessage(messageForJava), LEFT_OUTSIDE_OFFSET);
-
-        checkInjectLanguage(TestHelper.createAssertFalseWithMessage(messageForJava), RIGHT_OUTSIDE_OFFSET);
+        assertTrue(message, checkInjectLanguage(JAVA_FILE_SUCCESS, CENTER_INSIDE_OFFSET));
     }
 
-    private String getMessageIfLanguageCanNotBeInjected() {
-        return TestHelper.getMessage(LanguageInjectorMainTests.JAVA_FILE, "Language can not be injected in this literal. But the test says it can");
+    @Test
+    public void caretInsideStringLiteralOnLeft() {
+        String message = getMessageIfLanguageCanBeInjected(JAVA_FILE_SUCCESS);
+
+        assertTrue(message, checkInjectLanguage(JAVA_FILE_SUCCESS, LEFT_INSIDE_OFFSET));
     }
 
-    private String getMessageIfLanguageCanBeInjected() {
-        return TestHelper.getMessage(LanguageInjectorMainTests.JAVA_FILE, "Language can be injected in this literal. But the test says it can't");
+    @Test
+    public void caretInsideStringLiteralOnRight() {
+        String message = getMessageIfLanguageCanBeInjected(JAVA_FILE_SUCCESS);
+
+        assertTrue(message, checkInjectLanguage(JAVA_FILE_SUCCESS, RIGHT_INSIDE_OFFSET));
     }
 
-    private void checkInjectLanguage(TestHelper.@NotNull Assert checking, int offset) {
+    @Test
+    public void caretOutsideStringLiteralOnLeft() {
+        String message = getMessageIfLanguageCanNotBeInjected(JAVA_FILE_FAIL);
+
+        assertFalse(message, checkInjectLanguage(JAVA_FILE_SUCCESS, LEFT_OUTSIDE_OFFSET));
+    }
+
+    @Test
+    public void caretOutsideStringLiteralOnRight() {
+        String message = getMessageIfLanguageCanNotBeInjected(JAVA_FILE_FAIL);
+
+        assertFalse(message, checkInjectLanguage(JAVA_FILE_SUCCESS, RIGHT_OUTSIDE_OFFSET));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String getMessageIfLanguageCanNotBeInjected(String fileName) {
+        return TestHelper.getMessage(fileName, "Language can not be injected in this literal. But the test says it can");
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String getMessageIfLanguageCanBeInjected(String fileName) {
+        return TestHelper.getMessage(fileName, "Language can be injected in this literal. But the test says it can't");
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private boolean checkInjectLanguage(String fileName, int offset) {
         PsiFile psiFile = myFixture.getFile();
 
         if (psiFile == null) {
-            psiFile = myFixture.configureByFile(JAVA_FILE);
+            psiFile = myFixture.configureByFile(fileName);
         }
 
         Project project = myFixture.getProject();
@@ -64,7 +85,8 @@ public class LanguageInjectorMainTests extends LightPlatformCodeInsightFixture4T
         editor.getCaretModel().moveToOffset(offset);
 
         TestHelper.injectLanguage(project, editor, psiFile);
-        checking.test(isInjected(project, editor, psiFile));
+
+        return isInjected(project, editor, psiFile);
     }
 
     private boolean isInjected(Project project, @NotNull Editor editor, PsiFile psiFile) {

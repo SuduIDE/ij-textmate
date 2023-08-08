@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
 import org.junit.Test;
 
-public class UnLanguageInjectorTests extends LightPlatformCodeInsightFixture4TestCase {
+public class UnInjectionLanguageTests extends LightPlatformCodeInsightFixture4TestCase {
     private static final int CENTER_INSIDE_OFFSET = 131;
     private static final int LEFT_INSIDE_OFFSET = 105;
     private static final int RIGHT_INSIDE_OFFSET = 155;
