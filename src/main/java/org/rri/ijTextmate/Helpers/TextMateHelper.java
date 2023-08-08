@@ -38,7 +38,6 @@ public final class TextMateHelper {
         languages.clear();
         languages.put("textmate", "");
 
-        languages.clear();
         Collection<BundleConfigBean> bundles = TextMateSettings.getInstance().getBundles();
         bundles.forEach((bundle) -> languages.put(bundle.getName(), bundle.getPath()));
     }
