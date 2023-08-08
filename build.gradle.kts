@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.intellij") version "1.15.0"
 }
 
-group = "com.example"
-version = "0.1-SNAPSHOT"
+group = "com.intership"
+version = "0.1.5"
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("232")
+        sinceBuild.set("232.8660.185")
         untilBuild.set("232.*")
     }
 

@@ -24,8 +24,7 @@ public final class TextMateHelper {
     private final Map<String, Path> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
     private final Map<String, List<String>> languageToKeywords = new HashMap<>(Map.of("textmate", Collections.emptyList()));
-    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>();
-    private final List<String> UPPER_CASE_LANGUAGES = List.of("docker", "sql");
+    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>(Map.of("docker", StrategySelectingRegisters.UPPER, "sql", StrategySelectingRegisters.UPPER));
     private final static String MATCH = "match";
     private final static String PATTERNS = "patterns";
     private final static String REPOSITORY = "repository";
@@ -71,7 +70,7 @@ public final class TextMateHelper {
         synchronized (this) {
             fileExtension = languageToFileExtension.get(language);
             if (fileExtension == null) {
-                fileExtension = getExtension(getPath(language));
+                fileExtension = getExtension(getPath(language), language);
 
                 languageToFileExtension.put(language, fileExtension);
 
@@ -86,21 +85,25 @@ public final class TextMateHelper {
         return languageToKeywords.get(language);
     }
 
-    private @NotNull String getExtension(@Nullable Path path) {
+    private @NotNull String getExtension(@Nullable Path path, String language) {
         TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
         if (textMateBundleReader == null) return "";
 
         Iterator<TextMateGrammar> iterator = textMateBundleReader.readGrammars().iterator();
+        List<String> extensions = new ArrayList<>();
         while (iterator.hasNext()) {
             TextMateGrammar grammar = iterator.next();
             for (TextMateFileNameMatcher fileNameMatcher : grammar.getFileNameMatchers()) {
                 if (fileNameMatcher instanceof TextMateFileNameMatcher.Extension extension) {
-                    return extension.getExtension();
+                    extensions.add(extension.getExtension());
                 }
             }
         }
 
-        return "";
+        language = language.toLowerCase();
+        if (extensions.contains(language)) return language;
+        if (extensions.isEmpty()) return "";
+        return extensions.get(0);
     }
 
     private @NotNull List<String> calcKeywords(@Nullable Path path) {
@@ -125,7 +128,8 @@ public final class TextMateHelper {
     }
 
     private StrategySelectingRegisters getStrategy(String language) {
-        if (UPPER_CASE_LANGUAGES.contains(language)) return StrategySelectingRegisters.UPPER;
+        StrategySelectingRegisters strategy = languageToStrategy.get(language);
+        if (strategy != null) return strategy;
         return StrategySelectingRegisters.DEFAULT;
     }
 
@@ -182,6 +186,7 @@ public final class TextMateHelper {
 
         StrategySelectingRegisters DEFAULT = new DefaultStrategySelectingRegisters();
         StrategySelectingRegisters UPPER = new UpperStrategySelectingRegisters();
+        @SuppressWarnings("unused")
         StrategySelectingRegisters LOWER = new LowerStrategySelectingRegisters();
 
         class DefaultStrategySelectingRegisters implements StrategySelectingRegisters {
