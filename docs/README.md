@@ -3,13 +3,24 @@
 # Contents
 
 - [Contents](#contents)
-  - [Short description](#short-description)
-  - [Install plugin](#install-plugin)
-  - [Usage](#usage)
+    - [Short description](#short-description)
+    - [Install plugin](#install-plugin)
+    - [Usage](#usage)
 
 ## Short description
 
-Plugin for language injection. Provides language injection in string literals. The injected languages can be those for which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-textmate-bundles.html) are available.
+Plugin for language injection. Provides language injection in string literals. The injected languages can be those for
+which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-textmate-bundles.html) are available.
+
+## Requirements
+
+| IDE                             | min version | max version | status      |
+|---------------------------------|-------------|-------------|-------------|
+| IntelliJ IDEA Community Edition | 2022.2      | 2023.1.5    | supported   |
+| IntelliJ IDEA Community Edition | 2023.2      | 2023.2      | unsupported |
+| IntelliJ IDEA Ultimate          | 2022.2      | 2023.1.5    | supported   |
+| PyCharm Community Edition       | 2022.2      | 2023.1      | supported   |
+| PhpStorm                        | 2022.2      | 2023.1      | supported   |
 
 ## Install plugin
 
@@ -43,8 +54,11 @@ Plugin for language injection. Provides language injection in string literals. T
 
 4. To remove an injection, first press `Ctrl+\` then press `Ctrl+I`
 
-You can also search by name when selecting languages. To do this, just type the name of the language you need.
+## Features
 
-![search_language](images/search_language.png)
+- You can also search by name when selecting languages. To do this, just type the name of the language you need
+  ![search_language](images/search_language.png)
 
+- Support completion for injected language
 
+- Injections are saved when the IDE is restarted
