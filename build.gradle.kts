@@ -14,7 +14,6 @@ dependencies {
 }
 
 
-
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
@@ -32,8 +31,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("232")
-        untilBuild.set("232.*")
+        sinceBuild.set("222.2")
+        untilBuild.set("232.1.5")
     }
 
     signPlugin {

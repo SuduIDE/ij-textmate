@@ -5,15 +5,16 @@ import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.textmate.Constants;
 import org.jetbrains.plugins.textmate.TextMateService;
-import org.jetbrains.plugins.textmate.bundles.TextMateBundleReader;
-import org.jetbrains.plugins.textmate.bundles.TextMateFileNameMatcher;
-import org.jetbrains.plugins.textmate.bundles.TextMateGrammar;
+import org.jetbrains.plugins.textmate.bundles.*;
 import org.jetbrains.plugins.textmate.configuration.*;
-import org.jetbrains.plugins.textmate.plist.PListValue;
-import org.jetbrains.plugins.textmate.plist.Plist;
-import org.jetbrains.plugins.textmate.plist.PlistValueType;
+import org.jetbrains.plugins.textmate.language.TextMateLanguageDescriptor;
+import org.jetbrains.plugins.textmate.language.syntax.SyntaxNodeDescriptor;
+import org.jetbrains.plugins.textmate.plist.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.nio.file.Path;
@@ -21,14 +22,13 @@ import java.util.*;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
-    private final Map<String, Path> languages = new HashMap<>();
+    private final Map<String, String> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
+    private final Map<String, List<String>> languageToFileExtensions = new HashMap<>();
     private final Map<String, List<String>> languageToKeywords = new HashMap<>(Map.of("textmate", Collections.emptyList()));
-    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>();
-    private final List<String> UPPER_CASE_LANGUAGES = List.of("docker", "sql");
-    private final static String MATCH = "match";
-    private final static String PATTERNS = "patterns";
-    private final static String REPOSITORY = "repository";
+    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>(Map.of("docker", StrategySelectingRegisters.UPPER, "sql", StrategySelectingRegisters.UPPER));
+    private final PlistReader plistReader = new CompositePlistReader();
+    private final BundleFactory bundleFactory = new BundleFactory(plistReader);
 
     public TextMateHelper() {
         updateLanguages();
@@ -36,24 +36,11 @@ public final class TextMateHelper {
 
     public void updateLanguages() {
         languages.clear();
-        languages.put("textmate", Path.of(""));
+        languages.put("textmate", "");
 
-        Map<String, TextMatePersistentBundle> userBundles = Objects.requireNonNull(TextMateUserBundlesSettings.getInstance()).getBundles();
-
-        for (Map.Entry<String, TextMatePersistentBundle> entry : userBundles.entrySet()) {
-            if (entry.getValue().getEnabled()) {
-                languages.put(entry.getValue().getName(), Path.of(entry.getKey()));
-            }
-        }
-
-        List<Path> builtinBundles = Objects.requireNonNull(TextMateBuiltinBundlesSettings.getInstance()).getBuiltinBundles();
-        Set<String> offBundles = Objects.requireNonNull(TextMateBuiltinBundlesSettings.getInstance()).getTurnedOffBundleNames();
-
-        for (Path path : builtinBundles) {
-            TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
-            if (textMateBundleReader == null || offBundles.contains(textMateBundleReader.getBundleName())) continue;
-            languages.put(textMateBundleReader.getBundleName(), path);
-        }
+        languages.clear();
+        Collection<BundleConfigBean> bundles = TextMateSettings.getInstance().getBundles();
+        bundles.forEach((bundle) -> languages.put(bundle.getName(), bundle.getPath()));
     }
 
     public List<String> getLanguages() {
@@ -61,7 +48,7 @@ public final class TextMateHelper {
     }
 
     public @NotNull Path getPath(String language) {
-        return languages.get(language);
+        return Path.of(languages.get(language));
     }
 
     public @NotNull String getExtension(String language) {
@@ -71,11 +58,13 @@ public final class TextMateHelper {
         synchronized (this) {
             fileExtension = languageToFileExtension.get(language);
             if (fileExtension == null) {
-                fileExtension = getExtension(getPath(language));
+                List<String> extensions = getExtensions(getPath(language));
+                languageToFileExtensions.put(language, extensions);
 
+                fileExtension = calcExtension(language);
                 languageToFileExtension.put(language, fileExtension);
 
-                ReadAction.run(() -> languageToKeywords.put(language, calcKeywords(getPath(language))));
+                ReadAction.run(() -> languageToKeywords.put(language, calcKeywords(language)));
             }
         }
 
@@ -86,69 +75,74 @@ public final class TextMateHelper {
         return languageToKeywords.get(language);
     }
 
-    private @NotNull String getExtension(@Nullable Path path) {
-        TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
-        if (textMateBundleReader == null) return "";
+    private @Nullable Bundle createBundle(Path path) {
+        try {
+            return bundleFactory.fromDirectory(path.toFile());
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
 
-        Iterator<TextMateGrammar> iterator = textMateBundleReader.readGrammars().iterator();
-        while (iterator.hasNext()) {
-            TextMateGrammar grammar = iterator.next();
-            for (TextMateFileNameMatcher fileNameMatcher : grammar.getFileNameMatchers()) {
-                if (fileNameMatcher instanceof TextMateFileNameMatcher.Extension extension) {
-                    return extension.getExtension();
-                }
+    private @NotNull List<String> getExtensions(@NotNull Path path) {
+        Bundle bundle = createBundle(path);
+        if (bundle == null) return Collections.emptyList();
+
+        List<String> allExtension = new ArrayList<>();
+
+        for (File grammarFile : bundle.getGrammarFiles()) {
+            try {
+                Plist plist = plistReader.read(grammarFile);
+                allExtension.addAll(bundle.getExtensions(grammarFile, plist));
+            } catch (IOException ignored) {
             }
         }
 
-        return "";
+        return allExtension;
     }
 
-    private @NotNull List<String> calcKeywords(@Nullable Path path) {
+    private @NotNull String calcExtension(String language) {
+        List<String> extensions = languageToFileExtensions.get(language);
+        if (extensions.contains(language.toLowerCase())) return language.toLowerCase();
+        if (extensions.isEmpty()) return "";
+        return extensions.get(0);
+    }
+
+    private @NotNull List<String> calcKeywords(String language) {
         ArrayList<String> keywords = new ArrayList<>();
-        if (path == null) return keywords;
+        Set<String> visited = new HashSet<>();
 
-        TextMateBundleReader textMateBundleReader = TextMateService.getInstance().readBundle(path);
-        if (textMateBundleReader == null) return keywords;
+        for (String extension : languageToFileExtensions.get(language)) {
+            TextMateLanguageDescriptor textMateLanguageDescriptor = TextMateService.getInstance().getLanguageDescriptorByExtension(extension);
+            if (textMateLanguageDescriptor == null) continue;
 
-        Iterator<TextMateGrammar> textMateGrammarIterator = textMateBundleReader.readGrammars().iterator();
-        while (textMateGrammarIterator.hasNext()) {
-            Plist plist = textMateGrammarIterator.next().getPlist().getValue();
-
-            PListValue pListValue = plist.getPlistValue(PATTERNS);
-            if (pListValue != null) recursiveExtraction(pListValue, keywords);
-
-            pListValue = plist.getPlistValue(REPOSITORY);
-            if (pListValue != null) recursiveExtraction(pListValue, keywords);
+            SyntaxNodeDescriptor nodeDescriptor = textMateLanguageDescriptor.getRootSyntaxNode();
+            visited.add(nodeDescriptor.toString());
+            recursiveExtraction(nodeDescriptor, keywords, visited);
         }
-
-        return splitRegex(keywords, getStrategy(textMateBundleReader.getBundleName()));
+        return splitRegex(keywords, getStrategy(language));
     }
 
     private StrategySelectingRegisters getStrategy(String language) {
-        if (UPPER_CASE_LANGUAGES.contains(language)) return StrategySelectingRegisters.UPPER;
+        StrategySelectingRegisters strategy = languageToStrategy.get(language);
+        if (strategy != null) return strategy;
         return StrategySelectingRegisters.DEFAULT;
     }
 
-    private void recursiveExtraction(@NotNull PListValue pListValue, @NotNull ArrayList<String> values) {
-        if (PlistValueType.ARRAY.equals(pListValue.getType())) {
-            for (PListValue value : pListValue.getArray()) {
-                recursiveExtraction(value, values);
-            }
-        }
-        if (!PlistValueType.DICT.equals(pListValue.getType())) return;
-        PListValue value = pListValue.getPlist().getPlistValue(MATCH);
-        if (value != null) {
-            String regex = value.getString();
-            values.add(regex);
-            return;
-        }
-        for (Map.Entry<String, PListValue> entry : pListValue.getPlist().entries()) {
-            recursiveExtraction(entry.getValue(), values);
+    private void recursiveExtraction(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited) {
+        for (SyntaxNodeDescriptor nodeDescriptor : syntaxNodeDescriptor.getChildren()) {
+            if (visited.contains(nodeDescriptor.toString())) continue;
+            visited.add(nodeDescriptor.toString());
+
+            recursiveExtraction(nodeDescriptor, keywords, visited);
+
+            CharSequence keyword = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
+            if (keyword != null) keywords.add(keyword.toString());
         }
     }
 
     private @NotNull List<String> splitRegex(@NotNull List<String> keywords, final StrategySelectingRegisters selectingRegisters) {
-        Pattern pattern = Pattern.compile("([a-z]+[a-z_]*)", Pattern.CASE_INSENSITIVE);
+        String REGEX = "([a-z]+[a-z_]*)";
+        Pattern pattern = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE);
         Set<String> set = new HashSet<>();
 
         for (String word : keywords) {
@@ -182,6 +176,7 @@ public final class TextMateHelper {
 
         StrategySelectingRegisters DEFAULT = new DefaultStrategySelectingRegisters();
         StrategySelectingRegisters UPPER = new UpperStrategySelectingRegisters();
+        @SuppressWarnings("unused")
         StrategySelectingRegisters LOWER = new LowerStrategySelectingRegisters();
 
         class DefaultStrategySelectingRegisters implements StrategySelectingRegisters {
