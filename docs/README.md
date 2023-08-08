@@ -23,6 +23,8 @@ which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-
 | PhpStorm                        | 2022.2      | 2023.1      | supported   |
 | CLion                           | 2022.2      | 2023.1      | supported   |
 
+Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`
+
 ## Install plugin
 
 1. Go to [github](https://github.com/SuduIDE/ij-textmate)
@@ -61,5 +63,16 @@ which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-
   ![search_language](images/search_language.png)
 
 - Support completion for injected language
+  ![variant_completion](images/variant_completion.png)
 
 - Injections are saved when the IDE is restarted
+
+- The list of supported languages depends on the mappings loaded by Textmate Bundles
+
+  ![textmate_bundles](images/textmate_bundles.png)
+
+## Bugs
+
+- Injected language locale in string literals with references only works for `java`.
+
+- Error occurs during initialization `PersistentStateComponent` in all ide except Intellij.
