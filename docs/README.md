@@ -65,7 +65,7 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`
 
 - Support completion for injected language
 
-- ![variant_completion](images/variant_completion.png)
+  ![variant_completion](images/variant_completion.png)
 
 - Injections are saved when the IDE is restarted
 
