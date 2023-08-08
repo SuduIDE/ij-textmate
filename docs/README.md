@@ -21,6 +21,7 @@ which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-
 | IntelliJ IDEA Ultimate          | 2022.2      | 2023.1.5    | supported   |
 | PyCharm Community Edition       | 2022.2      | 2023.1      | supported   |
 | PhpStorm                        | 2022.2      | 2023.1      | supported   |
+| CLion                           | 2022.2      | 2023.1      | supported   |
 
 ## Install plugin
 
