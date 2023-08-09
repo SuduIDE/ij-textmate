@@ -24,6 +24,14 @@ public class LanguageHighlight implements MultiHostInjector {
         TemporaryPlaceInjection languageID = getTemporaryPlaceInjection(host);
         if (languageID == null) return;
 
+        PsiElement psiElement = languageID.hostPointer.getElement();
+        if (psiElement == null) return;
+
+        if (!psiElement.getTextRange().intersects(host.getTextRange())) {
+            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
+            return;
+        }
+
         int start = 0;
         int end = host.getTextLength() - 1;
         String text = host.getText();
