@@ -3,13 +3,29 @@
 # Contents
 
 - [Contents](#contents)
-  - [Short description](#short-description)
-  - [Install plugin](#install-plugin)
-  - [Usage](#usage)
+    - [Short description](#short-description)
+    - [Install plugin](#install-plugin)
+    - [Usage](#usage)
+    - [Features](#features)
+    - [Bugs](#bugs)
 
 ## Short description
 
-Language injection support plugin for Textmate packages
+Plugin for language injection. Provides language injection in string literals. The injected languages can be those for
+which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-textmate-bundles.html) are available.
+
+## Requirements
+
+| IDE                             | min version | max version | status      |
+|---------------------------------|-------------|-------------|-------------|
+| IntelliJ IDEA Community Edition | 2022.2      | 2023.1.5    | supported   |
+| IntelliJ IDEA Community Edition | 2023.2      | 2023.2      | unsupported |
+| IntelliJ IDEA Ultimate          | 2022.2      | 2023.1.5    | supported   |
+| PyCharm Community Edition       | 2022.2      | 2023.1      | supported   |
+| PhpStorm                        | 2022.2      | 2023.1      | supported   |
+| CLion                           | 2022.2      | 2023.1      | supported   |
+
+Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`
 
 ## Install plugin
 
@@ -43,8 +59,24 @@ Language injection support plugin for Textmate packages
 
 4. To remove an injection, first press `Ctrl+\` then press `Ctrl+I`
 
-You can also search by name when selecting languages. To do this, just type the name of the language you need.
+## Features
 
-![search_language](images/search_language.png)
+- You can also search by name when selecting languages. To do this, just type the name of the language you need
 
-> **_NOTE:_** Idea restart injections persist in most cases
+  ![search_language](images/search_language.png)
+
+- Support completion for injected language
+
+  ![variant_completion](images/variant_completion.png)
+
+- Injections are saved when the IDE is restarted
+
+- The list of supported languages depends on the mappings loaded by Textmate Bundles
+
+  ![textmate_bundles](images/textmate_bundles.png)
+
+## Bugs
+
+- Injected language locale in string literals with references only works for `java`.
+
+- Error occurs during initialization `PersistentStateComponent` in all ide except Intellij.
