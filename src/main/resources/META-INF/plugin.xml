@@ -22,7 +22,7 @@
               <li>Move the carets to a position within the string literal</li>
               <li>First press <b>Ctrl+\</b> then press <b>Ctrl+I</b></li>
               <li>Select the language to be injected and press <b>enter</b></li>
-              <li>To remove an injection, first press <b>bCtrl+\</b> then press <b>Ctrl+I</b></li>
+              <li>To remove an injection, first press <b>Ctrl+\</b> then press <b>Ctrl+I</b></li>
             </ol>
         ]]>
     </description>
