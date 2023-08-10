@@ -2,13 +2,14 @@
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
     <id>org.rri.ij-textmate</id>
+    <category>Other Tools</category>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>InjectSense</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">Russian Research Institute</vendor>
+    <vendor>Russian Research Institute</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
@@ -45,9 +46,9 @@
         />
     </extensions>
     <project-components>
-        <!--        <component>-->
-        <!--            <implementation-class>PersistentStorage.org.rri.ijTextmate.PersistentStorage</implementation-class>>-->
-        <!--        </component>-->
+<!--                <component>-->
+<!--                    <implementation-class>org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage</implementation-class>>-->
+<!--                </component>-->
     </project-components>
     <projectListeners>
         <listener class="org.rri.ijTextmate.Listeners.InitializerHighlightListener"

@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Inject.InjectLanguageMain;
 
 import java.util.function.Consumer;
 
@@ -34,7 +35,7 @@ public class TestHelper {
     public static void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
         PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
         if (host == null) return;
-        InjectLanguageAction.injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE);
+        InjectLanguageAction.injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE, InjectLanguageMain.INSTANCE);
     }
 
     public static boolean isInjected(Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {

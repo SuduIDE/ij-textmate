@@ -1,13 +1,13 @@
 package org.rri.ijTextmate.Inject;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 
-public class InjectLanguageMain extends AbstractInjectLanguage {
-    public static InjectLanguageMain INSTANCE = new InjectLanguageMain();
+public class InjectLanguageOnePlace extends AbstractInjectLanguage {
+    public static InjectLanguageOnePlace INSTANCE = new InjectLanguageOnePlace();
 
     public String getIdentifier() {
-        return "Inject where used";
+        return "Inject one place";
     }
 
     @Override
