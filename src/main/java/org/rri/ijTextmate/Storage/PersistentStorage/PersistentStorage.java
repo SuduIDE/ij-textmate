@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.xmlb.Converter;
@@ -19,12 +20,12 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 import java.lang.reflect.Type;
 import java.util.*;
 
-@State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
+@State(name = "PersistentStorage", storages = @Storage("PersistentStorageInjectSense.xml"))
 public class PersistentStorage implements PersistentStateComponent<PersistentStorage.MapFileToSetElement> {
     private MapFileToSetElement myMapToSetElement = new MapFileToSetElement();
     private final Project project;
 
-    public PersistentStorage(Project project) {
+    public PersistentStorage(@NotNull Project project) {
         this.project = project;
     }
 
@@ -80,12 +81,14 @@ public class PersistentStorage implements PersistentStateComponent<PersistentSto
             }
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public SetElement put(String key, SetElement value) {
             synchronized (mutex) {
                 return map.put(key, value);
             }
         }
 
+        @SuppressWarnings("unused")
         public int size() {
             synchronized (mutex) {
                 return map.size();
