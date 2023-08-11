@@ -1,21 +1,20 @@
 package org.rri.ijTextmate.Inject;
 
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
-public class InjectLanguageOnePlace extends AbstractInjectLanguage {
-    public static InjectLanguageOnePlace INSTANCE = new InjectLanguageOnePlace();
+public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
+    public static InjectLanguageMultiplePlace INSTANCE = new InjectLanguageMultiplePlace();
 
     public String getIdentifier() {
-        return "Inject one place";
+        return "Inject where used";
     }
 
     @Override
     public TemporaryPlaceInjection getTemporaryPlaceInjection(@NotNull PsiLanguageInjectionHost host, String languageID) {
+        host = InjectorHelper.resolveHost(host);
         if (!host.isValidHost()) return null;
         SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
         return new TemporaryPlaceInjection(psiElementPointer, languageID);
