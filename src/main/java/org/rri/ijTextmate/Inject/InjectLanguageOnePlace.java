@@ -4,7 +4,6 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
 public class InjectLanguageOnePlace extends AbstractInjectLanguage {
