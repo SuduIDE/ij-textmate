@@ -2,13 +2,16 @@ package org.rri.ijTextmate.Storage.PersistentStorage;
 
 import com.google.gson.*;
 import com.intellij.openapi.util.TextRange;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Storage.Interfaces.ConverterElement;
 import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-public class PlaceInjection implements LanguageID {
+public class PlaceInjection implements LanguageID, ConverterElement {
+    private static final String PLACE_INJECTION = "placeInjection";
     public static String LANGUAGE_ID = "languageId";
     public static String START = "start";
     public static String END = "end";
@@ -41,6 +44,31 @@ public class PlaceInjection implements LanguageID {
     @Override
     public String getID() {
         return languageId;
+    }
+
+    @Override
+    public boolean fromElement(@NotNull Element placeElement) {
+        languageId = placeElement.getAttribute(LANGUAGE_ID).getValue();
+
+        int start = Integer.parseInt(placeElement.getAttribute(START).getValue());
+        int end = Integer.parseInt(placeElement.getAttribute(END).getValue());
+
+        if (start > end) {
+            return false;
+        }
+        textRange = new TextRange(start, end);
+        return true;
+    }
+
+    @Override
+    public Element toElement() {
+        Element placeJDOM = new Element(PLACE_INJECTION);
+
+        placeJDOM.setAttribute(LANGUAGE_ID, languageId);
+        placeJDOM.setAttribute(START, String.valueOf(textRange.getStartOffset()));
+        placeJDOM.setAttribute(END, String.valueOf(textRange.getEndOffset()));
+
+        return placeJDOM;
     }
 
     public static class PlaceInjectionAdapter implements JsonSerializer<PlaceInjection>, JsonDeserializer<PlaceInjection> {

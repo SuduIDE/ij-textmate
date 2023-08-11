@@ -2,6 +2,7 @@ package org.rri.ijTextmate;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
@@ -12,7 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class SetElementSerializationTest extends LightPlatformCodeInsightFixture4TestCase {
-    Map<String, SetElement> map = Map.of(
+    Map<String, SetElement> data = Map.of(
             "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
             "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10))),
             "file3", createSetElement(),
@@ -27,12 +28,14 @@ public class SetElementSerializationTest extends LightPlatformCodeInsightFixture
 
     @Test
     public void testSerialization() {
-        PersistentStorage.ConverterMapFileToSetElement converterMapFileToSetElement = new PersistentStorage.ConverterMapFileToSetElement();
-        String json = converterMapFileToSetElement.toString(map);
-        assertNotNull(json);
+        PersistentStorage.MapFileToSetElement map = new PersistentStorage.MapFileToSetElement(data);
+        Element element = map.toElement();
+        assertNotNull(element);
 
-        Map<String, SetElement> newMap = converterMapFileToSetElement.fromString(json);
-        assertEquals(answer, newMap);
+        PersistentStorage.MapFileToSetElement newMap = new PersistentStorage.MapFileToSetElement();
+        newMap.fromElement(element);
+
+        assertEquals(answer, newMap.getMap());
     }
 
     private @NotNull SetElement createSetElement(PlaceInjection... placeInjections) {

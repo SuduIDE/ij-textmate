@@ -3,6 +3,7 @@ package org.rri.ijTextmate;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -28,8 +29,8 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     @Test
     public void test0() {
         myFixture.configureByFile(JAVA_FILE);
-        PersistentStorage.MapFileToSetElement mapFileToSetElement = PersistentStorage.getInstance(getProject()).getState();
-        mapFileToSetElement.clear();
+        Element element = PersistentStorage.getInstance(getProject()).getState();
+        element.getChildren().clear();
     }
 
     @Test
