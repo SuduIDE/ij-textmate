@@ -5,11 +5,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.MultipleInjectionStrategy;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.LeafMultipleInjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.RootMultipleInjectionStrategy;
 
 import java.util.*;
 
@@ -39,16 +36,8 @@ public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
         }
 
         for (PsiLanguageInjectionHost hostAdd : hosts) {
-            if (!hostAdd.isValidHost()) return;
-            SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(hostAdd);
-
-            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, languageID, new MultipleInjectionStrategy());
-
-            String relativePath = InjectorHelper.getRelativePath(project, psiFile);
-            TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
-            mapPointerToLanguage.add(temporaryPlaceInjection);
-
-            putUserData(hostAdd, psiFile, temporaryPlaceInjection);
+            addInjectionPlace(hostAdd, languageID, psiFile, project, new LeafMultipleInjectionStrategy());
         }
+        addInjectionPlace(host, languageID, psiFile, project, new RootMultipleInjectionStrategy());
     }
 }

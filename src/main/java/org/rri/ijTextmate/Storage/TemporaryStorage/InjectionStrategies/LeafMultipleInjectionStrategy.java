@@ -11,17 +11,14 @@ import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
-public class SingleInjectionStrategy implements InjectionStrategy {
+public class LeafMultipleInjectionStrategy implements InjectionStrategy {
     @Override
     public String identifier() {
-        return "SingleInjectionStrategy";
+        return "LeafMultipleInjectionStrategy";
     }
 
     @Override
-    public void registrar(@NotNull MultiHostRegistrar registrar,
-                          @NotNull PsiLanguageInjectionHost host,
-                          @NotNull TextRange range,
-                          @NotNull TemporaryPlaceInjection languageID) {
+    public void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range, @NotNull TemporaryPlaceInjection languageID) {
         String fileExtension = TextMateHelper.getInstance(host.getProject()).getExtension(languageID.getID());
         registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
 

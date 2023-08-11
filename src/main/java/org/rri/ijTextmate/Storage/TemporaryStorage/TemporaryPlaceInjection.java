@@ -1,7 +1,10 @@
 package org.rri.ijTextmate.Storage.TemporaryStorage;
 
+import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.SmartPsiElementPointer;
+import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
@@ -39,8 +42,8 @@ public class TemporaryPlaceInjection implements LanguageID {
         return languageID;
     }
 
-    public void registrar() {
-        injectionStrategy.registrar();
+    public void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range) {
+        injectionStrategy.registrar(registrar, host, range, this);
     }
 
     public void delete() {

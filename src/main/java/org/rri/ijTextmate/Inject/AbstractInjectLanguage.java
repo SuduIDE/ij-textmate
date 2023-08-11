@@ -4,9 +4,15 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Constants;
+import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 public abstract class AbstractInjectLanguage {
     public abstract String getIdentifier();
@@ -23,4 +29,17 @@ public abstract class AbstractInjectLanguage {
     }
 
     protected abstract void addInjectionPlace(PsiLanguageInjectionHost host, @NotNull String languageID, PsiFile psiFile, Project project);
+
+    protected void addInjectionPlace(@NotNull PsiLanguageInjectionHost host, @NotNull String languageID, PsiFile psiFile, Project project, InjectionStrategy injectionStrategy) {
+        if (!host.isValidHost()) return;
+        SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
+
+        TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, languageID, injectionStrategy);
+
+        String relativePath = InjectorHelper.getRelativePath(project, psiFile);
+        TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+        mapPointerToLanguage.add(temporaryPlaceInjection);
+
+        putUserData(host, psiFile, temporaryPlaceInjection);
+    }
 }
