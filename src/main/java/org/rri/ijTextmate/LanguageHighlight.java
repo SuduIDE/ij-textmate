@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import org.jetbrains.annotations.Contract;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.textmate.TextMateLanguage;
@@ -32,12 +33,10 @@ public class LanguageHighlight implements MultiHostInjector {
             return;
         }
 
-        int start = 0;
-        int end = host.getTextLength() - 1;
         String text = host.getText();
-        while (text.charAt(start) == '"' && start < end) start++;
-        while (text.charAt(end) == '"' && end > start) end--;
-        int count = Math.min(start, host.getTextLength() - end);
+        int count = numberCharactersTrim(text);
+
+        if (count == -1) return;
 
         TextRange range = new TextRange(count, host.getTextLength() - count);
         String fileExtension = TextMateHelper.getInstance(context.getProject()).getExtension(languageID.getID());
@@ -91,5 +90,31 @@ public class LanguageHighlight implements MultiHostInjector {
         }
 
         return languageID;
+    }
+
+    @Contract(pure = true)
+    private int numberCharactersTrim(@NotNull String text) {
+        String escapeCharacters = """
+                `'"><
+                """;
+
+        int start = 0;
+        int end = text.length() - 1;
+
+        if (end == -1) return -1;
+
+        if (text.charAt(start) != text.charAt(end)) return 0;
+        int index = escapeCharacters.indexOf(text.charAt(start));
+
+        if (index == -1) return 0;
+
+        char escape = escapeCharacters.charAt(index);
+
+        while (text.charAt(start) == escape && text.charAt(end) == escape && start < end) {
+            start++;
+            end--;
+        }
+
+        return Math.min(start, text.length() - end);
     }
 }
