@@ -5,6 +5,7 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
@@ -37,7 +38,7 @@ public class LanguageHighlight implements MultiHostInjector {
         if (count == -1) return;
 
         TextRange range = new TextRange(count, host.getTextLength() - count);
-        languageID.registrar(registrar, host, range);
+        languageID.register(registrar, host, range);
     }
 
     @Override
@@ -63,6 +64,12 @@ public class LanguageHighlight implements MultiHostInjector {
                 return new TemporaryPlaceInjection(entry.getKey(), entry.getValue());
             }
         }
+
+        psiFile = PsiManager.getInstance(project).findFile(psiFile.getOriginalFile().getVirtualFile());
+        if (psiFile == null) return null;
+
+        host = PsiTreeUtil.getParentOfType(psiFile.findElementAt(host.getTextOffset()), PsiLanguageInjectionHost.class);
+        if (host != null) return host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
 
         return null;
     }
@@ -91,14 +98,5 @@ public class LanguageHighlight implements MultiHostInjector {
         }
 
         return Math.min(start, text.length() - end);
-    }
-
-    public TemporaryPlaceInjection findLanguageRoot(PsiElement element) {
-        if (element == null) return null;
-        PsiReference psiReference = InjectorHelper.getFirstReference(element.getParent());
-        if (psiReference == null) return null;
-        element = psiReference.resolve();
-        element = InjectorHelper.getHostFromElementRoot(element);
-        return (element == null) ? null : element.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
     }
 }

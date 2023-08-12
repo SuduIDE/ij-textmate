@@ -42,7 +42,7 @@ public class TemporaryPlaceInjection implements LanguageID {
         return languageID;
     }
 
-    public void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range) {
+    public void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range) {
         injectionStrategy.register(registrar, host, range, this);
     }
 
