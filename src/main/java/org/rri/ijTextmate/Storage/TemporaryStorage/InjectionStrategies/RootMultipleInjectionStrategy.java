@@ -2,34 +2,64 @@ package org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies;
 
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.*;
+import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.textmate.TextMateLanguage;
 import org.rri.ijTextmate.Constants;
-import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
+import java.util.Collection;
+
 public class RootMultipleInjectionStrategy implements InjectionStrategy {
+    private final InjectionStrategy single = new SingleInjectionStrategy();
+
     @Override
     public String identifier() {
         return "RootMultipleInjectionStrategy";
     }
 
     @Override
-    public void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range, @NotNull TemporaryPlaceInjection languageID) {
-        String fileExtension = TextMateHelper.getInstance(host.getProject()).getExtension(languageID.getID());
-        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
+    public void register(@NotNull MultiHostRegistrar registrar,
+                         @NotNull PsiLanguageInjectionHost host,
+                         @NotNull TextRange range,
+                         @NotNull TemporaryPlaceInjection languageID) {
+        single.register(registrar, host, range, languageID);
 
-        @SuppressWarnings("deprecation")
-        PsiFile psiFile = InjectedLanguageUtil.getCachedInjectedFileWithLanguage(host, TextMateLanguage.LANGUAGE);
-        if (psiFile == null) return;
-        psiFile.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
+        PsiElement psiElement = host.getParent();
+        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (psiElement == null) return;
+
+        Collection<PsiReference> references = ReferencesSearch.search(psiElement).findAll();
+
+        for (PsiReference reference : references) {
+            PsiLanguageInjectionHost hostAdd = PsiTreeUtil.getChildOfType(reference.getElement().getParent(), PsiLanguageInjectionHost.class);
+            if (hostAdd != null && hostAdd.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) == null) {
+                SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer = SmartPointerManager.createPointer(hostAdd);
+                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(hostPointer, languageID.languageID, new LeafMultipleInjectionStrategy(languageID));
+                hostAdd.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
+            }
+        }
     }
 
     @Override
-    public void delete() {
+    public void delete(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
+        single.delete(temporaryPlaceInjection);
 
+        PsiElement psiElement = temporaryPlaceInjection.hostPointer.getElement();
+        if (psiElement == null) return;
+
+        psiElement = psiElement.getParent();
+        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (psiElement == null) return;
+
+        Collection<PsiReference> references = ReferencesSearch.search(psiElement).findAll();
+
+        for (PsiReference reference : references) {
+            PsiLanguageInjectionHost hostAdd = PsiTreeUtil.getChildOfType(reference.getElement().getParent(), PsiLanguageInjectionHost.class);
+            if (hostAdd != null) hostAdd.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, null);
+        }
     }
 }

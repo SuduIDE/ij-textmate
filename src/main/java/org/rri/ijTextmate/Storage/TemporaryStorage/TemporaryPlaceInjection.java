@@ -43,13 +43,14 @@ public class TemporaryPlaceInjection implements LanguageID {
     }
 
     public void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range) {
-        injectionStrategy.registrar(registrar, host, range, this);
+        injectionStrategy.register(registrar, host, range, this);
     }
 
     public void delete() {
-        injectionStrategy.delete();
+        injectionStrategy.delete(this);
     }
 
+    @SuppressWarnings("unused")
     public String getStrategyIdentifier() {
         return injectionStrategy.identifier();
     }

@@ -35,7 +35,6 @@ public class CheckType extends AnAction {
         PsiElement psiElement = file.findElementAt(editor.getCaretModel().getOffset());
         assert psiElement != null;
         var query = ReferencesSearch.search(psiElement, GlobalSearchScope.allScope(project)).findAll();
-        System.out.println(query.size());
 
 //        new ArrayList<>(ReferencesSearch.search(psiElement.getParent().getParent().getChildren()[0]).findAll()).get(2).getElement().getParent().getChildren()[1].getOriginalElement() instanceof PsiLanguageInjectionHost
 

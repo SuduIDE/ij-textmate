@@ -17,14 +17,17 @@ public class TemporaryMapPointerToLanguage {
     public TemporaryMapPointerToLanguage() {
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public String add(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
         return synchronizedSupplier(() -> map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection.languageID));
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public String remove(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
         return synchronizedSupplier(() -> map.remove(temporaryPlaceInjection.hostPointer));
     }
 
+    @SuppressWarnings("unused")
     public String remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
         return synchronizedSupplier(() -> map.remove(psiElementPointer));
     }

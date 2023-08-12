@@ -54,10 +54,12 @@ public class SetElement extends AbstractSet<PlaceInjection> {
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean contains(PlaceInjection place) {
         return set.contains(place);
     }
 
+    @SuppressWarnings("unused")
     public boolean contains(final int offset) {
         synchronized (mutex) {
             TextRange textRange = new TextRange(offset, offset);
@@ -66,6 +68,7 @@ public class SetElement extends AbstractSet<PlaceInjection> {
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean remove(final int offset) {
         synchronized (mutex) {
             TextRange textRange = new TextRange(offset, offset);
@@ -74,6 +77,7 @@ public class SetElement extends AbstractSet<PlaceInjection> {
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean remove(@NotNull PlaceInjection place) {
         synchronized (mutex) {
             mapTextRange.remove(place.textRange);

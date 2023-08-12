@@ -39,18 +39,21 @@ public final class TemporaryStorage {
         return Collections.unmodifiableSet(map.entrySet());
     }
 
+    @SuppressWarnings("unused")
     public TemporaryMapPointerToLanguage put(String key, TemporaryMapPointerToLanguage value) {
         synchronized (mutex) {
             return map.put(key, value);
         }
     }
 
+    @SuppressWarnings("unused")
     public int size() {
         synchronized (mutex) {
             return map.size();
         }
     }
 
+    @SuppressWarnings("unused")
     public void clear() {
         synchronized (mutex) {
             map.clear();

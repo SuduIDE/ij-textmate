@@ -40,6 +40,7 @@ public class UnInjectLanguageAction extends AnAction {
         e.getPresentation().setEnabledAndVisible(canUnInjectLanguageToHost(project, editor, file, host));
     }
 
+    @SuppressWarnings("UnusedParameters")
     public boolean canUnInjectLanguageToHost(Project project, Editor editor, PsiFile file, PsiLanguageInjectionHost host) {
         return host != null && host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) != null;
     }

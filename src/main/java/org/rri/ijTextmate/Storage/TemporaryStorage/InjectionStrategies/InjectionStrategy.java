@@ -8,8 +8,7 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
 public interface InjectionStrategy {
     String identifier();
+    void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range, @NotNull TemporaryPlaceInjection languageID);
 
-    void registrar(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range, @NotNull TemporaryPlaceInjection languageID);
-
-    void delete();
+    void delete(@NotNull TemporaryPlaceInjection temporaryPlaceInjection);
 }
