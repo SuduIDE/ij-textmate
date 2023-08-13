@@ -5,6 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.RootMultipleInjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
 
 public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
     public static InjectLanguageMultiplePlace INSTANCE = new InjectLanguageMultiplePlace();
@@ -16,10 +17,13 @@ public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
     @Override
     protected void addInjectionPlace(@NotNull PsiLanguageInjectionHost host, @NotNull String languageID, PsiFile psiFile, Project project) {
         PsiElement psiElement = host.getParent();
-        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (!(psiElement instanceof PsiVariable)) {
+            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
+        }
 
         if (psiElement == null) {
-            addInjectionPlace(host, languageID, psiFile, project);
+            addInjectionPlace(host, languageID, psiFile, project, new SingleInjectionStrategy());
             return;
         }
 

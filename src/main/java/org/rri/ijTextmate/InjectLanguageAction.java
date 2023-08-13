@@ -74,7 +74,10 @@ public class InjectLanguageAction extends AnAction {
     private void chooseInjection(Project project, @NotNull Editor editor, @NotNull PsiFile file) {
         PsiElement psiElement = InjectorHelper.findInjectionHost(editor, file);
         if (psiElement != null) psiElement = psiElement.getParent();
-        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (!(psiElement instanceof PsiVariable)) {
+            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
+        }
 
         if (psiElement != null) {
             chooseInjectionStrategy(project, editor, file);

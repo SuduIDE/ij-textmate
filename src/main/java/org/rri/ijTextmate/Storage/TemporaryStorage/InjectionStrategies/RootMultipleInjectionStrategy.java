@@ -27,7 +27,10 @@ public class RootMultipleInjectionStrategy implements InjectionStrategy {
         single.register(registrar, host, range, languageID);
 
         PsiElement psiElement = host.getParent();
-        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (!(psiElement instanceof PsiVariable)) {
+            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
+        }
 
         if (psiElement == null) return;
 
@@ -51,7 +54,10 @@ public class RootMultipleInjectionStrategy implements InjectionStrategy {
         if (psiElement == null) return;
 
         psiElement = psiElement.getParent();
-        psiElement = PsiTreeUtil.getChildOfType(psiElement, PsiNamedElement.class);
+
+        if (!(psiElement instanceof PsiVariable)) {
+            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
+        }
 
         if (psiElement == null) return;
 

@@ -22,6 +22,8 @@ public class PlaceInjection implements LanguageID, ConverterElement {
 
     public PlaceInjection() {
         languageId = "";
+        textRange = TextRange.EMPTY_RANGE;
+        identifierStrategy = "";
     }
 
     public PlaceInjection(@NotNull String languageId, @NotNull TextRange textRange, @NotNull String identifierStrategy) {
