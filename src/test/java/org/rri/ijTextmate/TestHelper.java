@@ -45,9 +45,7 @@ public class TestHelper {
     }
 
     public static PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
-        host = InjectorHelper.resolveHost(host);
-        return host;
+        return InjectorHelper.findInjectionHost(editor, psiFile);
     }
 
     @SuppressWarnings("unused")

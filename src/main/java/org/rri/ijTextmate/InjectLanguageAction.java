@@ -46,12 +46,7 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (!canInjectLanguageToHost(project, editor, file, host)) {
-            e.getPresentation().setEnabledAndVisible(false);
-            return;
-        }
-        //TODO removed resolve
-        host = InjectorHelper.resolveHost(host);
+
         e.getPresentation().setEnabledAndVisible(canInjectLanguageToHost(project, editor, file, host));
     }
 

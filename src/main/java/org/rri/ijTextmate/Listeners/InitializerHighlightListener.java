@@ -36,7 +36,6 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         for (PlaceInjection placeInjection : persistentStorage.getSetElementAndClear(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.getCenter(), psiFile);
-            host = InjectorHelper.resolveHost(host);
 
             if (host != null && host.isValidHost()) {
                 SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);

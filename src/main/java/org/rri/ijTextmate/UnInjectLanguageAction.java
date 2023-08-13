@@ -36,7 +36,6 @@ public class UnInjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        host = InjectorHelper.resolveHost(host);
         e.getPresentation().setEnabledAndVisible(canUnInjectLanguageToHost(project, editor, file, host));
     }
 
@@ -53,8 +52,7 @@ public class UnInjectLanguageAction extends AnAction {
     public static void unInjectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
         if (host == null) return;
-        PsiLanguageInjectionHost resolvedHost = InjectorHelper.resolveHost(host);
-        TemporaryPlaceInjection placeInjection = resolvedHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+        TemporaryPlaceInjection placeInjection = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
         if (placeInjection == null) return;
         UnInjectLanguageMain.INSTANCE.unInject(host, placeInjection, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);

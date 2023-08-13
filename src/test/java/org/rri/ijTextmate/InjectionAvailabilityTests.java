@@ -47,9 +47,7 @@ public class InjectionAvailabilityTests extends LightPlatformCodeInsightFixture4
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
 
         InjectLanguageAction action = new InjectLanguageAction();
-        if (!action.canInjectLanguageToHost(project, editor, psiFile, host)) return false;
 
-        host = InjectorHelper.resolveHost(host);
         return action.canInjectLanguageToHost(project, editor, psiFile, host);
     }
 

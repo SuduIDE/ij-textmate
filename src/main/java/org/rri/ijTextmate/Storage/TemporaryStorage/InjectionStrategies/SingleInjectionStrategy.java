@@ -27,6 +27,7 @@ public class SingleInjectionStrategy implements InjectionStrategy {
                          @NotNull PsiLanguageInjectionHost host,
                          @NotNull TextRange range,
                          @NotNull TemporaryPlaceInjection languageID) {
+        host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
         String fileExtension = TextMateHelper.getInstance(host.getProject()).getExtension(languageID.getID());
         registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
 
