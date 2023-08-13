@@ -12,35 +12,35 @@ import java.util.function.Supplier;
 
 public class TemporaryMapPointerToLanguage {
     private final Object mutex = new Object();
-    private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map = new HashMap<>();
+    private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = new HashMap<>();
 
     public TemporaryMapPointerToLanguage() {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public String add(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
-        return synchronizedSupplier(() -> map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection.languageID));
+    public TemporaryPlaceInjection add(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
+        return synchronizedSupplier(() -> map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection));
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public String remove(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
+    public TemporaryPlaceInjection remove(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
         return synchronizedSupplier(() -> map.remove(temporaryPlaceInjection.hostPointer));
     }
 
     @SuppressWarnings("unused")
-    public String remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
+    public TemporaryPlaceInjection remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
         return synchronizedSupplier(() -> map.remove(psiElementPointer));
     }
 
-    public String get(SmartPsiElementPointer<PsiLanguageInjectionHost> key) {
+    public TemporaryPlaceInjection get(SmartPsiElementPointer<PsiLanguageInjectionHost> key) {
         return synchronizedSupplier(() -> map.get(key));
     }
 
-    public String get(PsiLanguageInjectionHost psiLanguageInjectionHost) {
-        return synchronizedSupplier(() ->  map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost)));
+    public TemporaryPlaceInjection get(PsiLanguageInjectionHost psiLanguageInjectionHost) {
+        return synchronizedSupplier(() -> map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost)));
     }
 
-    public Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> getMap() {
+    public Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> getMap() {
         return Collections.unmodifiableMap(map);
     }
 

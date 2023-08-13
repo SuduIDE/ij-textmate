@@ -10,6 +10,8 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategyFactory;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
@@ -38,8 +40,12 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
             if (host != null && host.isValidHost()) {
                 SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
-                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, placeInjection.languageId);
+
+                InjectionStrategy injectionStrategy = InjectionStrategyFactory.create(placeInjection.identifierStrategy);
+
+                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, placeInjection.languageId, injectionStrategy);
                 temporaryMapPointerToLanguage.add(temporaryPlaceInjection);
+
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }

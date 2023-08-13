@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
@@ -40,7 +41,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(100, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "sql"));
+        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
     }
 
     @Test
@@ -50,7 +51,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(156, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "php"));
+        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
     }
 
     @Test
@@ -60,7 +61,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(253, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "go"));
+        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
     }
 
     @Test
@@ -75,7 +76,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         assertEquals(3, mapPointerToLanguage.getMap().size());
     }
 
-    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map, int offset) {
+    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, int offset) {
         TextRange textRange = new TextRange(offset, offset);
         for (var key : map.keySet()) {
             PsiElement element = key.getElement();

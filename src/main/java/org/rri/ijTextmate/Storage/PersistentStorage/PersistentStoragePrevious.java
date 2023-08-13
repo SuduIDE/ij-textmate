@@ -14,6 +14,7 @@ import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.lang.reflect.Type;
@@ -43,10 +44,10 @@ public class PersistentStoragePrevious implements PersistentStateComponent<Persi
             setElement.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
-                String language = entryInner.getValue();
+                TemporaryPlaceInjection temporaryPlaceInjection = entryInner.getValue();
                 PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
                 if (psiElement == null || !psiElement.isValidHost()) continue;
-                setElement.add(new PlaceInjection(language, psiElement.getTextRange()));
+                setElement.add(new PlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
             }
         }
         return myMapToSetElement;

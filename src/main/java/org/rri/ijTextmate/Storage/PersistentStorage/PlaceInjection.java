@@ -12,19 +12,22 @@ import java.util.Objects;
 
 public class PlaceInjection implements LanguageID, ConverterElement {
     private static final String PLACE_INJECTION = "placeInjection";
+    private static final String IDENTIFIER_STRATEGY = "identifierStrategy";
     public static String LANGUAGE_ID = "languageId";
     public static String START = "start";
     public static String END = "end";
     public String languageId;
-    public TextRange textRange = TextRange.EMPTY_RANGE;
+    public TextRange textRange;
+    public String identifierStrategy;
 
     public PlaceInjection() {
         languageId = "";
     }
 
-    public PlaceInjection(String languageId, @NotNull TextRange textRange) {
+    public PlaceInjection(@NotNull String languageId, @NotNull TextRange textRange, @NotNull String identifierStrategy) {
         this.languageId = languageId;
         this.textRange = textRange;
+        this.identifierStrategy = identifierStrategy;
     }
 
     @Override
@@ -48,8 +51,6 @@ public class PlaceInjection implements LanguageID, ConverterElement {
 
     @Override
     public boolean fromElement(@NotNull Element placeElement) {
-        languageId = placeElement.getAttribute(LANGUAGE_ID).getValue();
-
         int start = Integer.parseInt(placeElement.getAttribute(START).getValue());
         int end = Integer.parseInt(placeElement.getAttribute(END).getValue());
 
@@ -57,6 +58,10 @@ public class PlaceInjection implements LanguageID, ConverterElement {
             return false;
         }
         textRange = new TextRange(start, end);
+
+        languageId = placeElement.getAttribute(LANGUAGE_ID).getValue();
+        identifierStrategy = placeElement.getAttribute(IDENTIFIER_STRATEGY).getValue();
+
         return true;
     }
 
@@ -65,6 +70,7 @@ public class PlaceInjection implements LanguageID, ConverterElement {
         Element placeJDOM = new Element(PLACE_INJECTION);
 
         placeJDOM.setAttribute(LANGUAGE_ID, languageId);
+        placeJDOM.setAttribute(IDENTIFIER_STRATEGY, identifierStrategy);
         placeJDOM.setAttribute(START, String.valueOf(textRange.getStartOffset()));
         placeJDOM.setAttribute(END, String.valueOf(textRange.getEndOffset()));
 
@@ -88,12 +94,17 @@ public class PlaceInjection implements LanguageID, ConverterElement {
             if (!jsonElement.isJsonObject()) return null;
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            if (!jsonObject.has(LANGUAGE_ID) || !jsonObject.has(START) || !jsonObject.has(END)) return null;
+            if (checkJsonObject(jsonObject)) return null;
 
             String languageID = jsonObject.get(LANGUAGE_ID).getAsString();
+            String identifierStrategy = jsonObject.get(IDENTIFIER_STRATEGY).getAsString();
             TextRange textRange = createTextRangeFromJsonObject(jsonObject);
 
-            return new PlaceInjection(languageID, textRange);
+            return new PlaceInjection(languageID, textRange, identifierStrategy);
+        }
+
+        private boolean checkJsonObject(@NotNull JsonObject jsonObject) {
+            return !jsonObject.has(LANGUAGE_ID) || !jsonObject.has(START) || !jsonObject.has(END) || !jsonObject.has(IDENTIFIER_STRATEGY);
         }
 
         private @NotNull TextRange createTextRangeFromJsonObject(@NotNull JsonObject jsonObject) {

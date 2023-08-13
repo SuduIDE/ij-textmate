@@ -7,21 +7,15 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
-import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
 
 import java.util.Objects;
 
 public class TemporaryPlaceInjection implements LanguageID {
-    public SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer;
+    public final SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer;
     public final String languageID;
-    private InjectionStrategy injectionStrategy = new SingleInjectionStrategy();
+    private final InjectionStrategy injectionStrategy;
 
-    public TemporaryPlaceInjection(SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer, final String languageID) {
-        this.hostPointer = hostPointer;
-        this.languageID = languageID;
-    }
-
-    public TemporaryPlaceInjection(SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer, final String languageID, InjectionStrategy injectionStrategy) {
+    public TemporaryPlaceInjection(@NotNull SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer, @NotNull String languageID, @NotNull InjectionStrategy injectionStrategy) {
         this.hostPointer = hostPointer;
         this.languageID = languageID;
         this.injectionStrategy = injectionStrategy;

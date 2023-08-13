@@ -13,17 +13,20 @@ import java.util.Collections;
 import java.util.Map;
 
 public class SetElementSerializationTest extends LightPlatformCodeInsightFixture4TestCase {
+    private static String IDENTIFIER_STRATEGY = "";
+
     Map<String, SetElement> data = Map.of(
-            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
-            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10))),
+            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10), IDENTIFIER_STRATEGY)),
+            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10), IDENTIFIER_STRATEGY),
+                    new PlaceInjection("go", new TextRange(1, 10), IDENTIFIER_STRATEGY)),
             "file3", createSetElement(),
             "file4", createSetElement(),
             "file5", createSetElement(new PlaceInjection())
     );
 
     Map<String, SetElement> answer = Map.of(
-            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10))),
-            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10)), new PlaceInjection("go", new TextRange(1, 10)))
+            "file1", createSetElement(new PlaceInjection("php", new TextRange(1, 10), IDENTIFIER_STRATEGY)),
+            "file2", createSetElement(new PlaceInjection("cpp", new TextRange(1, 10), IDENTIFIER_STRATEGY), new PlaceInjection("go", new TextRange(1, 10), IDENTIFIER_STRATEGY))
     );
 
     @Test

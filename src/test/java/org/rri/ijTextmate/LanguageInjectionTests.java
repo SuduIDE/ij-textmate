@@ -8,6 +8,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestC
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.util.Map;
@@ -102,7 +103,7 @@ public class LanguageInjectionTests extends LightPlatformCodeInsightFixture4Test
         return resultFirst && intersectsWithElementFromMap(map, psiElement);
     }
 
-    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map, @NotNull PsiElement psiElement) {
+    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, @NotNull PsiElement psiElement) {
         TextRange textRange = psiElement.getTextRange();
         for (var key : map.keySet()) {
             PsiElement element = key.getElement();

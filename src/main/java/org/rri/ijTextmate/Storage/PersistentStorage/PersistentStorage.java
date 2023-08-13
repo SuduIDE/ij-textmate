@@ -9,6 +9,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.ConverterElement;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
 import java.util.*;
@@ -35,10 +36,10 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
             setElement.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
-                String language = entryInner.getValue();
+                TemporaryPlaceInjection temporaryPlaceInjection = entryInner.getValue();
                 PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
                 if (psiElement == null || !psiElement.isValidHost()) continue;
-                setElement.add(new PlaceInjection(language, psiElement.getTextRange()));
+                setElement.add(new PlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
             }
         }
         return myMapToSetElement.toElement();

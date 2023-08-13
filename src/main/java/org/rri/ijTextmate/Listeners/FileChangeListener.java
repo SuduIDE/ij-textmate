@@ -47,15 +47,13 @@ public class FileChangeListener implements BulkFileListener {
     }
 
     void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToLanguage mapPointerToLanguage) {
-        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> entry : mapPointerToLanguage.getMap().entrySet()) {
+        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> entry : mapPointerToLanguage.getMap().entrySet()) {
             SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
 
             PsiElement psiElement = smartPsiElementPointer.getElement();
             if (psiElement == null) continue;
 
-            String language = entry.getValue();
-            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(smartPsiElementPointer, language);
-            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
+            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, entry.getValue());
         }
     }
 }
