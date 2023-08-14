@@ -10,6 +10,7 @@ import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
 import java.util.Collection;
+import java.util.List;
 
 public class RootMultipleInjectionStrategy implements InjectionStrategy {
     private final InjectionStrategy single = new SingleInjectionStrategy();
@@ -22,9 +23,9 @@ public class RootMultipleInjectionStrategy implements InjectionStrategy {
     @Override
     public void register(@NotNull MultiHostRegistrar registrar,
                          @NotNull PsiLanguageInjectionHost host,
-                         @NotNull TextRange range,
+                         @NotNull List<TextRange> ranges,
                          @NotNull TemporaryPlaceInjection languageID) {
-        single.register(registrar, host, range, languageID);
+        single.register(registrar, host, ranges, languageID);
 
 //        PsiElement psiElement = host.getParent();
 //

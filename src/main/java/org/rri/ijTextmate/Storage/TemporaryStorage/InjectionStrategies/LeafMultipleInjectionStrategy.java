@@ -6,6 +6,8 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
+import java.util.List;
+
 public class LeafMultipleInjectionStrategy implements InjectionStrategy {
     private final InjectionStrategy single = new SingleInjectionStrategy();
     private final TemporaryPlaceInjection temporaryPlaceInjectionRoot;
@@ -20,8 +22,8 @@ public class LeafMultipleInjectionStrategy implements InjectionStrategy {
     }
 
     @Override
-    public void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range, @NotNull TemporaryPlaceInjection languageID) {
-        single.register(registrar, host, range, languageID);
+    public void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull List<TextRange> ranges, @NotNull TemporaryPlaceInjection languageID) {
+        single.register(registrar, host, ranges, languageID);
     }
 
     @Override

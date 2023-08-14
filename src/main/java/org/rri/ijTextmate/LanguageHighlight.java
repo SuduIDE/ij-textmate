@@ -5,11 +5,7 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Contract;
+import com.intellij.psi.util.*;
 import org.jetbrains.annotations.Nullable;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +14,7 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.LeafMulti
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LanguageHighlight implements MultiHostInjector {
     @Override
@@ -37,12 +32,8 @@ public class LanguageHighlight implements MultiHostInjector {
                 return;
             }
 
-            int count = numberCharactersTrim(host.getText());
-
-            if (count == -1) return;
-
-            TextRange range = new TextRange(count, host.getTextLength() - count);
-            languageID.register(registrar, host, range);
+            List<TextRange> ranges = calculateRanges(host);
+            languageID.register(registrar, host, ranges);
         } else {
             TemporaryPlaceInjection temporaryPlaceInjection = CachedValuesManager.getCachedValue(host, Constants.MY_CACHED_TEMPORARY_INJECTED_LANGUAGE, new CachedValueProvider<>() {
                 @Override
@@ -50,7 +41,7 @@ public class LanguageHighlight implements MultiHostInjector {
                     PsiElement element = host.getParent();
                     PsiReference reference = null;
                     for (PsiElement child : element.getChildren()) {
-                        if (child instanceof PsiReference newReference){
+                        if (child instanceof PsiReference newReference) {
                             reference = newReference;
                             break;
                         }
@@ -64,7 +55,8 @@ public class LanguageHighlight implements MultiHostInjector {
                 }
             });
 
-            if (temporaryPlaceInjection == null || !temporaryPlaceInjection.getStrategyIdentifier().equals("RootMultipleInjectionStrategy")) return;
+            if (temporaryPlaceInjection == null || !temporaryPlaceInjection.getStrategyIdentifier().equals("RootMultipleInjectionStrategy"))
+                return;
 
             SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.createPointer(host);
             String language = temporaryPlaceInjection.languageID;
@@ -74,13 +66,8 @@ public class LanguageHighlight implements MultiHostInjector {
 
             host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, newTempPlaceInjection);
 
-            int count = numberCharactersTrim(host.getText());
-
-            if (count == -1) return;
-
-            TextRange range = new TextRange(count, host.getTextLength() - count);
-
-            newTempPlaceInjection.register(registrar, host, range);
+            List<TextRange> ranges = calculateRanges(host);
+            newTempPlaceInjection.register(registrar, host, ranges);
         }
     }
 
@@ -117,29 +104,42 @@ public class LanguageHighlight implements MultiHostInjector {
         return null;
     }
 
-    @Contract(pure = true)
-    private int numberCharactersTrim(@NotNull String text) {
-        String escapeCharacters = """
-                `'"><
-                """;
+    private static @NotNull List<TextRange> calculateRanges(PsiLanguageInjectionHost host) {
+        TextRange textRange = ElementManipulators.getValueTextRange(host);
+        String text = host.getText();
+        int indent = calculateIndent(text.substring(textRange.getStartOffset(), textRange.getEndOffset()));
 
-        int start = 0;
-        int end = text.length() - 1;
+        if (indent == 0) return Collections.singletonList(textRange);
 
-        if (end == -1) return -1;
+        int startOffset = textRange.getStartOffset() + indent;
+        int endOffset = text.indexOf('\n', startOffset);
+        List<TextRange> list = new ArrayList<>();
 
-        if (text.charAt(start) != text.charAt(end)) return 0;
-        int index = escapeCharacters.indexOf(text.charAt(start));
-
-        if (index == -1) return 0;
-
-        char escape = escapeCharacters.charAt(index);
-
-        while (text.charAt(start) == escape && text.charAt(end) == escape && start < end) {
-            start++;
-            end--;
+        while (endOffset > 0) {
+            endOffset++;
+            list.add(new TextRange(startOffset, endOffset));
+            startOffset = endOffset + indent;
+            endOffset = text.indexOf('\n', startOffset);
         }
 
-        return Math.min(start, text.length() - end);
+        endOffset = textRange.getEndOffset();
+
+        if (startOffset < endOffset) list.add(new TextRange(startOffset, endOffset));
+
+        return list;
+    }
+
+    private static int calculateIndent(@NotNull String text) {
+        if (!text.contains("\n")) return 0;
+
+        String[] strings = text.split("\n");
+        int indent = Integer.MAX_VALUE;
+
+        for (String str : strings) {
+            int curIndent = 0, i = 0;
+            while (i < str.length() && str.charAt(i++) == ' ') curIndent++;
+            indent = Integer.min(curIndent, indent);
+        }
+        return indent;
     }
 }

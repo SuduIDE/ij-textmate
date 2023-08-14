@@ -16,6 +16,8 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
+import java.util.List;
+
 public class SingleInjectionStrategy implements InjectionStrategy {
     @Override
     public String identifier() {
@@ -25,11 +27,17 @@ public class SingleInjectionStrategy implements InjectionStrategy {
     @Override
     public void register(@NotNull MultiHostRegistrar registrar,
                          @NotNull PsiLanguageInjectionHost host,
-                         @NotNull TextRange range,
+                         @NotNull List<TextRange> ranges,
                          @NotNull TemporaryPlaceInjection languageID) {
         host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
         String fileExtension = TextMateHelper.getInstance(host.getProject()).getExtension(languageID.getID());
-        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
+        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension);
+
+        for (TextRange range : ranges) {
+            registrar.addPlace(null, null, host, range);
+        }
+
+        registrar.doneInjecting();
 
         @SuppressWarnings("deprecation")
         PsiFile psiFile = InjectedLanguageUtil.getCachedInjectedFileWithLanguage(host, TextMateLanguage.LANGUAGE);

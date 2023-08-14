@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
 
+import java.util.List;
 import java.util.Objects;
 
 public class TemporaryPlaceInjection implements LanguageID {
@@ -36,8 +37,8 @@ public class TemporaryPlaceInjection implements LanguageID {
         return languageID;
     }
 
-    public void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull TextRange range) {
-        injectionStrategy.register(registrar, host, range, this);
+    public void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull List<TextRange> ranges) {
+        injectionStrategy.register(registrar, host, ranges, this);
     }
 
     public void delete() {
