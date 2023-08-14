@@ -9,7 +9,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.Processor;
@@ -70,7 +69,7 @@ public class InjectLanguageAction extends AnAction {
         PsiElement psiElement = InjectorHelper.findInjectionHost(editor, file);
         if (psiElement != null) psiElement = psiElement.getParent();
 
-        if (psiElement instanceof PsiLocalVariable) {
+        if (psiElement instanceof PsiNameIdentifierOwner && file.getFileType().getName().toLowerCase().contains("java")) {
             chooseInjectionStrategy(project, editor, file);
         } else {
             chooseLanguageForInjection(project, editor, file, InjectLanguageOnePlace.INSTANCE);

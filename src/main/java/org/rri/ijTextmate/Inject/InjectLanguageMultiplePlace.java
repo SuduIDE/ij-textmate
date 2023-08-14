@@ -18,8 +18,8 @@ public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
     protected void addInjectionPlace(@NotNull PsiLanguageInjectionHost host, @NotNull String languageID, PsiFile psiFile, Project project) {
         PsiElement psiElement = host.getParent();
 
-        if (!(psiElement instanceof PsiVariable)) {
-            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
+        if (!(psiElement instanceof PsiNamedElement)) {
+            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class);
         }
 
         if (psiElement == null) {

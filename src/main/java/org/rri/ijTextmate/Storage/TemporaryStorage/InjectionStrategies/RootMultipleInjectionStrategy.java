@@ -55,8 +55,8 @@ public class RootMultipleInjectionStrategy implements InjectionStrategy {
 
         psiElement = psiElement.getParent();
 
-        if (!(psiElement instanceof PsiLocalVariable)) {
-            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiLocalVariable.class);
+        if (!(psiElement instanceof PsiNamedElement)) {
+            psiElement = PsiTreeUtil.findChildOfAnyType(psiElement, PsiNamedElement.class);
         }
 
         if (psiElement == null) return;

@@ -48,13 +48,15 @@ public class LanguageHighlight implements MultiHostInjector {
                 @Override
                 public @Nullable Result<TemporaryPlaceInjection> compute() {
                     PsiElement element = host.getParent();
-                    PsiElement identifier = PsiTreeUtil.findChildOfType(element, PsiIdentifier.class);
                     PsiReference reference = null;
-                    while (identifier != element && identifier != null && reference == null) {
-                        reference = identifier.getReference();
-                        identifier = identifier.getParent();
+                    for (PsiElement child : element.getChildren()) {
+                        if (child instanceof PsiReference newReference){
+                            reference = newReference;
+                            break;
+                        }
                     }
                     if (reference == null) return null;
+
                     element = reference.resolve();
                     PsiLanguageInjectionHost rootHost = PsiTreeUtil.findChildOfType(element, PsiLanguageInjectionHost.class);
                     if (rootHost == null) return null;
@@ -62,7 +64,7 @@ public class LanguageHighlight implements MultiHostInjector {
                 }
             });
 
-            if (temporaryPlaceInjection == null) return;
+            if (temporaryPlaceInjection == null || !temporaryPlaceInjection.getStrategyIdentifier().equals("RootMultipleInjectionStrategy")) return;
 
             SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.createPointer(host);
             String language = temporaryPlaceInjection.languageID;
