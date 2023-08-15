@@ -3,6 +3,8 @@ package org.rri.ijTextmate;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
@@ -11,6 +13,7 @@ import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.LeafMultipleInjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -23,11 +26,11 @@ public class LanguageHighlight implements MultiHostInjector {
 
         TemporaryPlaceInjection languageID = getTemporaryPlaceInjection(host);
         if (languageID != null) {
-
             PsiElement psiElement = languageID.hostPointer.getElement();
+
             if (psiElement == null) return;
 
-            if (!psiElement.getTextRange().intersects(host.getTextRange())) {
+            if (!host.getTextRange().intersects(psiElement.getTextRange())) {
                 psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
                 return;
             }
@@ -84,15 +87,41 @@ public class LanguageHighlight implements MultiHostInjector {
         Project project = host.getProject();
         PsiFile psiFile = host.getContainingFile();
 
-        Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = TemporaryStorage.getInstance(project)
-                .get(InjectorHelper.getRelativePath(project, psiFile)).getMap();
+        TemporaryMapPointerToLanguage storage = TemporaryStorage.getInstance(project).get(InjectorHelper.getRelativePath(project, psiFile));
+        Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = storage.getMap();
+        List<Pair<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection>> newEntrances = new ArrayList<>();
 
         PsiElement element;
         for (var entry : map.entrySet()) {
-            element = entry.getKey().getElement();
-            if (element != null && element.getTextRange().intersects(host.getTextRange())) {
-                return entry.getValue();
+            var key = entry.getKey();
+            var value = entry.getValue();
+            element = key.getElement();
+
+            if (element != null) {
+                if (element.getTextRange().intersects(host.getTextRange())) return value;
+                continue;
             }
+
+            Segment segment = key.getRange();
+            if (segment == null) continue;
+            if (host.getTextRange().intersects(segment)) {
+                newEntrances.add(Pair.create(key, value));
+            }
+        }
+
+        String language = null;
+        InjectionStrategy strategy = null;
+        for (var pair : newEntrances) {
+            language = pair.second.getID();
+            strategy = pair.second.getInjectionStrategy();
+            storage.remove(pair.first);
+        }
+
+        if (language != null && strategy != null) {
+            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(SmartPointerManager.createPointer(host), language, strategy);
+            storage.add(temporaryPlaceInjection);
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
+            return temporaryPlaceInjection;
         }
 
         psiFile = PsiManager.getInstance(project).findFile(psiFile.getOriginalFile().getVirtualFile());

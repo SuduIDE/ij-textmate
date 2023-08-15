@@ -69,7 +69,7 @@ public class InjectLanguageAction extends AnAction {
         PsiElement psiElement = InjectorHelper.findInjectionHost(editor, file);
         if (psiElement != null) psiElement = psiElement.getParent();
 
-        if (psiElement instanceof PsiNameIdentifierOwner && file.getFileType().getName().toLowerCase().contains("java")) {
+        if (psiElement instanceof PsiNameIdentifierOwner && file.getFileType().getName().equalsIgnoreCase("java")) {
             chooseInjectionStrategy(project, editor, file);
         } else {
             chooseLanguageForInjection(project, editor, file, InjectLanguageOnePlace.INSTANCE);

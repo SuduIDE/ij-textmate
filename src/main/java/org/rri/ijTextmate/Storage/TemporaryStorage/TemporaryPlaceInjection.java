@@ -45,8 +45,11 @@ public class TemporaryPlaceInjection implements LanguageID {
         injectionStrategy.delete(this);
     }
 
-    @SuppressWarnings("unused")
     public String getStrategyIdentifier() {
         return injectionStrategy.identifier();
+    }
+
+    public InjectionStrategy getInjectionStrategy() {
+        return injectionStrategy;
     }
 }
