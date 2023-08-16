@@ -8,7 +8,7 @@ import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 
 import java.util.Objects;
 
-public class PlaceInjection implements LanguageID, ConverterElement {
+public class PersistentPlaceInjection implements LanguageID, ConverterElement {
     private static final String PLACE_INJECTION = "placeInjection";
     private static final String IDENTIFIER_STRATEGY = "identifierStrategy";
     public static String LANGUAGE_ID = "languageId";
@@ -18,13 +18,13 @@ public class PlaceInjection implements LanguageID, ConverterElement {
     public TextRange textRange;
     public String identifierStrategy;
 
-    public PlaceInjection() {
+    public PersistentPlaceInjection() {
         languageId = "";
         textRange = TextRange.EMPTY_RANGE;
         identifierStrategy = "";
     }
 
-    public PlaceInjection(@NotNull String languageId, @NotNull TextRange textRange, @NotNull String identifierStrategy) {
+    public PersistentPlaceInjection(@NotNull String languageId, @NotNull TextRange textRange, @NotNull String identifierStrategy) {
         this.languageId = languageId;
         this.textRange = textRange;
         this.identifierStrategy = identifierStrategy;
@@ -32,7 +32,7 @@ public class PlaceInjection implements LanguageID, ConverterElement {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof PlaceInjection place && languageId.equals(place.languageId);
+        return obj instanceof PersistentPlaceInjection place && languageId.equals(place.languageId);
     }
 
     @Override

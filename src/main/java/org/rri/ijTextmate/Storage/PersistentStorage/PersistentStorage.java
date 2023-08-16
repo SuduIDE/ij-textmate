@@ -23,23 +23,23 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
         this.project = project;
     }
 
-    public SetElement getSetElementAndClear(String relativePath) {
-        SetElement setElement = myMapToSetElement.get(relativePath);
-        myMapToSetElement.put(relativePath, new SetElement());
-        return setElement;
+    public PersistentSetElement getSetElementAndClear(String relativePath) {
+        PersistentSetElement persistentSetElement = myMapToSetElement.get(relativePath);
+        myMapToSetElement.put(relativePath, new PersistentSetElement());
+        return persistentSetElement;
     }
 
     @Override
     public @NotNull Element getState() {
         for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()) {
-            SetElement setElement = myMapToSetElement.get(entry.getKey());
-            setElement.clear();
+            PersistentSetElement persistentSetElement = myMapToSetElement.get(entry.getKey());
+            persistentSetElement.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
                 TemporaryPlaceInjection temporaryPlaceInjection = entryInner.getValue();
                 PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
                 if (psiElement == null || !psiElement.isValidHost()) continue;
-                setElement.add(new PlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
+                persistentSetElement.add(new PersistentPlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
             }
         }
         return myMapToSetElement.toElement();
@@ -60,28 +60,28 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
         private static final String FILE = "file";
         private final Object mutex = new Object();
 
-        private Map<String, SetElement> map = new HashMap<>();
+        private Map<String, PersistentSetElement> map = new HashMap<>();
 
         public MapFileToSetElement() {
         }
 
-        public MapFileToSetElement(Map<String, SetElement> map) {
+        public MapFileToSetElement(Map<String, PersistentSetElement> map) {
             this.map = map;
         }
 
-        public SetElement get(String key) {
+        public PersistentSetElement get(String key) {
             synchronized (mutex) {
-                SetElement setElement = map.get(key);
-                if (setElement == null) {
-                    setElement = new SetElement();
-                    map.put(key, setElement);
+                PersistentSetElement persistentSetElement = map.get(key);
+                if (persistentSetElement == null) {
+                    persistentSetElement = new PersistentSetElement();
+                    map.put(key, persistentSetElement);
                 }
-                return setElement;
+                return persistentSetElement;
             }
         }
 
         @SuppressWarnings("UnusedReturnValue")
-        public SetElement put(String key, SetElement value) {
+        public PersistentSetElement put(String key, PersistentSetElement value) {
             synchronized (mutex) {
                 return map.put(key, value);
             }
@@ -104,23 +104,23 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
         public boolean fromElement(final @NotNull Element root) {
             map.clear();
             for (Element element : root.getChildren()) {
-                SetElement setElement = new SetElement();
+                PersistentSetElement persistentSetElement = new PersistentSetElement();
                 for (Element placeJDOM : element.getChildren()) {
-                    PlaceInjection placeInjection = new PlaceInjection();
-                    if (placeInjection.fromElement(placeJDOM)) setElement.add(placeInjection);
+                    PersistentPlaceInjection persistentPlaceInjection = new PersistentPlaceInjection();
+                    if (persistentPlaceInjection.fromElement(placeJDOM)) persistentSetElement.add(persistentPlaceInjection);
                 }
-                map.put(element.getAttribute(PATH).getValue(), setElement);
+                map.put(element.getAttribute(PATH).getValue(), persistentSetElement);
             }
             return true;
         }
 
         public Element toElement() {
             Element root = new Element(NAME);
-            for (Map.Entry<String, SetElement> entry : map.entrySet()) {
+            for (Map.Entry<String, PersistentSetElement> entry : map.entrySet()) {
                 if (entry.getValue().isEmpty()) continue;
                 Element element = new Element(FILE).setAttribute(PATH, entry.getKey());
 
-                for (PlaceInjection place : entry.getValue()) {
+                for (PersistentPlaceInjection place : entry.getValue()) {
                     if (place.languageId.isEmpty()) continue;
                     element.addContent(place.toElement());
                 }
@@ -130,7 +130,7 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
             return root;
         }
 
-        public Map<String, SetElement> getMap() {
+        public Map<String, PersistentSetElement> getMap() {
             return Collections.unmodifiableMap(map);
         }
     }

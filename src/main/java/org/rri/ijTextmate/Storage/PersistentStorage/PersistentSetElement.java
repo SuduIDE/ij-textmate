@@ -1,29 +1,27 @@
 package org.rri.ijTextmate.Storage.PersistentStorage;
 
-import com.google.gson.*;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
-public class SetElement extends AbstractSet<PlaceInjection> {
+public class PersistentSetElement extends AbstractSet<PersistentPlaceInjection> {
     private final Object mutex = new Object();
 
-    private final Set<PlaceInjection> set = new HashSet<>();
+    private final Set<PersistentPlaceInjection> set = new HashSet<>();
     public static final Comparator<TextRange> COMPARATOR = (rangeLeft, rangeRight) -> {
         if (rangeLeft.intersects(rangeRight)) return 0;
         return rangeLeft.getStartOffset() - rangeRight.getStartOffset();
     };
-    Map<TextRange, PlaceInjection> mapTextRange = new TreeMap<>(COMPARATOR);
+    Map<TextRange, PersistentPlaceInjection> mapTextRange = new TreeMap<>(COMPARATOR);
 
-    public SetElement() {
+    public PersistentSetElement() {
     }
 
     @Override
-    public Iterator<PlaceInjection> iterator() {
+    public Iterator<PersistentPlaceInjection> iterator() {
         return new Iterator<>() {
-            private final Iterator<PlaceInjection> iterator = set.iterator();
+            private final Iterator<PersistentPlaceInjection> iterator = set.iterator();
 
             @Override
             public boolean hasNext() {
@@ -31,7 +29,7 @@ public class SetElement extends AbstractSet<PlaceInjection> {
             }
 
             @Override
-            public PlaceInjection next() {
+            public PersistentPlaceInjection next() {
                 return iterator.next();
             }
         };
@@ -45,16 +43,16 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     }
 
     @Override
-    public boolean add(PlaceInjection place) {
+    public boolean add(PersistentPlaceInjection place) {
         synchronized (mutex) {
-            PlaceInjection oldPlace = mapTextRange.put(place.textRange, place);
+            PersistentPlaceInjection oldPlace = mapTextRange.put(place.textRange, place);
             if (oldPlace != null) set.remove(oldPlace);
             return set.add(place);
         }
     }
 
     @SuppressWarnings("unused")
-    public boolean contains(PlaceInjection place) {
+    public boolean contains(PersistentPlaceInjection place) {
         return set.contains(place);
     }
 
@@ -62,8 +60,8 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     public boolean contains(final int offset) {
         synchronized (mutex) {
             TextRange textRange = new TextRange(offset, offset);
-            PlaceInjection placeInjection = mapTextRange.get(textRange);
-            return set.contains(placeInjection);
+            PersistentPlaceInjection persistentPlaceInjection = mapTextRange.get(textRange);
+            return set.contains(persistentPlaceInjection);
         }
     }
 
@@ -71,13 +69,13 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     public boolean remove(final int offset) {
         synchronized (mutex) {
             TextRange textRange = new TextRange(offset, offset);
-            PlaceInjection placeInjection = mapTextRange.remove(textRange);
-            return set.remove(placeInjection);
+            PersistentPlaceInjection persistentPlaceInjection = mapTextRange.remove(textRange);
+            return set.remove(persistentPlaceInjection);
         }
     }
 
     @SuppressWarnings("unused")
-    public boolean remove(@NotNull PlaceInjection place) {
+    public boolean remove(@NotNull PersistentPlaceInjection place) {
         synchronized (mutex) {
             mapTextRange.remove(place.textRange);
             return set.remove(place);

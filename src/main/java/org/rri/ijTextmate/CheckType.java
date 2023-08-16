@@ -5,21 +5,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 /*
  * This action is for tests only.
