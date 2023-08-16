@@ -42,6 +42,8 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(100, psiFile)));
         mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
@@ -52,6 +54,8 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(156, psiFile)));
         mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
@@ -62,6 +66,8 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(253, psiFile)));
         mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
