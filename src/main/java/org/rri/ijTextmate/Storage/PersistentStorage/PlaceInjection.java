@@ -78,41 +78,4 @@ public class PlaceInjection implements LanguageID, ConverterElement {
 
         return placeJDOM;
     }
-
-    public static class PlaceInjectionAdapter implements JsonSerializer<PlaceInjection>, JsonDeserializer<PlaceInjection> {
-
-        @Override
-        public JsonElement serialize(@NotNull PlaceInjection placeInjection, Type type, JsonSerializationContext jsonSerializationContext) {
-            if (Objects.equals(placeInjection.languageId, "")) return null;
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(LANGUAGE_ID, placeInjection.languageId);
-            jsonObject.addProperty(START, placeInjection.textRange.getStartOffset());
-            jsonObject.addProperty(END, placeInjection.textRange.getEndOffset());
-            return jsonObject;
-        }
-
-        @Override
-        public PlaceInjection deserialize(@NotNull JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            if (!jsonElement.isJsonObject()) return null;
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            if (checkJsonObject(jsonObject)) return null;
-
-            String languageID = jsonObject.get(LANGUAGE_ID).getAsString();
-            String identifierStrategy = jsonObject.get(IDENTIFIER_STRATEGY).getAsString();
-            TextRange textRange = createTextRangeFromJsonObject(jsonObject);
-
-            return new PlaceInjection(languageID, textRange, identifierStrategy);
-        }
-
-        private boolean checkJsonObject(@NotNull JsonObject jsonObject) {
-            return !jsonObject.has(LANGUAGE_ID) || !jsonObject.has(START) || !jsonObject.has(END) || !jsonObject.has(IDENTIFIER_STRATEGY);
-        }
-
-        private @NotNull TextRange createTextRangeFromJsonObject(@NotNull JsonObject jsonObject) {
-            int start = jsonObject.get(START).getAsInt();
-            int end = jsonObject.get(END).getAsInt();
-            return new TextRange(start, end);
-        }
-    }
 }

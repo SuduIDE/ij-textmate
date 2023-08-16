@@ -17,7 +17,6 @@ public class SetElement extends AbstractSet<PlaceInjection> {
     };
     Map<TextRange, PlaceInjection> mapTextRange = new TreeMap<>(COMPARATOR);
 
-
     public SetElement() {
     }
 

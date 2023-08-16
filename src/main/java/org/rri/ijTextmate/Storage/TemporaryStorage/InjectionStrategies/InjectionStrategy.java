@@ -11,6 +11,5 @@ import java.util.List;
 public interface InjectionStrategy {
     String identifier();
     void register(@NotNull MultiHostRegistrar registrar, @NotNull PsiLanguageInjectionHost host, @NotNull List<TextRange> ranges, @NotNull TemporaryPlaceInjection languageID);
-
     void delete(@NotNull TemporaryPlaceInjection temporaryPlaceInjection);
 }
