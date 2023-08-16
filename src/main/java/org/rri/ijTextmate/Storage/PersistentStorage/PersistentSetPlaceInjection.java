@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PersistentSetElement extends AbstractSet<PersistentPlaceInjection> {
+public class PersistentSetPlaceInjection extends AbstractSet<PersistentPlaceInjection> {
     private final Object mutex = new Object();
 
     private final Set<PersistentPlaceInjection> set = new HashSet<>();
@@ -15,7 +15,7 @@ public class PersistentSetElement extends AbstractSet<PersistentPlaceInjection> 
     };
     Map<TextRange, PersistentPlaceInjection> mapTextRange = new TreeMap<>(COMPARATOR);
 
-    public PersistentSetElement() {
+    public PersistentSetPlaceInjection() {
     }
 
     @Override

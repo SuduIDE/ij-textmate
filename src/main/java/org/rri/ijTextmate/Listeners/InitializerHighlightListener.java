@@ -34,7 +34,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
 
-        for (PersistentPlaceInjection persistentPlaceInjection : persistentStorage.getSetElementAndClear(relativePath)) {
+        for (PersistentPlaceInjection persistentPlaceInjection : persistentStorage.getSetPlaceInjectionAndClear(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(persistentPlaceInjection.getCenter(), psiFile);
 
             if (host != null && host.isValidHost()) {
