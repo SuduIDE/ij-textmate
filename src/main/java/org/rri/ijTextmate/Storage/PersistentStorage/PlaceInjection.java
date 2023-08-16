@@ -1,13 +1,11 @@
 package org.rri.ijTextmate.Storage.PersistentStorage;
 
-import com.google.gson.*;
 import com.intellij.openapi.util.TextRange;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.ConverterElement;
 import org.rri.ijTextmate.Storage.Interfaces.LanguageID;
 
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 public class PlaceInjection implements LanguageID, ConverterElement {

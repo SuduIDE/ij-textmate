@@ -11,7 +11,7 @@ public class InjectLanguageMultiplePlace extends AbstractInjectLanguage {
     public static InjectLanguageMultiplePlace INSTANCE = new InjectLanguageMultiplePlace();
 
     public String getIdentifier() {
-        return "Inject where used";
+        return "Inject language where the variable is used";
     }
 
     @Override

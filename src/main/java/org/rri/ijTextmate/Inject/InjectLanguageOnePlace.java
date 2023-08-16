@@ -10,7 +10,7 @@ public class InjectLanguageOnePlace extends AbstractInjectLanguage {
     public static InjectLanguageOnePlace INSTANCE = new InjectLanguageOnePlace();
 
     public String getIdentifier() {
-        return "Inject one place";
+        return "Inject language in the current place";
     }
 
     @Override

@@ -91,29 +91,4 @@ public class SetElement extends AbstractSet<PlaceInjection> {
             set.clear();
         }
     }
-
-    public static class SetElementAdapter implements JsonSerializer<SetElement>, JsonDeserializer<SetElement> {
-        @Override
-        public JsonElement serialize(@NotNull SetElement placeInjections, Type type, @NotNull JsonSerializationContext jsonSerializationContext) {
-            JsonArray jsonArray = new JsonArray(placeInjections.size());
-            if (placeInjections.isEmpty()) return null;
-            for (PlaceInjection placeInjection : placeInjections) {
-                JsonElement jsonElement = jsonSerializationContext.serialize(placeInjection);
-                if (!jsonElement.isJsonNull()) jsonArray.add(jsonElement);
-            }
-            return jsonArray.isEmpty() ? null : jsonArray;
-        }
-
-        @Override
-        public SetElement deserialize(@NotNull JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            SetElement setElement = new SetElement();
-            if (!jsonElement.isJsonArray()) return setElement;
-            JsonArray jsonElements = jsonElement.getAsJsonArray();
-            for (JsonElement jsonElementOne : jsonElements) {
-                PlaceInjection placeInjection = jsonDeserializationContext.deserialize(jsonElementOne, PlaceInjection.class);
-                if (placeInjection != null) setElement.add(placeInjection);
-            }
-            return setElement;
-        }
-    }
 }
