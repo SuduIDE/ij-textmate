@@ -12,7 +12,7 @@ import org.rri.ijTextmate.Storage.PersistentStorage.PersistentPlaceInjection;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategyFactory;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -32,7 +32,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
 
-        TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+        TemporaryMapPointerToPlaceInjection temporaryMapPointerToPlaceInjection = TemporaryStorage.getInstance(project).get(relativePath);
 
         for (PersistentPlaceInjection persistentPlaceInjection : persistentStorage.getSetPlaceInjectionAndClear(relativePath)) {
             PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(persistentPlaceInjection.getCenter(), psiFile);
@@ -43,7 +43,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
                 InjectionStrategy injectionStrategy = InjectionStrategyFactory.create(persistentPlaceInjection.identifierStrategy);
 
                 TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, persistentPlaceInjection.languageId, injectionStrategy);
-                temporaryMapPointerToLanguage.add(temporaryPlaceInjection);
+                temporaryMapPointerToPlaceInjection.add(temporaryPlaceInjection);
 
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();

@@ -12,7 +12,7 @@ import org.jetbrains.plugins.textmate.TextMateLanguage;
 import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -60,8 +60,8 @@ public class SingleInjectionStrategy implements InjectionStrategy {
         psiFile = psiElement.getContainingFile();
 
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
-        TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
-        mapPointerToLanguage.remove(temporaryPlaceInjection);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = TemporaryStorage.getInstance(project).get(relativePath);
+        mapPointerToPlaceInjection.remove(temporaryPlaceInjection);
 
         psiElement.getManager().dropPsiCaches();
     }

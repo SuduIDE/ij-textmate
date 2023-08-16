@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class TemporaryMapPointerToLanguage {
+public class TemporaryMapPointerToPlaceInjection {
     private final Object mutex = new Object();
     private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = new HashMap<>();
 
-    public TemporaryMapPointerToLanguage() {
+    public TemporaryMapPointerToPlaceInjection() {
     }
 
     @SuppressWarnings("UnusedReturnValue")

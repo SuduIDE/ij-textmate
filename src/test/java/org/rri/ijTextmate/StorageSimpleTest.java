@@ -11,7 +11,7 @@ import org.junit.runners.MethodSorters;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
 import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -38,10 +38,10 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     public void test1() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(100, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -50,10 +50,10 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     public void test2() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(156, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -62,10 +62,10 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     public void test3() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(253, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -74,12 +74,12 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     public void test4ContainsElements() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 100));
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 156));
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 253));
-        assertEquals(3, mapPointerToLanguage.getMap().size());
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 100));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 156));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 253));
+        assertEquals(3, mapPointerToPlaceInjection.getMap().size());
     }
 
     private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, int offset) {
@@ -93,7 +93,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         return false;
     }
 
-    private @NotNull TemporaryMapPointerToLanguage getMyMap(PsiFile psiFile) {
+    private @NotNull TemporaryMapPointerToPlaceInjection getMyMap(PsiFile psiFile) {
         String relativePath = getRelativePath(psiFile);
 
         return TemporaryStorage.getInstance(getProject()).get(relativePath);

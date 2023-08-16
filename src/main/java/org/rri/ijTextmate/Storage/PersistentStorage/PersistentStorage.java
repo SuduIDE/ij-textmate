@@ -8,7 +8,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Storage.Interfaces.ConverterElement;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -31,7 +31,7 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
 
     @Override
     public @NotNull Element getState() {
-        for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()) {
+        for (Map.Entry<String, TemporaryMapPointerToPlaceInjection> entry : TemporaryStorage.getInstance(project).entrySet()) {
             PersistentSetPlaceInjection persistentSetPlaceInjection = myMapToSetPlaceInjection.get(entry.getKey());
             persistentSetPlaceInjection.clear();
 
