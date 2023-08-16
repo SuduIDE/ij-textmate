@@ -52,8 +52,12 @@ public class SingleInjectionStrategy implements InjectionStrategy {
 
         psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, null);
 
+        @SuppressWarnings("deprecation")
+        PsiFile psiFile = InjectedLanguageUtil.getCachedInjectedFileWithLanguage(psiElement, TextMateLanguage.LANGUAGE);
+        if (psiFile != null) psiFile.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, null);
+
         Project project = psiElement.getProject();
-        PsiFile psiFile = psiElement.getContainingFile();
+        psiFile = psiElement.getContainingFile();
 
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
         TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
