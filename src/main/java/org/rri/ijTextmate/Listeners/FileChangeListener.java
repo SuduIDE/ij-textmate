@@ -13,6 +13,7 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +48,20 @@ public class FileChangeListener implements BulkFileListener {
     }
 
     void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToLanguage mapPointerToLanguage) {
+        List<SmartPsiElementPointer<PsiLanguageInjectionHost>> removed = new ArrayList<>();
         for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> entry : mapPointerToLanguage.getMap().entrySet()) {
             SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
 
             PsiElement psiElement = smartPsiElementPointer.getElement();
-            if (psiElement == null) continue;
+            if (psiElement == null) {
+                removed.add(smartPsiElementPointer);
+                continue;
+            }
 
             psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, entry.getValue());
+        }
+        for (var key : removed) {
+            mapPointerToLanguage.remove(key);
         }
     }
 }

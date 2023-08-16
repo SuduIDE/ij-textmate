@@ -27,7 +27,7 @@ public class TemporaryMapPointerToLanguage {
         return synchronizedSupplier(() -> map.remove(temporaryPlaceInjection.hostPointer));
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "UnusedReturnValue"})
     public TemporaryPlaceInjection remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
         return synchronizedSupplier(() -> map.remove(psiElementPointer));
     }
