@@ -22,6 +22,12 @@ import java.util.*;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
+    private static final String SEARCH = "([a-z_]+[a-z_]*)";
+    private static final String REMOVED = "(\\\\[a-z])";
+    private static final String FILTER = "_*";
+    private static final Pattern PATTERN_SEARCH = Pattern.compile(SEARCH, Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN_REMOVED = Pattern.compile(REMOVED, Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN_FILTER = Pattern.compile(FILTER, Pattern.CASE_INSENSITIVE);
     private final Map<String, String> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
     private final Map<String, List<String>> languageToFileExtensions = new HashMap<>();
@@ -116,9 +122,9 @@ public final class TextMateHelper {
 
             SyntaxNodeDescriptor nodeDescriptor = textMateLanguageDescriptor.getRootSyntaxNode();
             visited.add(nodeDescriptor.toString());
-            recursiveExtraction(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited);
         }
-        return splitRegex(keywords, getStrategy(language));
+        return extractWordsFromRegexList(keywords, getStrategy(language));
     }
 
     private StrategySelectingRegisters getStrategy(String language) {
@@ -127,36 +133,33 @@ public final class TextMateHelper {
         return StrategySelectingRegisters.DEFAULT;
     }
 
-    private void recursiveExtraction(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited) {
+    private void recursiveExtractionRegex(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited) {
         for (SyntaxNodeDescriptor nodeDescriptor : syntaxNodeDescriptor.getChildren()) {
             if (visited.contains(nodeDescriptor.toString())) continue;
             visited.add(nodeDescriptor.toString());
 
-            recursiveExtraction(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited);
 
             CharSequence keyword = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
             if (keyword != null) keywords.add(keyword.toString());
         }
     }
 
-    private @NotNull List<String> splitRegex(@NotNull List<String> keywords, final StrategySelectingRegisters selectingRegisters) {
-        String REGEX = "([a-z]+[a-z_]*)";
-        Pattern pattern = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE);
-        Set<String> set = new HashSet<>();
+    private @NotNull List<String> extractWordsFromRegexList(@NotNull List<String> keywords, final @NotNull StrategySelectingRegisters selectingRegisters) {
+        Set<String> words = new HashSet<>();
 
-        for (String word : keywords) {
-            Matcher matcher = pattern.matcher(word);
+        for (String regex : keywords) {
+            regex = PATTERN_REMOVED.matcher(regex).replaceAll("");
+            Matcher matcher = PATTERN_SEARCH.matcher(regex);
+
             while (matcher.find()) {
-                set.add(word.substring(matcher.start(), matcher.end()));
+                String added = regex.substring(matcher.start(), matcher.end());
+                if (!PATTERN_FILTER.matcher(added).matches() && added.length() > 1) {
+                    words.add(selectingRegisters.apply(added));
+                }
             }
         }
-
-        List<String> result = new ArrayList<>();
-        for (String word : set) {
-            if (word.length() > 1) result.add(selectingRegisters.apply(word));
-        }
-
-        return result;
+        return words.stream().toList();
     }
 
     public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
