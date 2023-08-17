@@ -7,6 +7,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.project.Project;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.textmate.Constants;
@@ -164,7 +165,7 @@ public final class TextMateHelper {
 
             SyntaxNodeDescriptor nodeDescriptor = textMateLanguageDescriptor.getRootSyntaxNode();
             visited.add(nodeDescriptor.toString());
-            recursiveExtractionRegex(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited, language);
         }
         return extractWordsFromRegexList(keywords, getStrategy(language));
     }
@@ -175,16 +176,45 @@ public final class TextMateHelper {
         return SelectingRegistersStrategy.DEFAULT;
     }
 
-    private void recursiveExtractionRegex(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited) {
+    private void recursiveExtractionRegex(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited, final String language) {
         for (SyntaxNodeDescriptor nodeDescriptor : syntaxNodeDescriptor.getChildren()) {
             if (visited.contains(nodeDescriptor.toString())) continue;
             visited.add(nodeDescriptor.toString());
 
-            recursiveExtractionRegex(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited, language);
 
-            CharSequence keyword = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
-            if (keyword != null) keywords.add(keyword.toString());
+            extractFromNode(nodeDescriptor, keywords, language.toLowerCase());
         }
+    }
+
+    private void extractFromNode(@NotNull SyntaxNodeDescriptor nodeDescriptor, @NotNull ArrayList<String> keywords, final String language) {
+        if (!tryAdd(nodeDescriptor, language)) return;
+
+        CharSequence variable = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
+        if (variable != null) keywords.add(variable.toString());
+
+        variable = nodeDescriptor.getStringAttribute(Constants.StringKey.BEGIN);
+        if (variable != null) keywords.add(variable.toString());
+
+        variable = nodeDescriptor.getStringAttribute(Constants.StringKey.END);
+        if (variable != null) keywords.add(variable.toString());
+    }
+
+    private boolean tryAdd(@NotNull SyntaxNodeDescriptor nodeDescriptor, final String language) {
+        CharSequence name = nodeDescriptor.getStringAttribute(Constants.StringKey.NAME);
+        if (name != null && name.toString().toLowerCase().contains(language)) return true;
+        if (checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.CAPTURES), language)) return true;
+        if (checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.BEGIN_CAPTURES), language)) return true;
+        return checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.END_CAPTURES), language);
+    }
+
+    private boolean checkCapture(Int2ObjectMap<CharSequence> captures, final String language) {
+        if (captures != null) {
+            for (var capture : captures.int2ObjectEntrySet()) {
+                if (capture.toString().toLowerCase().contains(language)) return true;
+            }
+        }
+        return false;
     }
 
     private @NotNull List<String> extractWordsFromRegexList(@NotNull List<String> keywords, final @NotNull SelectingRegistersStrategy selectingRegisters) {
