@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CompletionInjectedLanguageTests extends LightPlatformCodeInsightFixture4TestCase {
-    private static final Set<String> dockerKeywords = Set.of("ADD", "COPY", "ENV", "EXPOSE", "FROM", "LABEL", "STOPSIGNAL", "USER", "VOLUME", "WORKDIR", "ONBUILD", "CMD");
+    private static final Set<String> dockerKeywords = Set.of("ADD", "COPY", "ENV", "EXPOSE", "FROM", "LABEL", "USER", "VOLUME", "WORKDIR", "ONBUILD", "CMD");
     private static final Set<String> cppKeywords = Set.of("int", "if", "#ifdef", "#ifndef", "void", "virtual");
 
     @Override
