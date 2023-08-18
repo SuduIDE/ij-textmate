@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.15.0"
 }
 
-group = "com.intership"
+group = "com.internship"
 version = "0.1.5"
 
 repositories {
@@ -11,6 +11,7 @@ repositories {
 }
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    implementation("com.github.curious-odd-man:rgxgen:1.4")
 }
 
 

@@ -27,31 +27,5 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
             ProgressManager.checkCanceled();
             result.addElement(LookupElementBuilder.create(word));
         });
-//        if (parameters.isAutoPopup()) return;
-//
-//        @SuppressWarnings("unchecked") List<String> list = (List<String>) context.get(CompletionPattern.LANGUAGE);
-//
-//        String prefix = result.getPrefixMatcher().getPrefix();
-//
-//        if (prefix.isEmpty()) return;
-//
-//        result.runRemainingContributors(parameters, true);
-//
-//        CompletionResultSet newResult;
-//
-//        int lastSpace = prefix.lastIndexOf(' ');
-//
-//        if (lastSpace >= 0 && lastSpace < prefix.length() - 1) {
-//            prefix = prefix.substring(lastSpace + 1);
-//            newResult = result.withPrefixMatcher(prefix);
-//        } else {
-//            newResult = result;
-//        }
-//
-//        list.forEach((word) -> {
-//            ProgressManager.checkCanceled();
-//            newResult.addElement(LookupElementBuilder.create(word));
-//        });
-//        result.stopHere();
     }
 }

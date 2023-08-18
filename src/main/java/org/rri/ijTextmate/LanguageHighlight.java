@@ -3,18 +3,21 @@ package org.rri.ijTextmate;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.util.*;
+import org.jetbrains.annotations.Nullable;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.textmate.TextMateLanguage;
-import org.rri.ijTextmate.Helpers.TextMateHelper;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.LeafMultipleInjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LanguageHighlight implements MultiHostInjector {
     @Override
@@ -22,23 +25,53 @@ public class LanguageHighlight implements MultiHostInjector {
         if (!(context instanceof PsiLanguageInjectionHost host) || !host.isValidHost()) return;
 
         TemporaryPlaceInjection languageID = getTemporaryPlaceInjection(host);
-        if (languageID == null) return;
+        if (languageID != null) {
+            PsiElement psiElement = languageID.hostPointer.getElement();
 
-        int start = 0;
-        int end = host.getTextLength() - 1;
-        String text = host.getText();
-        while (text.charAt(start) == '"' && start < end) start++;
-        while (text.charAt(end) == '"' && end > start) end--;
-        int count = Math.min(start, host.getTextLength() - end);
+            if (psiElement == null) return;
 
-        TextRange range = new TextRange(count, host.getTextLength() - count);
-        String fileExtension = TextMateHelper.getInstance(context.getProject()).getExtension(languageID.getID());
-        registrar.startInjecting(TextMateLanguage.LANGUAGE, fileExtension).addPlace(null, null, host, range).doneInjecting();
+            if (!host.getTextRange().intersects(psiElement.getTextRange())) {
+                psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
+                return;
+            }
 
-        @SuppressWarnings("deprecation")
-        PsiFile psiFile = InjectedLanguageUtil.getCachedInjectedFileWithLanguage(host, TextMateLanguage.LANGUAGE);
-        if (psiFile == null) return;
-        psiFile.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, languageID);
+            List<TextRange> ranges = calculateRanges(host);
+            languageID.register(registrar, host, ranges);
+        } else {
+            TemporaryPlaceInjection temporaryPlaceInjection = CachedValuesManager.getCachedValue(host, Constants.MY_CACHED_TEMPORARY_INJECTED_LANGUAGE, new CachedValueProvider<>() {
+                @Override
+                public @Nullable Result<TemporaryPlaceInjection> compute() {
+                    PsiElement element = host.getParent();
+                    PsiReference reference = null;
+                    for (PsiElement child : element.getChildren()) {
+                        if (child instanceof PsiReference newReference) {
+                            reference = newReference;
+                            break;
+                        }
+                    }
+                    if (reference == null) return null;
+
+                    element = reference.resolve();
+                    PsiLanguageInjectionHost rootHost = PsiTreeUtil.findChildOfType(element, PsiLanguageInjectionHost.class);
+                    if (rootHost == null) return null;
+                    return Result.create(rootHost.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE), PsiModificationTracker.getInstance(host.getProject()));
+                }
+            });
+
+            if (temporaryPlaceInjection == null || !temporaryPlaceInjection.getStrategyIdentifier().equals("RootMultipleInjectionStrategy"))
+                return;
+
+            SmartPsiElementPointer<PsiLanguageInjectionHost> pointer = SmartPointerManager.createPointer(host);
+            String language = temporaryPlaceInjection.languageID;
+            InjectionStrategy injectionStrategy = new LeafMultipleInjectionStrategy(temporaryPlaceInjection);
+
+            TemporaryPlaceInjection newTempPlaceInjection = new TemporaryPlaceInjection(pointer, language, injectionStrategy);
+
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, newTempPlaceInjection);
+
+            List<TextRange> ranges = calculateRanges(host);
+            newTempPlaceInjection.register(registrar, host, ranges);
+        }
     }
 
     @Override
@@ -46,42 +79,96 @@ public class LanguageHighlight implements MultiHostInjector {
         return List.of(PsiLanguageInjectionHost.class);
     }
 
-    public TemporaryPlaceInjection findLanguageRoot(PsiElement element) {
-        if (element == null) return null;
-        PsiReference psiReference = InjectorHelper.getFirstReference(element.getParent());
-        if (psiReference == null) return null;
-        element = psiReference.resolve();
-        element = InjectorHelper.getHostFromElementRoot(element);
-        return (element == null) ? null : element.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
-    }
-
-    private TemporaryPlaceInjection getTemporaryPlaceInjection(@NotNull PsiLanguageInjectionHost host) {
+    private @Nullable TemporaryPlaceInjection getTemporaryPlaceInjection(@NotNull PsiLanguageInjectionHost host) {
         TemporaryPlaceInjection languageID = host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
-
-        if (languageID != null) return languageID;
-
-        PsiElement element = host.getOriginalElement();
-        languageID = findLanguageRoot(element);
 
         if (languageID != null) return languageID;
 
         Project project = host.getProject();
         PsiFile psiFile = host.getContainingFile();
 
-        Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map = TemporaryStorage
-                .getInstance(project)
-                .get(InjectorHelper.getRelativePath(project, psiFile))
-                .getMap();
+        TemporaryMapPointerToPlaceInjection storage = TemporaryStorage.getInstance(project).get(InjectorHelper.getRelativePath(project, psiFile));
+        Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = storage.getMap();
+        List<Pair<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection>> newEntrances = new ArrayList<>();
 
-        host = InjectorHelper.resolveHost(host);
-
+        PsiElement element;
         for (var entry : map.entrySet()) {
-            element = entry.getKey().getElement();
-            if (element != null && element.getTextRange().intersects(host.getTextRange())) {
-                return new TemporaryPlaceInjection(entry.getKey(), entry.getValue());
+            var key = entry.getKey();
+            var value = entry.getValue();
+            element = key.getElement();
+
+            if (element != null) {
+                if (element.getTextRange().intersects(host.getTextRange())) return value;
+                continue;
+            }
+
+            Segment segment = key.getRange();
+            if (segment == null) continue;
+            if (host.getTextRange().intersects(segment)) {
+                newEntrances.add(Pair.create(key, value));
             }
         }
 
-        return languageID;
+        String language = null;
+        InjectionStrategy strategy = null;
+        for (var pair : newEntrances) {
+            language = pair.second.getID();
+            strategy = pair.second.getInjectionStrategy();
+            storage.remove(pair.first);
+        }
+
+        if (language != null && strategy != null) {
+            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(SmartPointerManager.createPointer(host), language, strategy);
+            storage.add(temporaryPlaceInjection);
+            host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
+            return temporaryPlaceInjection;
+        }
+
+        psiFile = PsiManager.getInstance(project).findFile(psiFile.getOriginalFile().getVirtualFile());
+        if (psiFile == null) return null;
+
+        host = PsiTreeUtil.getParentOfType(psiFile.findElementAt(host.getTextOffset()), PsiLanguageInjectionHost.class);
+        if (host != null) return host.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
+
+        return null;
+    }
+
+    private static @NotNull List<TextRange> calculateRanges(PsiLanguageInjectionHost host) {
+        TextRange textRange = ElementManipulators.getValueTextRange(host);
+        String text = host.getText();
+        int indent = calculateIndent(text.substring(textRange.getStartOffset(), textRange.getEndOffset()));
+
+        if (indent == 0) return Collections.singletonList(textRange);
+
+        int startOffset = textRange.getStartOffset() + indent;
+        int endOffset = text.indexOf('\n', startOffset);
+        List<TextRange> list = new ArrayList<>();
+
+        while (endOffset > 0) {
+            endOffset++;
+            list.add(new TextRange(startOffset, endOffset));
+            startOffset = endOffset + indent;
+            endOffset = text.indexOf('\n', startOffset);
+        }
+
+        endOffset = textRange.getEndOffset();
+
+        if (startOffset < endOffset) list.add(new TextRange(startOffset, endOffset));
+
+        return list;
+    }
+
+    private static int calculateIndent(@NotNull String text) {
+        if (!text.contains("\n")) return 0;
+
+        String[] strings = text.split("\n");
+        int indent = Integer.MAX_VALUE;
+
+        for (String str : strings) {
+            int curIndent = 0, i = 0;
+            while (i < str.length() && str.charAt(i++) == ' ') curIndent++;
+            indent = Integer.min(curIndent, indent);
+        }
+        return indent;
     }
 }

@@ -6,35 +6,24 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
+import org.rri.ijTextmate.Inject.InjectLanguageOnePlace;
 
 import java.util.function.Consumer;
 
 public class TestHelper {
     public static final String INJECTED_LANGUAGE = "sql";
 
-    @FunctionalInterface
-    public interface Assert {
-        void test(boolean b);
-    }
-
-    @Contract(pure = true)
-    public static @NotNull Assert createAssertTrueWithMessage(String message) {
-        return (boolean b) -> TestCase.assertTrue(message, b);
-    }
-
-    @Contract(pure = true)
-    public static @NotNull Assert createAssertFalseWithMessage(String message) {
-        return (boolean b) -> TestCase.assertFalse(message, b);
+    public static void injectLanguage(Project project, Editor editor, PsiFile psiFile, String language) {
+        PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
+        if (host == null) return;
+        InjectLanguageAction.injectLanguage(project, editor, psiFile, language, InjectLanguageOnePlace.INSTANCE);
     }
 
     public static void injectLanguage(Project project, Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
-        if (host == null) return;
-        InjectLanguageAction.injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE);
+        injectLanguage(project, editor, psiFile, INJECTED_LANGUAGE);
     }
 
     public static boolean isInjected(Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
@@ -44,9 +33,7 @@ public class TestHelper {
     }
 
     public static PsiLanguageInjectionHost getHost(Editor editor, PsiFile psiFile) {
-        PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, psiFile);
-        host = InjectorHelper.resolveHost(host);
-        return host;
+        return InjectorHelper.findInjectionHost(editor, psiFile);
     }
 
     @SuppressWarnings("unused")

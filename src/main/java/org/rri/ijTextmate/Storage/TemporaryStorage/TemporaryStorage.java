@@ -12,17 +12,17 @@ import java.util.Set;
 
 @Service(Service.Level.PROJECT)
 public final class TemporaryStorage {
-    private final Map<String, TemporaryMapPointerToLanguage> map = new HashMap<>();
+    private final Map<String, TemporaryMapPointerToPlaceInjection> map = new HashMap<>();
     private final Object mutex = new Object();
 
     public TemporaryStorage() {
     }
 
-    public @NotNull TemporaryMapPointerToLanguage get(String key) {
+    public @NotNull TemporaryMapPointerToPlaceInjection get(String key) {
         synchronized (mutex) {
-            TemporaryMapPointerToLanguage temporaryMap = map.get(key);
+            TemporaryMapPointerToPlaceInjection temporaryMap = map.get(key);
             if (temporaryMap == null) {
-                temporaryMap = new TemporaryMapPointerToLanguage();
+                temporaryMap = new TemporaryMapPointerToPlaceInjection();
                 map.put(key, temporaryMap);
             }
             return temporaryMap;
@@ -35,22 +35,25 @@ public final class TemporaryStorage {
         }
     }
 
-    public @NotNull @UnmodifiableView Set<Map.Entry<String, TemporaryMapPointerToLanguage>> entrySet() {
+    public @NotNull @UnmodifiableView Set<Map.Entry<String, TemporaryMapPointerToPlaceInjection>> entrySet() {
         return Collections.unmodifiableSet(map.entrySet());
     }
 
-    public TemporaryMapPointerToLanguage put(String key, TemporaryMapPointerToLanguage value) {
+    @SuppressWarnings("unused")
+    public TemporaryMapPointerToPlaceInjection put(String key, TemporaryMapPointerToPlaceInjection value) {
         synchronized (mutex) {
             return map.put(key, value);
         }
     }
 
+    @SuppressWarnings("unused")
     public int size() {
         synchronized (mutex) {
             return map.size();
         }
     }
 
+    @SuppressWarnings("unused")
     public void clear() {
         synchronized (mutex) {
             map.clear();

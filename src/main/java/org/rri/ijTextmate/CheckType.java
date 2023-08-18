@@ -5,19 +5,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.FileContentUtil;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
-import org.rri.ijTextmate.Storage.PersistentStorage.SetElement;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 /*
  * This action is for tests only.
@@ -30,7 +21,17 @@ public class CheckType extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
-        FileContentUtil.reparseFiles(project, List.of(file.getVirtualFile()), true);
+        PsiElement psiElement = file.findElementAt(editor.getCaretModel().getOffset());
+        assert psiElement != null;
+        var query = ReferencesSearch.search(psiElement, GlobalSearchScope.allScope(project)).findAll();
+
+//        new ArrayList<>(ReferencesSearch.search(psiElement.getParent().getParent().getChildren()[0]).findAll()).get(2).getElement().getParent().getChildren()[1].getOriginalElement() instanceof PsiLanguageInjectionHost
+
+//        ReferencesSearch.search(psiElement.getParent()).findAll();
+
+//        ReferencesSearch.search(psiElement.getParent().getReferences()[0].resolve()).findAll()
+
+//        FileContentUtil.reparseFiles(project, List.of(file.getVirtualFile()), true);
 
 //        Supplier<String> supplier = () -> {
 //            System.out.println("supplier");

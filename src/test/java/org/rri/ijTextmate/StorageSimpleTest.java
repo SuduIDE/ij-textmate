@@ -3,13 +3,15 @@ package org.rri.ijTextmate;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.SingleInjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -28,53 +30,59 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
     @Test
     public void test0() {
         myFixture.configureByFile(JAVA_FILE);
-        PersistentStorage.MapFileToSetElement mapFileToSetElement = PersistentStorage.getInstance(getProject()).getState();
-        mapFileToSetElement.clear();
+        Element element = PersistentStorage.getInstance(getProject()).getState();
+        element.getChildren().clear();
     }
 
     @Test
     public void test1() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(100, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "sql"));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
     public void test2() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(156, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "php"));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
     public void test3() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(253, psiFile)));
-        mapPointerToLanguage.add(new TemporaryPlaceInjection(pointer, "go"));
+        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
+
+        PersistentStorage.getInstance(getProject()).getState();
     }
 
     @Test
     public void test4ContainsElements() {
         PsiFile psiFile = myFixture.configureByFile(JAVA_FILE);
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = getMyMap(psiFile);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 100));
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 156));
-        assertTrue(intersectsWithElementFromMap(mapPointerToLanguage.getMap(), 253));
-        assertEquals(3, mapPointerToLanguage.getMap().size());
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 100));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 156));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 253));
+        assertEquals(3, mapPointerToPlaceInjection.getMap().size());
     }
 
-    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> map, int offset) {
+    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, int offset) {
         TextRange textRange = new TextRange(offset, offset);
         for (var key : map.keySet()) {
             PsiElement element = key.getElement();
@@ -85,7 +93,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         return false;
     }
 
-    private @NotNull TemporaryMapPointerToLanguage getMyMap(PsiFile psiFile) {
+    private @NotNull TemporaryMapPointerToPlaceInjection getMyMap(PsiFile psiFile) {
         String relativePath = getRelativePath(psiFile);
 
         return TemporaryStorage.getInstance(getProject()).get(relativePath);

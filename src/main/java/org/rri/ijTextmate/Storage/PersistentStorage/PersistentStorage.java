@@ -1,123 +1,137 @@
 package org.rri.ijTextmate.Storage.PersistentStorage;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.util.xmlb.Converter;
-import com.intellij.util.xmlb.annotations.OptionTag;
-import com.intellij.util.xmlb.annotations.Property;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.Interfaces.ConverterElement;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
-@State(name = "PersistentStorage", storages = @Storage("PersistentStorage.xml"))
-public class PersistentStorage implements PersistentStateComponent<PersistentStorage.MapFileToSetElement> {
-    private MapFileToSetElement myMapToSetElement = new MapFileToSetElement();
+@State(name = "PersistentStorage", storages = @Storage("PersistentStorageInjectSense.xml"))
+public class PersistentStorage implements PersistentStateComponent<Element> {
+    private final MapFileToSetElement myMapToSetPlaceInjection = new MapFileToSetElement();
     private final Project project;
 
-    public PersistentStorage(Project project) {
+    public PersistentStorage(@NotNull Project project) {
         this.project = project;
     }
 
-    public SetElement getSetElementAndClear(String relativePath) {
-        SetElement setElement = myMapToSetElement.get(relativePath);
-        myMapToSetElement.put(relativePath, new SetElement());
-        return setElement;
+    public PersistentSetPlaceInjection getSetPlaceInjectionAndClear(String relativePath) {
+        PersistentSetPlaceInjection persistentSetPlaceInjection = myMapToSetPlaceInjection.get(relativePath);
+        myMapToSetPlaceInjection.put(relativePath, new PersistentSetPlaceInjection());
+        return persistentSetPlaceInjection;
     }
 
     @Override
-    public @NotNull MapFileToSetElement getState() {
-        for (Map.Entry<String, TemporaryMapPointerToLanguage> entry : TemporaryStorage.getInstance(project).entrySet()) {
-            SetElement setElement = myMapToSetElement.get(entry.getKey());
-            setElement.clear();
+    public @NotNull Element getState() {
+        for (Map.Entry<String, TemporaryMapPointerToPlaceInjection> entry : TemporaryStorage.getInstance(project).entrySet()) {
+            PersistentSetPlaceInjection persistentSetPlaceInjection = myMapToSetPlaceInjection.get(entry.getKey());
+            persistentSetPlaceInjection.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
-                String language = entryInner.getValue();
+                TemporaryPlaceInjection temporaryPlaceInjection = entryInner.getValue();
                 PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
                 if (psiElement == null || !psiElement.isValidHost()) continue;
-                setElement.add(new PlaceInjection(language, psiElement.getTextRange()));
+                persistentSetPlaceInjection.add(new PersistentPlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
             }
         }
-        return myMapToSetElement;
+        return myMapToSetPlaceInjection.toElement();
     }
 
     @Override
-    public void loadState(@NotNull MapFileToSetElement state) {
-        myMapToSetElement = state;
+    public void loadState(@NotNull Element state) {
+        myMapToSetPlaceInjection.fromElement(state);
     }
 
     public static PersistentStorage getInstance(@NotNull Project project) {
         return project.getService(PersistentStorage.class);
     }
 
-    public static class MapFileToSetElement {
+    public static class MapFileToSetElement implements ConverterElement {
+        private static final String NAME = "PersistentStorage";
+        private static final String PATH = "path";
+        private static final String FILE = "file";
         private final Object mutex = new Object();
 
-        @Property
-        @OptionTag(converter = ConverterMapFileToSetElement.class)
-        private final Map<String, SetElement> map = new HashMap<>();
+        private Map<String, PersistentSetPlaceInjection> map = new HashMap<>();
 
         public MapFileToSetElement() {
         }
 
-        public SetElement get(String key) {
+        public MapFileToSetElement(Map<String, PersistentSetPlaceInjection> map) {
+            this.map = map;
+        }
+
+        public PersistentSetPlaceInjection get(String key) {
             synchronized (mutex) {
-                SetElement setElement = map.get(key);
-                if (setElement == null) {
-                    setElement = new SetElement();
-                    map.put(key, setElement);
+                PersistentSetPlaceInjection persistentSetPlaceInjection = map.get(key);
+                if (persistentSetPlaceInjection == null) {
+                    persistentSetPlaceInjection = new PersistentSetPlaceInjection();
+                    map.put(key, persistentSetPlaceInjection);
                 }
-                return setElement;
+                return persistentSetPlaceInjection;
             }
         }
 
-        public SetElement put(String key, SetElement value) {
+        @SuppressWarnings("UnusedReturnValue")
+        public PersistentSetPlaceInjection put(String key, PersistentSetPlaceInjection value) {
             synchronized (mutex) {
                 return map.put(key, value);
             }
         }
 
+        @SuppressWarnings("unused")
         public int size() {
             synchronized (mutex) {
                 return map.size();
             }
         }
 
+        @SuppressWarnings("unused")
         public void clear() {
             synchronized (mutex) {
                 map.clear();
             }
         }
-    }
 
-    public static class ConverterMapFileToSetElement extends Converter<Map<String, SetElement>> {
-        @Override
-        public @Nullable Map<String, SetElement> fromString(@NotNull String value) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
-                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
-                    .create();
-            Type collectionType = new TypeToken<HashMap<String, SetElement>>() {
-            }.getType();
-            return gson.fromJson(value, collectionType);
+        public boolean fromElement(final @NotNull Element root) {
+            map.clear();
+            for (Element element : root.getChildren()) {
+                PersistentSetPlaceInjection persistentSetPlaceInjection = new PersistentSetPlaceInjection();
+                for (Element placeJDOM : element.getChildren()) {
+                    PersistentPlaceInjection persistentPlaceInjection = new PersistentPlaceInjection();
+                    if (persistentPlaceInjection.fromElement(placeJDOM)) persistentSetPlaceInjection.add(persistentPlaceInjection);
+                }
+                map.put(element.getAttribute(PATH).getValue(), persistentSetPlaceInjection);
+            }
+            return true;
         }
 
-        @Override
-        public @Nullable String toString(@NotNull Map<String, SetElement> value) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SetElement.class, new SetElement.SetElementAdapter())
-                    .registerTypeAdapter(PlaceInjection.class, new PlaceInjection.PlaceInjectionAdapter())
-                    .create();
-            return gson.toJson(value);
+        public Element toElement() {
+            Element root = new Element(NAME);
+            for (Map.Entry<String, PersistentSetPlaceInjection> entry : map.entrySet()) {
+                if (entry.getValue().isEmpty()) continue;
+                Element element = new Element(FILE).setAttribute(PATH, entry.getKey());
+
+                for (PersistentPlaceInjection place : entry.getValue()) {
+                    if (place.languageId.isEmpty()) continue;
+                    element.addContent(place.toElement());
+                }
+
+                if (!element.getContent().isEmpty()) root.addContent(element);
+            }
+            return root;
+        }
+
+        public Map<String, PersistentSetPlaceInjection> getMap() {
+            return Collections.unmodifiableMap(map);
         }
     }
 }

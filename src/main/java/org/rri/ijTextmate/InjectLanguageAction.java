@@ -14,10 +14,12 @@ import com.intellij.util.FileContentUtil;
 import com.intellij.util.Processor;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
-import org.rri.ijTextmate.Inject.InjectLanguageMain;
+import org.rri.ijTextmate.Inject.AbstractInjectLanguage;
+import org.rri.ijTextmate.Inject.InjectLanguageMultiplePlace;
 import org.intellij.plugins.intelliLang.references.InjectedReferencesContributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Inject.InjectLanguageOnePlace;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -30,7 +32,7 @@ public class InjectLanguageAction extends AnAction {
         PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         assert project != null && editor != null && file != null;
-        chooseLanguageForInjection(project, editor, file);
+        chooseInjection(project, editor, file);
     }
 
     @Override
@@ -43,11 +45,7 @@ public class InjectLanguageAction extends AnAction {
             return;
         }
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(editor, file);
-        if (!canInjectLanguageToHost(project, editor, file, host)) {
-            e.getPresentation().setEnabledAndVisible(false);
-            return;
-        }
-        host = InjectorHelper.resolveHost(host);
+
         e.getPresentation().setEnabledAndVisible(canInjectLanguageToHost(project, editor, file, host));
     }
 
@@ -67,45 +65,85 @@ public class InjectLanguageAction extends AnAction {
         return ActionUpdateThread.BGT;
     }
 
-    private void chooseLanguageForInjection(Project project, Editor editor, PsiFile file) {
-        TextMateHelper textMateHelper = TextMateHelper.upateLanguagesAndGetTextMateHelper(project);
-        List<String> listLanguages = textMateHelper.getLanguages();
+    private void chooseInjection(Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+        PsiElement psiElement = InjectorHelper.findInjectionHost(editor, file);
+        if (psiElement != null) psiElement = psiElement.getParent();
 
-        ColoredListCellRenderer<String> listCellRenderer = createColoredListCellRenderer();
-        Processor<? super String> processor = createProcessor(project, editor, file);
+        if (psiElement instanceof PsiNameIdentifierOwner && file.getFileType().getName().equalsIgnoreCase("java")) {
+            chooseInjectionStrategy(project, editor, file);
+        } else {
+            chooseLanguageForInjection(project, editor, file, InjectLanguageOnePlace.INSTANCE);
+        }
+    }
 
-        IPopupChooserBuilder<String> builder = JBPopupFactory.getInstance()
-                .createPopupChooserBuilder(listLanguages).setRenderer(listCellRenderer)
-                .setNamerForFiltering(x -> x).setItemChosenCallback(processor::process);
+    private void chooseInjectionStrategy(Project project, Editor editor, PsiFile file) {
+        List<AbstractInjectLanguage> listStrategy = List.of(InjectLanguageOnePlace.INSTANCE, InjectLanguageMultiplePlace.INSTANCE);
+
+        ColoredListCellRenderer<AbstractInjectLanguage> listCellRenderer = ColoredListFactory.createListAbstractInjectLanguage();
+
+        Processor<? super AbstractInjectLanguage> processor = ProcessFactory.createProcessor(project, editor, file, this);
+
+        IPopupChooserBuilder<AbstractInjectLanguage> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(listStrategy).setRenderer(listCellRenderer).setNamerForFiltering(AbstractInjectLanguage::getIdentifier).setItemChosenCallback(processor::process);
         builder.createPopup().showInBestPositionFor(editor);
     }
 
-    public static void injectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile, @NotNull String languageId) {
+    private void chooseLanguageForInjection(Project project, Editor editor, PsiFile file, AbstractInjectLanguage injector) {
+        TextMateHelper textMateHelper = TextMateHelper.upateLanguagesAndGetTextMateHelper(project);
+        List<String> listLanguages = textMateHelper.getLanguages();
+
+        ColoredListCellRenderer<String> listCellRenderer = ColoredListFactory.createListString();
+        Processor<? super String> processor = ProcessFactory.createProcessor(project, editor, file, injector);
+
+        IPopupChooserBuilder<String> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(listLanguages).setRenderer(listCellRenderer).setNamerForFiltering(x -> x).setItemChosenCallback(processor::process);
+        builder.createPopup().showInBestPositionFor(editor);
+    }
+
+    public static void injectLanguage(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile, @NotNull String languageId, @NotNull AbstractInjectLanguage injector) {
         int offset = editor.getCaretModel().getOffset();
         PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(offset, psiFile);
         if (host == null) return;
-        InjectLanguageMain.INSTANCE.inject(host, languageId, psiFile, project);
+        injector.inject(host, languageId, psiFile, project);
         FileContentUtil.reparseFiles(project, Collections.emptyList(), false);
     }
 
-    @Contract(value = "_, _, _ -> new", pure = true)
-    private static @NotNull Processor<? super String> createProcessor(Project project, Editor editor, PsiFile file) {
-        return new Processor<>() {
-            @Override
-            public boolean process(String language) {
-                injectLanguage(project, editor, file, language);
+
+    public static class ProcessFactory {
+        private static @NotNull Processor<? super AbstractInjectLanguage> createProcessor(Project project, Editor editor, PsiFile file, InjectLanguageAction action) {
+            return (Processor<AbstractInjectLanguage>) injector -> {
+                action.chooseLanguageForInjection(project, editor, file, injector);
                 return false;
-            }
-        };
+            };
+        }
+
+        @Contract(value = "_, _, _, _ -> new", pure = true)
+        private static @NotNull Processor<? super String> createProcessor(Project project, Editor editor, PsiFile file, AbstractInjectLanguage injector) {
+            return (Processor<String>) language -> {
+                injectLanguage(project, editor, file, language, injector);
+                return false;
+            };
+        }
+
     }
 
-    @Contract(" -> new")
-    private static @NotNull ColoredListCellRenderer<String> createColoredListCellRenderer() {
-        return new ColoredListCellRenderer<>() {
-            @Override
-            protected void customizeCellRenderer(@NotNull JList<? extends String> list, String language, int index, boolean selected, boolean hasFocus) {
-                append(language);
-            }
-        };
+    public static class ColoredListFactory {
+        @Contract(" -> new")
+        private static @NotNull ColoredListCellRenderer<String> createListString() {
+            return new ColoredListCellRenderer<>() {
+                @Override
+                protected void customizeCellRenderer(@NotNull JList<? extends String> list, String language, int index, boolean selected, boolean hasFocus) {
+                    append(language);
+                }
+            };
+        }
+
+        @Contract(" -> new")
+        private static @NotNull ColoredListCellRenderer<AbstractInjectLanguage> createListAbstractInjectLanguage() {
+            return new ColoredListCellRenderer<>() {
+                @Override
+                protected void customizeCellRenderer(@NotNull JList<? extends AbstractInjectLanguage> list, @NotNull AbstractInjectLanguage value, int index, boolean selected, boolean hasFocus) {
+                    append(value.getIdentifier());
+                }
+            };
+        }
     }
 }

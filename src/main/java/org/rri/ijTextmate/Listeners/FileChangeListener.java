@@ -9,10 +9,11 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,23 +40,28 @@ public class FileChangeListener implements BulkFileListener {
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
         if (!TemporaryStorage.getInstance(project).contains(relativePath)) return;
 
-        TemporaryMapPointerToLanguage mapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+        TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = TemporaryStorage.getInstance(project).get(relativePath);
 
-        insertInjectedLanguageIntoFileStringLiterals(mapPointerToLanguage);
+        insertInjectedLanguageIntoFileStringLiterals(mapPointerToPlaceInjection);
 
         psiFile.putUserData(Constants.MY_LANGUAGE_INJECTED, new Object());
     }
 
-    void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToLanguage mapPointerToLanguage) {
-        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, String> entry : mapPointerToLanguage.getMap().entrySet()) {
+    void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection) {
+        List<SmartPsiElementPointer<PsiLanguageInjectionHost>> removed = new ArrayList<>();
+        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> entry : mapPointerToPlaceInjection.getMap().entrySet()) {
             SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
 
             PsiElement psiElement = smartPsiElementPointer.getElement();
-            if (psiElement == null) continue;
+            if (psiElement == null) {
+                removed.add(smartPsiElementPointer);
+                continue;
+            }
 
-            String language = entry.getValue();
-            TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(smartPsiElementPointer, language);
-            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
+            psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, entry.getValue());
+        }
+        for (var key : removed) {
+            mapPointerToPlaceInjection.remove(key);
         }
     }
 }

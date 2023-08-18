@@ -1,8 +1,13 @@
 package org.rri.ijTextmate.Helpers;
 
+import com.intellij.ide.highlighter.custom.SyntaxTable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.project.Project;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.textmate.Constants;
@@ -12,11 +17,11 @@ import org.jetbrains.plugins.textmate.configuration.*;
 import org.jetbrains.plugins.textmate.language.TextMateLanguageDescriptor;
 import org.jetbrains.plugins.textmate.language.syntax.SyntaxNodeDescriptor;
 import org.jetbrains.plugins.textmate.plist.*;
+import org.rri.ijTextmate.Helpers.SelectingRegistersStrategy.SelectingRegistersStrategy;
+import org.rri.ijTextmate.Helpers.WordExtraction.WordExtractionFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -26,12 +31,20 @@ public final class TextMateHelper {
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
     private final Map<String, List<String>> languageToFileExtensions = new HashMap<>();
     private final Map<String, List<String>> languageToKeywords = new HashMap<>(Map.of("textmate", Collections.emptyList()));
-    private final Map<String, StrategySelectingRegisters> languageToStrategy = new HashMap<>(Map.of("docker", StrategySelectingRegisters.UPPER, "sql", StrategySelectingRegisters.UPPER));
+    private final Map<String, SelectingRegistersStrategy> languageToStrategyRegister = new HashMap<>(Map.of("docker", SelectingRegistersStrategy.UPPER, "sql", SelectingRegistersStrategy.UPPER));
     private final PlistReader plistReader = new CompositePlistReader();
     private final BundleFactory bundleFactory = new BundleFactory(plistReader);
+    private final Map<String, AbstractFileType> extensionToFileType = new HashMap<>();
 
     public TextMateHelper() {
         updateLanguages();
+
+        for (FileType fileType : FileTypeManager.getInstance().getRegisteredFileTypes()) {
+            if (fileType instanceof AbstractFileType abstractFileType) {
+                String extension = abstractFileType.getDefaultExtension();
+                extensionToFileType.put(extension.isEmpty() ? abstractFileType.getName().toLowerCase() : extension, abstractFileType);
+            }
+        }
     }
 
     public void updateLanguages() {
@@ -63,7 +76,18 @@ public final class TextMateHelper {
                 fileExtension = calcExtension(language);
                 languageToFileExtension.put(language, fileExtension);
 
-                ReadAction.run(() -> languageToKeywords.put(language, calcKeywords(language)));
+                String extension = abstractFileTypeExists(extensions);
+
+                ReadAction.run(() -> {
+                    List<String> keywords;
+                    if (extension == null) {
+                        keywords = extractKeywordsFromTextmateRegex(language);
+                    } else {
+                        keywords = extractKeywordsFromAbstractLanguage(extensionToFileType.get(extension));
+                    }
+                    if (keywords.isEmpty()) keywords = extractKeywordsFromTextmateRegex(language);
+                    languageToKeywords.put(language, keywords);
+                });
             }
         }
 
@@ -106,8 +130,28 @@ public final class TextMateHelper {
         return extensions.get(0);
     }
 
-    private @NotNull List<String> calcKeywords(String language) {
-        ArrayList<String> keywords = new ArrayList<>();
+    private @Nullable String abstractFileTypeExists(List<String> extensions) {
+        for (String extension : extensionToFileType.keySet()) {
+            if (extensions.contains(extension)) return extension;
+        }
+        return null;
+    }
+
+    private @NotNull List<String> extractKeywordsFromAbstractLanguage(@NotNull AbstractFileType abstractFileType) {
+        SyntaxTable syntaxTable = abstractFileType.getSyntaxTable();
+        Set<String> merged = new HashSet<>() {
+            {
+                addAll(syntaxTable.getKeywords1());
+                addAll(syntaxTable.getKeywords2());
+                addAll(syntaxTable.getKeywords3());
+                addAll(syntaxTable.getKeywords4());
+            }
+        };
+        return merged.stream().toList();
+    }
+
+    private @NotNull List<String> extractKeywordsFromTextmateRegex(String language) {
+        Set<String> keywords = new HashSet<>();
         Set<String> visited = new HashSet<>();
 
         for (String extension : languageToFileExtensions.get(language)) {
@@ -116,47 +160,67 @@ public final class TextMateHelper {
 
             SyntaxNodeDescriptor nodeDescriptor = textMateLanguageDescriptor.getRootSyntaxNode();
             visited.add(nodeDescriptor.toString());
-            recursiveExtraction(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited, language);
         }
-        return splitRegex(keywords, getStrategy(language));
+        return extractWordsFromRegexList(language, keywords, getStrategy(language));
     }
 
-    private StrategySelectingRegisters getStrategy(String language) {
-        StrategySelectingRegisters strategy = languageToStrategy.get(language);
+    private SelectingRegistersStrategy getStrategy(String language) {
+        SelectingRegistersStrategy strategy = languageToStrategyRegister.get(language);
         if (strategy != null) return strategy;
-        return StrategySelectingRegisters.DEFAULT;
+        return SelectingRegistersStrategy.DEFAULT;
     }
 
-    private void recursiveExtraction(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull ArrayList<String> keywords, Set<String> visited) {
+    private void recursiveExtractionRegex(@NotNull SyntaxNodeDescriptor syntaxNodeDescriptor, @NotNull Set<String> keywords, Set<String> visited, final String language) {
         for (SyntaxNodeDescriptor nodeDescriptor : syntaxNodeDescriptor.getChildren()) {
             if (visited.contains(nodeDescriptor.toString())) continue;
             visited.add(nodeDescriptor.toString());
 
-            recursiveExtraction(nodeDescriptor, keywords, visited);
+            recursiveExtractionRegex(nodeDescriptor, keywords, visited, language);
 
-            CharSequence keyword = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
-            if (keyword != null) keywords.add(keyword.toString());
+            extractFromNode(nodeDescriptor, keywords, language.toLowerCase());
         }
     }
 
-    private @NotNull List<String> splitRegex(@NotNull List<String> keywords, final StrategySelectingRegisters selectingRegisters) {
-        String REGEX = "([a-z]+[a-z_]*)";
-        Pattern pattern = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE);
-        Set<String> set = new HashSet<>();
+    private void extractFromNode(@NotNull SyntaxNodeDescriptor nodeDescriptor, @NotNull Set<String> keywords, final String language) {
+        String name = tryAdd(nodeDescriptor, language);
+        if (name == null) return;
 
-        for (String word : keywords) {
-            Matcher matcher = pattern.matcher(word);
-            while (matcher.find()) {
-                set.add(word.substring(matcher.start(), matcher.end()));
+        CharSequence variable = nodeDescriptor.getStringAttribute(Constants.StringKey.MATCH);
+        if (variable != null) keywords.add(variable.toString());
+
+        variable = nodeDescriptor.getStringAttribute(Constants.StringKey.BEGIN);
+        if (variable != null) keywords.add(variable.toString());
+
+        variable = nodeDescriptor.getStringAttribute(Constants.StringKey.END);
+        if (variable != null) keywords.add(variable.toString());
+    }
+
+    private String tryAdd(@NotNull SyntaxNodeDescriptor nodeDescriptor, final String language) {
+        CharSequence name = nodeDescriptor.getStringAttribute(Constants.StringKey.NAME);
+        if (name != null && name.toString().toLowerCase().contains(language)) return name.toString();
+
+        name = checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.CAPTURES), language);
+        if (name != null) return name.toString();
+
+        name = checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.BEGIN_CAPTURES), language);
+        if (name != null) return name.toString();
+
+        return checkCapture(nodeDescriptor.getCaptures(Constants.CaptureKey.END_CAPTURES), language);
+    }
+
+    private String checkCapture(Int2ObjectMap<CharSequence> captures, final String language) {
+        if (captures != null) {
+            for (var capture : captures.int2ObjectEntrySet()) {
+                String stringCapture = capture.toString().toLowerCase();
+                if (stringCapture.contains(language)) return stringCapture;
             }
         }
+        return null;
+    }
 
-        List<String> result = new ArrayList<>();
-        for (String word : set) {
-            if (word.length() > 1) result.add(selectingRegisters.apply(word));
-        }
-
-        return result;
+    private @NotNull List<String> extractWordsFromRegexList(@NotNull String language, @NotNull Set<String> keywords, final @NotNull SelectingRegistersStrategy selectingRegisters) {
+        return WordExtractionFactory.create(language, keywords, selectingRegisters).extract();
     }
 
     public static @NotNull TextMateHelper getInstance(@NotNull Project project) {
@@ -167,37 +231,5 @@ public final class TextMateHelper {
         TextMateHelper textMateHelper = getInstance(project);
         textMateHelper.updateLanguages();
         return textMateHelper;
-    }
-
-    @FunctionalInterface
-    private interface StrategySelectingRegisters {
-        String apply(String word);
-
-        StrategySelectingRegisters DEFAULT = new DefaultStrategySelectingRegisters();
-        StrategySelectingRegisters UPPER = new UpperStrategySelectingRegisters();
-        @SuppressWarnings("unused")
-        StrategySelectingRegisters LOWER = new LowerStrategySelectingRegisters();
-
-        class DefaultStrategySelectingRegisters implements StrategySelectingRegisters {
-            @Override
-            public String apply(@NotNull String word) {
-                return word;
-            }
-        }
-
-
-        class UpperStrategySelectingRegisters implements StrategySelectingRegisters {
-            @Override
-            public String apply(@NotNull String word) {
-                return word.toUpperCase();
-            }
-        }
-
-        class LowerStrategySelectingRegisters implements StrategySelectingRegisters {
-            @Override
-            public String apply(@NotNull String word) {
-                return word.toLowerCase();
-            }
-        }
     }
 }

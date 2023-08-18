@@ -8,9 +8,11 @@ import com.intellij.psi.*;
 import org.rri.ijTextmate.Constants;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage;
-import org.rri.ijTextmate.Storage.PersistentStorage.PlaceInjection;
+import org.rri.ijTextmate.Storage.PersistentStorage.PersistentPlaceInjection;
 import org.jetbrains.annotations.NotNull;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToLanguage;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategy;
+import org.rri.ijTextmate.Storage.TemporaryStorage.InjectionStrategies.InjectionStrategyFactory;
+import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
@@ -30,16 +32,19 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
 
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
 
-        TemporaryMapPointerToLanguage temporaryMapPointerToLanguage = TemporaryStorage.getInstance(project).get(relativePath);
+        TemporaryMapPointerToPlaceInjection temporaryMapPointerToPlaceInjection = TemporaryStorage.getInstance(project).get(relativePath);
 
-        for (PlaceInjection placeInjection : persistentStorage.getSetElementAndClear(relativePath)) {
-            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(placeInjection.getCenter(), psiFile);
-            host = InjectorHelper.resolveHost(host);
+        for (PersistentPlaceInjection persistentPlaceInjection : persistentStorage.getSetPlaceInjectionAndClear(relativePath)) {
+            PsiLanguageInjectionHost host = InjectorHelper.findInjectionHost(persistentPlaceInjection.getCenter(), psiFile);
 
             if (host != null && host.isValidHost()) {
                 SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer = SmartPointerManager.createPointer(host);
-                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, placeInjection.languageId);
-                temporaryMapPointerToLanguage.add(temporaryPlaceInjection);
+
+                InjectionStrategy injectionStrategy = InjectionStrategyFactory.create(persistentPlaceInjection.identifierStrategy);
+
+                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, persistentPlaceInjection.languageId, injectionStrategy);
+                temporaryMapPointerToPlaceInjection.add(temporaryPlaceInjection);
+
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();
             }
