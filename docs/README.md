@@ -27,9 +27,9 @@ which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-
 | PhpStorm                        | 2022.2      | 2023.1      | supported             |
 | Rider                           | 2022.2.4    | 2023.1.4    | supported             |
 | GoLang                          | 2022.2.6    | 2023.1.4    | supported             |
-| RubyMine                        | -           | -           | -                     |
+| RubyMine                        | 2022.2.5    | 2023.1.5    | supported             |
 
-Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#`, `Go`
+Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#`, `Go`, `Ruby`
 
 ## Install plugin
 
