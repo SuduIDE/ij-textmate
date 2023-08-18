@@ -38,6 +38,12 @@ public class WordExtractionHTML implements WordExtraction {
             extract = EXTRACT_TWO.matcher(regex);
             WordExtraction.generateStrings(regex, extract, words, selectingRegisters);
         }
-        return words.stream().toList();
+
+        return new ArrayList<>() {
+            {
+                addAll(words);
+                addAll(words.stream().map(word -> word.replaceFirst("(</?)", "")).toList());
+            }
+        };
     }
 }
