@@ -13,7 +13,7 @@ public class WordExtractionDefault implements WordExtraction {
     private static final Pattern EXTRACT = Pattern.compile("(\\(@\\)|[a-z|-]*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED_COMMENT = Pattern.compile("(\\(\\?\\#.*\\)|\\#\\ \\(.*\\)|\\#.*\\n)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED_SPECIAL_SYMBOLS = Pattern.compile("(\\\\[a-z])", Pattern.CASE_INSENSITIVE);
-    private static final Pattern REMOVED_QUESTION = Pattern.compile("(\\(\\?[a-z]\\)|\\?[a-z]:?)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REMOVED_QUESTION = Pattern.compile("(~\\?|\\(\\?[a-z]\\)|\\?[a-z]:?)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED_IN_SQUARE_BRACKETS = Pattern.compile("(\\[.*\\])", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED_IN_CURLY_BRACKETS = Pattern.compile("(\\{.*\\})", Pattern.CASE_INSENSITIVE);
     private final Set<String> keywords;
