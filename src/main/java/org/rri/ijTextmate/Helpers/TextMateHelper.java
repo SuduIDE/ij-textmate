@@ -1,5 +1,6 @@
 package org.rri.ijTextmate.Helpers;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.custom.SyntaxTable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
@@ -20,6 +21,7 @@ import org.jetbrains.plugins.textmate.plist.*;
 import org.rri.ijTextmate.Helpers.SelectingRegistersStrategy.SelectingRegistersStrategy;
 import org.rri.ijTextmate.Helpers.WordExtraction.WordExtractionFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,6 +29,7 @@ import java.util.*;
 
 @Service(Service.Level.PROJECT)
 public final class TextMateHelper {
+    private final static Icon DEFAULT_ICON = AllIcons.Actions.Words;
     private final Map<String, String> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
     private final Map<String, List<String>> languageToFileExtensions = new HashMap<>();
@@ -35,6 +38,7 @@ public final class TextMateHelper {
     private final PlistReader plistReader = new CompositePlistReader();
     private final BundleFactory bundleFactory = new BundleFactory(plistReader);
     private final Map<String, AbstractFileType> extensionToFileType = new HashMap<>();
+    private final Map<String, Icon> languageToIcon = new HashMap<>();
 
     public TextMateHelper() {
         updateLanguages();
@@ -80,13 +84,17 @@ public final class TextMateHelper {
 
                 ReadAction.run(() -> {
                     List<String> keywords;
+                    Icon icon = null;
                     if (extension == null) {
                         keywords = extractKeywordsFromTextmateRegex(language);
                     } else {
-                        keywords = extractKeywordsFromAbstractLanguage(extensionToFileType.get(extension));
+                        AbstractFileType abstractFileType = extensionToFileType.get(extension);
+                        keywords = extractKeywordsFromAbstractLanguage(abstractFileType);
+                        icon = abstractFileType.getIcon();
                     }
                     if (keywords.isEmpty()) keywords = extractKeywordsFromTextmateRegex(language);
                     languageToKeywords.put(language, keywords);
+                    languageToIcon.put(language, (icon == null) ? DEFAULT_ICON : icon);
                 });
             }
         }
@@ -96,6 +104,10 @@ public final class TextMateHelper {
 
     public @NotNull List<String> getKeywords(String language) {
         return languageToKeywords.get(language);
+    }
+
+    public @NotNull Icon getIcon(String language) {
+        return languageToIcon.get(language);
     }
 
     private @Nullable Bundle createBundle(Path path) {
