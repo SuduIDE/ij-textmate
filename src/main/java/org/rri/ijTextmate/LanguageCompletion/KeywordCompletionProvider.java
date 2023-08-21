@@ -16,7 +16,6 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
-        result.runRemainingContributors(parameters, true);
         TextMateHelper textMateHelper = (TextMateHelper) context.get(CompletionPattern.LANGUAGE);
 
         TemporaryPlaceInjection languageID = parameters.getOriginalFile().getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
@@ -25,7 +24,7 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
 
         textMateHelper.getKeywords(languageID.getID()).forEach(word -> {
             ProgressManager.checkCanceled();
-            result.addElement(LookupElementBuilder.create(word));
+            result.addElement(LookupElementBuilder.create(word).withCaseSensitivity(false));
         });
     }
 }
