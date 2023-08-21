@@ -22,9 +22,11 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
 
         if (languageID == null) return;
 
-        textMateHelper.getKeywords(languageID.getID()).forEach(word -> {
+        TextMateHelper.ExtractedLanguageInformation information = textMateHelper.getInformation(languageID.getID());
+
+        information.getKeywords().forEach(word -> {
             ProgressManager.checkCanceled();
-            result.addElement(LookupElementBuilder.create(word).withCaseSensitivity(false));
+            result.addElement(LookupElementBuilder.create(word).withCaseSensitivity(false).withIcon(information.getIcon()));
         });
     }
 }
