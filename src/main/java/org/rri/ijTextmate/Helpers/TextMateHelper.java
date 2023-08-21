@@ -31,7 +31,6 @@ import java.util.*;
 public final class TextMateHelper {
     private final Map<String, String> languages = new HashMap<>();
     private final Map<String, String> languageToFileExtension = new HashMap<>(Map.of("textmate", ""));
-    private final Map<String, List<String>> languageToFileExtensions = new HashMap<>();
     private final Map<String, ExtractedLanguageInformation> languageToInformation = new HashMap<>(Map.of("textmate", new ExtractedLanguageInformation()));
     private final Map<String, SelectingRegistersStrategy> languageToStrategyRegister = new HashMap<>(Map.of("docker", SelectingRegistersStrategy.UPPER, "sql", SelectingRegistersStrategy.UPPER));
     private final PlistReader plistReader = new CompositePlistReader();
@@ -73,9 +72,8 @@ public final class TextMateHelper {
             fileExtension = languageToFileExtension.get(language);
             if (fileExtension == null) {
                 List<String> extensions = getExtensions(getPath(language));
-                languageToFileExtensions.put(language, extensions);
 
-                fileExtension = calcExtension(language);
+                fileExtension = calcExtension(extensions, language);
                 languageToFileExtension.put(language, fileExtension);
 
                 String extension = abstractFileTypeExists(extensions);
@@ -84,13 +82,13 @@ public final class TextMateHelper {
                     List<String> keywords;
                     Icon icon = null;
                     if (extension == null) {
-                        keywords = extractKeywordsFromTextmateRegex(language);
+                        keywords = extractKeywordsFromTextmateRegex(extensions, language);
                     } else {
                         AbstractFileType abstractFileType = extensionToFileType.get(extension);
                         keywords = extractKeywordsFromAbstractLanguage(abstractFileType);
                         icon = abstractFileType.getIcon();
                     }
-                    if (keywords.isEmpty()) keywords = extractKeywordsFromTextmateRegex(language);
+                    if (keywords.isEmpty()) keywords = extractKeywordsFromTextmateRegex(extensions, language);
                     languageToInformation.put(language, new ExtractedLanguageInformation(icon, keywords));
                 });
             }
@@ -128,8 +126,7 @@ public final class TextMateHelper {
         return allExtension;
     }
 
-    private @NotNull String calcExtension(String language) {
-        List<String> extensions = languageToFileExtensions.get(language);
+    private @NotNull String calcExtension(@NotNull List<String> extensions, @NotNull String language) {
         if (extensions.contains(language.toLowerCase())) return language.toLowerCase();
         if (extensions.isEmpty()) return "";
         return extensions.get(0);
@@ -155,11 +152,11 @@ public final class TextMateHelper {
         return merged.stream().toList();
     }
 
-    private @NotNull List<String> extractKeywordsFromTextmateRegex(String language) {
+    private @NotNull List<String> extractKeywordsFromTextmateRegex(List<String> extensions, String language) {
         Set<String> keywords = new HashSet<>();
         Set<String> visited = new HashSet<>();
 
-        for (String extension : languageToFileExtensions.get(language)) {
+        for (String extension : extensions) {
             TextMateLanguageDescriptor textMateLanguageDescriptor = TextMateService.getInstance().getLanguageDescriptorByExtension(extension);
             if (textMateLanguageDescriptor == null) continue;
 
