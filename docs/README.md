@@ -3,16 +3,33 @@
 # Contents
 
 - [Contents](#contents)
-    - [Short description](#short-description)
-    - [Install plugin](#install-plugin)
-    - [Usage](#usage)
-    - [Features](#features)
-    - [Bugs](#bugs)
+- [Motivation and terms](#motivation-and-terms)
+- [Short description](#short-description)
+- [Install plugin](#install-plugin)
+- [Usage](#usage)
+- [Features](#features)
+- [Bugs](#bugs)
+
+## Motivation and terms
+
+Sometimes a person who deals with code has to write code fragments in another language inside string literals.
+
+A good example is `SQL` queries that have to be written inside string literals in `Java`, `PHP`, `Python` backend developer:
+
+![example_sql_query](images/example_sql_query.png)
+
+Or `bash` script inside a yaml file:
+
+![bash_yaml](images/bash_yaml.png)
+
+In order to make it easier to work with such code fragments, there are language injections. Language injections allow you to add syntax highlighting and completions to code fragments inside a string literal
 
 ## Short description
 
 Plugin for language injection. Provides language injection in string literals. The injected languages can be those for
 which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-textmate-bundles.html) are available.
+
+Supports saving injections between IDE restarts and completions for the injected language.
 
 ## Requirements
 
