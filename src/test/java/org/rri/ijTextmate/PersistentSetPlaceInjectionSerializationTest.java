@@ -38,7 +38,7 @@ public class PersistentSetPlaceInjectionSerializationTest extends LightPlatformC
         PersistentStorage.MapFileToSetElement newMap = new PersistentStorage.MapFileToSetElement();
         newMap.fromElement(element);
 
-        assertEquals(answer, newMap.getMap());
+        assertEquals(answer.entrySet(), newMap.entrySet());
     }
 
     private @NotNull PersistentSetPlaceInjection createSetPlaceInjection(PersistentPlaceInjection... persistentPlaceInjections) {

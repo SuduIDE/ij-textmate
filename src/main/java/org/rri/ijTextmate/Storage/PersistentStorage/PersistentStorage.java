@@ -16,7 +16,7 @@ import java.util.*;
 
 @State(name = "PersistentStorage", storages = @Storage("PersistentStorageInjectSense.xml"))
 public class PersistentStorage implements PersistentStateComponent<Element> {
-    private final MapFileToSetElement myMapToSetPlaceInjection = new MapFileToSetElement();
+    private final MapFileToSetElement mapToSetPlaceInjection = new MapFileToSetElement();
     private final Project project;
 
     public PersistentStorage(@NotNull Project project) {
@@ -24,15 +24,15 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
     }
 
     public PersistentSetPlaceInjection getSetPlaceInjectionAndClear(String relativePath) {
-        PersistentSetPlaceInjection persistentSetPlaceInjection = myMapToSetPlaceInjection.get(relativePath);
-        myMapToSetPlaceInjection.put(relativePath, new PersistentSetPlaceInjection());
+        PersistentSetPlaceInjection persistentSetPlaceInjection = mapToSetPlaceInjection.get(relativePath);
+        mapToSetPlaceInjection.put(relativePath, new PersistentSetPlaceInjection());
         return persistentSetPlaceInjection;
     }
 
     @Override
     public @NotNull Element getState() {
         for (Map.Entry<String, TemporaryMapPointerToPlaceInjection> entry : TemporaryStorage.getInstance(project).entrySet()) {
-            PersistentSetPlaceInjection persistentSetPlaceInjection = myMapToSetPlaceInjection.get(entry.getKey());
+            PersistentSetPlaceInjection persistentSetPlaceInjection = mapToSetPlaceInjection.get(entry.getKey());
             persistentSetPlaceInjection.clear();
 
             for (var entryInner : entry.getValue().getMap().entrySet()) {
@@ -42,25 +42,23 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
                 persistentSetPlaceInjection.add(new PersistentPlaceInjection(temporaryPlaceInjection.languageID, psiElement.getTextRange(), temporaryPlaceInjection.getStrategyIdentifier()));
             }
         }
-        return myMapToSetPlaceInjection.toElement();
+        return mapToSetPlaceInjection.toElement();
     }
 
     @Override
     public void loadState(@NotNull Element state) {
-        myMapToSetPlaceInjection.fromElement(state);
+        mapToSetPlaceInjection.fromElement(state);
     }
 
     public static PersistentStorage getInstance(@NotNull Project project) {
         return project.getService(PersistentStorage.class);
     }
 
-    public static class MapFileToSetElement implements ConverterElement {
+    public static class MapFileToSetElement extends AbstractMap<String, PersistentSetPlaceInjection> implements ConverterElement {
         private static final String NAME = "PersistentStorage";
         private static final String PATH = "path";
         private static final String FILE = "file";
-        private final Object mutex = new Object();
-
-        private Map<String, PersistentSetPlaceInjection> map = new HashMap<>();
+        private Map<String, PersistentSetPlaceInjection> map = new Hashtable<>();
 
         public MapFileToSetElement() {
         }
@@ -69,45 +67,15 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
             this.map = map;
         }
 
-        public PersistentSetPlaceInjection get(String key) {
-            synchronized (mutex) {
-                PersistentSetPlaceInjection persistentSetPlaceInjection = map.get(key);
-                if (persistentSetPlaceInjection == null) {
-                    persistentSetPlaceInjection = new PersistentSetPlaceInjection();
-                    map.put(key, persistentSetPlaceInjection);
-                }
-                return persistentSetPlaceInjection;
-            }
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public PersistentSetPlaceInjection put(String key, PersistentSetPlaceInjection value) {
-            synchronized (mutex) {
-                return map.put(key, value);
-            }
-        }
-
-        @SuppressWarnings("unused")
-        public int size() {
-            synchronized (mutex) {
-                return map.size();
-            }
-        }
-
-        @SuppressWarnings("unused")
-        public void clear() {
-            synchronized (mutex) {
-                map.clear();
-            }
-        }
-
         public boolean fromElement(final @NotNull Element root) {
             map.clear();
             for (Element element : root.getChildren()) {
                 PersistentSetPlaceInjection persistentSetPlaceInjection = new PersistentSetPlaceInjection();
                 for (Element placeJDOM : element.getChildren()) {
                     PersistentPlaceInjection persistentPlaceInjection = new PersistentPlaceInjection();
-                    if (persistentPlaceInjection.fromElement(placeJDOM)) persistentSetPlaceInjection.add(persistentPlaceInjection);
+                    if (persistentPlaceInjection.fromElement(placeJDOM)) {
+                        persistentSetPlaceInjection.add(persistentPlaceInjection);
+                    }
                 }
                 map.put(element.getAttribute(PATH).getValue(), persistentSetPlaceInjection);
             }
@@ -130,8 +98,34 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
             return root;
         }
 
-        public Map<String, PersistentSetPlaceInjection> getMap() {
-            return Collections.unmodifiableMap(map);
+        @Override
+        public PersistentSetPlaceInjection get(Object key) {
+            PersistentSetPlaceInjection persistentSetPlaceInjection = map.get(key);
+            if (persistentSetPlaceInjection == null && key instanceof String str) {
+                persistentSetPlaceInjection = new PersistentSetPlaceInjection();
+                map.put(str, persistentSetPlaceInjection);
+            }
+            return persistentSetPlaceInjection;
+        }
+
+        @Override
+        public PersistentSetPlaceInjection put(String key, PersistentSetPlaceInjection value) {
+            return map.put(key, value);
+        }
+
+        @Override
+        public int size() {
+            return map.size();
+        }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
+
+        @Override
+        public Set<Map.Entry<String, PersistentSetPlaceInjection>> entrySet() {
+            return map.entrySet();
         }
     }
 }
