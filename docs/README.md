@@ -33,22 +33,22 @@ done as follows:
 <table>
   <tr>
     <td>
-        <a href="https://github.com/itaditya#gh-dark-mode-only"><img src="images/dark/string_literal.png" alt="string_literal" /></a>
-        <a href="https://github.com/itaditya#gh-light-mode-only"><img src="images/light/string_literal.png" alt="string_literal" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only"><img src="images/dark/string_literal.png" alt="string_literal" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only"><img src="images/light/string_literal.png" alt="string_literal" /></a>
     </td>
     <td> There is a string literal </td>
   </tr>
   <tr>
     <td>
-        <a href="https://github.com/itaditya#gh-dark-mode-only"><img src="images/dark/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
-        <a href="https://github.com/itaditya#gh-light-mode-only"><img src="images/light/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only"><img src="images/dark/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only"><img src="images/light/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
     </td>
     <td> Add a "language=textmate" comment above the string literal </td>
   </tr>
   <tr>
     <td>
-        <a href="https://github.com/itaditya#gh-dark-mode-only"><img src="images/dark/string_literal_comment_sql.png" alt="string_literal_comment_sql" /></a>
-        <a href="https://github.com/itaditya#gh-light-mode-only"><img src="images/light/string_literal_comment_sql.png" alt="string_literal_comment_sql" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only"><img src="images/dark/string_literal_comment_sql.png" alt="string_literal_comment_sql" /></a>
+        <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only"><img src="images/light/string_literal_comment_sql.png" alt="string_literal_comment_sql" /></a>
     </td>
     <td> Replace "textmate" with "sql" </td>
   </tr>
