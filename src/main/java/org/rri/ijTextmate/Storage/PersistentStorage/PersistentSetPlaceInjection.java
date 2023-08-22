@@ -1,9 +1,10 @@
 package org.rri.ijTextmate.Storage.PersistentStorage;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PersistentSetPlaceInjection extends AbstractSet<PersistentPlaceInjection> {
-    private final Set<PersistentPlaceInjection> set = new HashSet<>();
+    private final Set<PersistentPlaceInjection> set = ConcurrentHashMap.newKeySet();
 
     public PersistentSetPlaceInjection() {
     }
@@ -14,34 +15,34 @@ public class PersistentSetPlaceInjection extends AbstractSet<PersistentPlaceInje
             private final Iterator<PersistentPlaceInjection> iterator = set.iterator();
 
             @Override
-            public synchronized boolean hasNext() {
+            public boolean hasNext() {
                 return iterator.hasNext();
             }
 
             @Override
-            public synchronized PersistentPlaceInjection next() {
+            public PersistentPlaceInjection next() {
                 return iterator.next();
             }
         };
     }
 
     @Override
-    public synchronized int size() {
+    public int size() {
         return set.size();
     }
 
     @Override
-    public synchronized boolean add(PersistentPlaceInjection place) {
+    public boolean add(PersistentPlaceInjection place) {
         return set.add(place);
     }
 
     @Override
-    public synchronized boolean remove(Object place) {
+    public boolean remove(Object place) {
         return set.remove(place);
     }
 
     @Override
-    public synchronized void clear() {
+    public void clear() {
         set.clear();
     }
 }

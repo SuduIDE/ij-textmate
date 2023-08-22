@@ -49,7 +49,7 @@ public class FileChangeListener implements BulkFileListener {
 
     void insertInjectedLanguageIntoFileStringLiterals(@NotNull TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection) {
         List<SmartPsiElementPointer<PsiLanguageInjectionHost>> removed = new ArrayList<>();
-        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> entry : mapPointerToPlaceInjection.getMap().entrySet()) {
+        for (Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> entry : mapPointerToPlaceInjection.entrySet()) {
             SmartPsiElementPointer<PsiLanguageInjectionHost> smartPsiElementPointer = entry.getKey();
 
             PsiElement psiElement = smartPsiElementPointer.getElement();

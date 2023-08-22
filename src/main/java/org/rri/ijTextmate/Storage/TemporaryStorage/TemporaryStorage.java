@@ -13,26 +13,21 @@ import java.util.Set;
 @Service(Service.Level.PROJECT)
 public final class TemporaryStorage {
     private final Map<String, TemporaryMapPointerToPlaceInjection> map = new HashMap<>();
-    private final Object mutex = new Object();
 
     public TemporaryStorage() {
     }
 
-    public @NotNull TemporaryMapPointerToPlaceInjection get(String key) {
-        synchronized (mutex) {
-            TemporaryMapPointerToPlaceInjection temporaryMap = map.get(key);
-            if (temporaryMap == null) {
-                temporaryMap = new TemporaryMapPointerToPlaceInjection();
-                map.put(key, temporaryMap);
-            }
-            return temporaryMap;
+    public synchronized @NotNull TemporaryMapPointerToPlaceInjection get(String key) {
+        TemporaryMapPointerToPlaceInjection temporaryMap = map.get(key);
+        if (temporaryMap == null) {
+            temporaryMap = new TemporaryMapPointerToPlaceInjection();
+            map.put(key, temporaryMap);
         }
+        return temporaryMap;
     }
 
-    public boolean contains(String key) {
-        synchronized (mutex) {
-            return map.get(key) != null;
-        }
+    public synchronized boolean contains(String key) {
+        return map.get(key) != null;
     }
 
     public @NotNull @UnmodifiableView Set<Map.Entry<String, TemporaryMapPointerToPlaceInjection>> entrySet() {
@@ -40,24 +35,18 @@ public final class TemporaryStorage {
     }
 
     @SuppressWarnings("unused")
-    public TemporaryMapPointerToPlaceInjection put(String key, TemporaryMapPointerToPlaceInjection value) {
-        synchronized (mutex) {
-            return map.put(key, value);
-        }
+    public synchronized TemporaryMapPointerToPlaceInjection put(String key, TemporaryMapPointerToPlaceInjection value) {
+        return map.put(key, value);
     }
 
     @SuppressWarnings("unused")
-    public int size() {
-        synchronized (mutex) {
-            return map.size();
-        }
+    public synchronized int size() {
+        return map.size();
     }
 
     @SuppressWarnings("unused")
-    public void clear() {
-        synchronized (mutex) {
-            map.clear();
-        }
+    public synchronized void clear() {
+        map.clear();
     }
 
     public static TemporaryStorage getInstance(@NotNull Project project) {

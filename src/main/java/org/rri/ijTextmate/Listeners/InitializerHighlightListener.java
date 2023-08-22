@@ -43,7 +43,7 @@ public class InitializerHighlightListener implements FileEditorManagerListener {
                 InjectionStrategy injectionStrategy = InjectionStrategyFactory.create(persistentPlaceInjection.identifierStrategy);
 
                 TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(psiElementPointer, persistentPlaceInjection.languageId, injectionStrategy);
-                temporaryMapPointerToPlaceInjection.add(temporaryPlaceInjection);
+                temporaryMapPointerToPlaceInjection.put(temporaryPlaceInjection);
 
                 host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
                 host.getManager().dropPsiCaches();

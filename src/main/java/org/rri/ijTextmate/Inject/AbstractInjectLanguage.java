@@ -38,7 +38,7 @@ public abstract class AbstractInjectLanguage {
 
         String relativePath = InjectorHelper.getRelativePath(project, psiFile);
         TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = TemporaryStorage.getInstance(project).get(relativePath);
-        mapPointerToPlaceInjection.add(temporaryPlaceInjection);
+        mapPointerToPlaceInjection.put(temporaryPlaceInjection);
 
         putUserData(host, psiFile, temporaryPlaceInjection);
     }

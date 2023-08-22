@@ -8,10 +8,9 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestC
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
-import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-import java.util.Map;
+import java.util.Set;
 
 public class LanguageInjectionTests extends LightPlatformCodeInsightFixture4TestCase {
     private static final int CENTER_INSIDE_OFFSET = 131;
@@ -94,18 +93,18 @@ public class LanguageInjectionTests extends LightPlatformCodeInsightFixture4Test
         boolean resultFirst = TestHelper.isInjected(project, editor, psiFile);
 
         String relivePath = InjectorHelper.getRelativePath(project, psiFile);
-        var map = TemporaryStorage.getInstance(project).get(relivePath).getMap();
+        var keys = TemporaryStorage.getInstance(project).get(relivePath).keySet();
 
         PsiElement psiElement = psiFile.findElementAt(editor.getCaretModel().getOffset());
 
         assertNotNull(getMessage(psiFile.getName()), psiElement);
 
-        return resultFirst && intersectsWithElementFromMap(map, psiElement);
+        return resultFirst && intersectsWithElementFromMap(keys, psiElement);
     }
 
-    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, @NotNull PsiElement psiElement) {
+    private boolean intersectsWithElementFromMap(@NotNull Set<SmartPsiElementPointer<PsiLanguageInjectionHost>> keys, @NotNull PsiElement psiElement) {
         TextRange textRange = psiElement.getTextRange();
-        for (var key : map.keySet()) {
+        for (var key : keys) {
             PsiElement element = key.getElement();
             if (element == null) continue;
             TextRange textRangeOfElement = element.getTextRange();

@@ -35,7 +35,7 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
             PersistentSetPlaceInjection persistentSetPlaceInjection = mapToSetPlaceInjection.get(entry.getKey());
             persistentSetPlaceInjection.clear();
 
-            for (var entryInner : entry.getValue().getMap().entrySet()) {
+            for (var entryInner : entry.getValue().entrySet()) {
                 TemporaryPlaceInjection temporaryPlaceInjection = entryInner.getValue();
                 PsiLanguageInjectionHost psiElement = entryInner.getKey().getElement();
                 if (psiElement == null || !psiElement.isValidHost()) continue;

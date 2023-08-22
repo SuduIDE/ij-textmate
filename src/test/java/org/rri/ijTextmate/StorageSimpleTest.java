@@ -15,8 +15,8 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryMapPointerToPlaceInj
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase {
@@ -41,7 +41,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(100, psiFile)));
-        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.put(new TemporaryPlaceInjection(pointer, "sql", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -53,7 +53,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(156, psiFile)));
-        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.put(new TemporaryPlaceInjection(pointer, "php", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -65,7 +65,7 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
         TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
         var pointer = SmartPointerManager.createPointer(Objects.requireNonNull(InjectorHelper.findInjectionHost(253, psiFile)));
-        mapPointerToPlaceInjection.add(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
+        mapPointerToPlaceInjection.put(new TemporaryPlaceInjection(pointer, "go", new SingleInjectionStrategy()));
 
         PersistentStorage.getInstance(getProject()).getState();
     }
@@ -76,15 +76,15 @@ public class StorageSimpleTest extends LightPlatformCodeInsightFixture4TestCase 
 
         TemporaryMapPointerToPlaceInjection mapPointerToPlaceInjection = getMyMap(psiFile);
 
-        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 100));
-        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 156));
-        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.getMap(), 253));
-        assertEquals(3, mapPointerToPlaceInjection.getMap().size());
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.keySet(), 100));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.keySet(), 156));
+        assertTrue(intersectsWithElementFromMap(mapPointerToPlaceInjection.keySet(), 253));
+        assertEquals(3, mapPointerToPlaceInjection.size());
     }
 
-    private boolean intersectsWithElementFromMap(@NotNull Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map, int offset) {
+    private boolean intersectsWithElementFromMap(@NotNull Set<SmartPsiElementPointer<PsiLanguageInjectionHost>> keys, int offset) {
         TextRange textRange = new TextRange(offset, offset);
-        for (var key : map.keySet()) {
+        for (var key : keys) {
             PsiElement element = key.getElement();
             if (element == null) continue;
             TextRange textRangeOfElement = element.getTextRange();
