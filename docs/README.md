@@ -16,7 +16,7 @@ Sometimes a person who deals with code has to write code fragments in another la
 
 For example `SQL` queries inside `Java` string literals:
 
-<a href="https://github.com/itaditya#gh-dark-mode-only">
+<a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
   <img src="images/dark/spring_petclinic.png" alt="sql_query" />
 </a>
 
