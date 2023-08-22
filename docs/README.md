@@ -20,7 +20,7 @@ For example `SQL` queries inside `Java` string literals:
   <img src="images/dark/spring_petclinic.png" alt="sql_query" />
 </a>
 
-<a href="https://github.com/itaditya#gh-light-mode-only">
+<a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
   <img src="images/light/spring_petclinic.png" alt="sql_query" />
 </a>
 
@@ -107,17 +107,36 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
 1. Select the string literal in which we want to embed the language. To do this, move the caret to a position inside the
    string literal
 
-   ![string literal without injection](images/dark/without_injection.png)
+    <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+      <img src="images/dark/without_injection.png" alt="without_injection" />
+    </a>
+    
+    <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+      <img src="images/light/without_injection.png" alt="without_injection" />
+    </a>
 
 2. First press `Ctrl+\` then press `Ctrl+I`. A list of possible injection languages will appear. Use the keys to
    navigate through the list:
     - `↑` - move up
     - `↓` - move down
+    
+    <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+      <img src="images/dark/select_language.png" alt="select_language" />
+    </a>
 
-   ![select language](images/dark/select_language.png)
+    <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+      <img src="images/light/select_language.png" alt="select_language" />
+    </a>
+
 3. Press `enter` to confirm your choice
 
-   ![with injection](images/dark/with_injection.png)
+   <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+     <img src="images/dark/with_injection.png" alt="with_injection" />
+   </a>
+
+   <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+     <img src="images/light/with_injection.png" alt="with_injection" />
+   </a>   
 
 4. To remove an injection, first press `Ctrl+\` then press `Ctrl+I`
 
@@ -125,17 +144,35 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
 
 - You can also search by name when selecting languages. To do this, just type the name of the language you need
 
-  ![search_language](images/dark/search_language.png)
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+    <img src="images/dark/search_language.png" alt="search_language" />
+  </a>
+
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+    <img src="images/light/search_language.png" alt="search_language" />
+  </a>
 
 - Support completion for injected language
 
-  ![variant_completion](images/dark/variant_completion.png)
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+    <img src="images/dark/variant_completion.png" alt="variant_completion" />
+  </a>
+
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+    <img src="images/light/variant_completion.png" alt="variant_completion" />
+  </a>
 
 - Injections are saved when the IDE is restarted
 
 - The list of supported languages depends on the mappings loaded by Textmate Bundles
 
-  ![textmate_bundles](images/dark/textmate_bundles.png)
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
+    <img src="images/dark/textmate_bundles.png" alt="textmate_bundles" />
+  </a>
+
+  <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
+    <img src="images/light/textmate_bundles.png" alt="textmate_bundles" />
+  </a>
 
 ## Bugs
 
