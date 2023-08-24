@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public interface WordExtraction {
     List<String> extract();
-
+    int LIMIT_LENGTH = 2;
     Pattern FILTER = Pattern.compile("([^a-z]*)", Pattern.CASE_INSENSITIVE);
 
     static void generateStrings(String regex, @NotNull Matcher extract, Set<String> words, SelectingRegistersStrategy selectingRegisters) {
@@ -26,7 +26,7 @@ public interface WordExtraction {
 
             while (it.hasNext()) {
                 String word = it.next();
-                if (word.length() < 2) continue;
+                if (word.length() < LIMIT_LENGTH) continue;
                 words.add(selectingRegisters.apply(word));
             }
         }

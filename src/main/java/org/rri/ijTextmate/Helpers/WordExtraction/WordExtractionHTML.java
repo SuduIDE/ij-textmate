@@ -8,12 +8,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WordExtractionHTML implements WordExtraction {
-    private final Pattern REMOVED_END = Pattern.compile("(\\([?=s\\\\|/>]*\\))", Pattern.CASE_INSENSITIVE);
-    private final Pattern REMOVED_SPECIAL_SYMBOLS = Pattern.compile("(\\\\[a-z])", Pattern.CASE_INSENSITIVE);
-    private final Pattern REMOVED_QUESTION = Pattern.compile("(\\(\\?[a-z]+\\))", Pattern.CASE_INSENSITIVE);
-    private final Pattern FILTER = Pattern.compile("([^a-z]*)", Pattern.CASE_INSENSITIVE);
-    private final Pattern EXTRACT_ONE = Pattern.compile("(\\(<\\)\\([a-z0-9|\\[\\]-]*\\))", Pattern.CASE_INSENSITIVE);
-    private final Pattern EXTRACT_TWO = Pattern.compile("(\\(</\\)\\([-\\[\\]|a-z0-9]*\\))", Pattern.CASE_INSENSITIVE);
+    private static final String END = "\\([?=s\\\\|/>]*\\)";
+    private static final String SPECIAL_SYMBOLS = "\\\\[a-z]";
+    private static final String QUESTION = "\\(\\?[a-z]+\\)";
+    private static final Pattern REMOVED = Pattern.compile(regexToRemove(), Pattern.CASE_INSENSITIVE);
+    private static final Pattern FILTER = Pattern.compile("([^a-z]*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern EXTRACT = Pattern.compile("(\\(<\\)\\([a-z0-9|\\[\\]-]*\\)|\\(</\\)\\([-\\[\\]|a-z0-9]*\\))", Pattern.CASE_INSENSITIVE);
     private final Set<String> keywords;
     private final SelectingRegistersStrategy selectingRegisters;
 
@@ -27,15 +27,11 @@ public class WordExtractionHTML implements WordExtraction {
         Set<String> words = new HashSet<>();
 
         for (String regex : keywords) {
-            regex = REMOVED_END.matcher(regex).replaceAll("");
-            regex = REMOVED_SPECIAL_SYMBOLS.matcher(regex).replaceAll("");
-            regex = REMOVED_QUESTION.matcher(regex).replaceAll("");
+            regex = REMOVED.matcher(regex).replaceAll("");
 
             if (FILTER.matcher(regex).matches()) continue;
 
-            Matcher extract = EXTRACT_ONE.matcher(regex);
-            WordExtraction.generateStrings(regex, extract, words, selectingRegisters);
-            extract = EXTRACT_TWO.matcher(regex);
+            Matcher extract = EXTRACT.matcher(regex);
             WordExtraction.generateStrings(regex, extract, words, selectingRegisters);
         }
 
@@ -45,5 +41,9 @@ public class WordExtractionHTML implements WordExtraction {
                 addAll(words.stream().map(word -> word.replaceFirst("(</?)", "")).toList());
             }
         };
+    }
+
+    private static String regexToRemove() {
+        return String.format("(%s|%s|%s)", END, SPECIAL_SYMBOLS, QUESTION);
     }
 }
