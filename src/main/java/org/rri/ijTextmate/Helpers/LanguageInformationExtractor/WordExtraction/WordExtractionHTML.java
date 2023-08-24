@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.Helpers.WordExtraction;
+package org.rri.ijTextmate.Helpers.LanguageInformationExtractor.WordExtraction;
 
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.SelectingRegistersStrategy.SelectingRegistersStrategy;

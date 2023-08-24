@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.Helpers.WordExtraction;
+package org.rri.ijTextmate.Helpers.LanguageInformationExtractor.WordExtraction;
 
 import com.github.curiousoddman.rgxgen.RgxGen;
 import org.jetbrains.annotations.NotNull;

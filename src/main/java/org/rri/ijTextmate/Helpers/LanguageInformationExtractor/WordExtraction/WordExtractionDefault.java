@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.Helpers.WordExtraction;
+package org.rri.ijTextmate.Helpers.LanguageInformationExtractor.WordExtraction;
 
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Helpers.SelectingRegistersStrategy.SelectingRegistersStrategy;
@@ -15,7 +15,7 @@ public class WordExtractionDefault implements WordExtraction {
     private static final String QUESTION = "\\(\\?[a-z]\\)|\\?[a-z]:?";
     private static final String CONTENT_IN_SQUARE_BRACKETS = "\\[.*\\]";
     private static final String CONTENT_IN_CURLY_BRACKETS = "\\{.*\\}";
-    private static final Pattern EXTRACT = Pattern.compile("(\\(@\\)|[a-z|-]*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern EXTRACT = Pattern.compile("(\\(@\\)[a-z|-]*|[a-z|-]*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED = Pattern.compile(regexToRemove(), Pattern.CASE_INSENSITIVE);
     private final Set<String> keywords;
     private final SelectingRegistersStrategy selectingRegisters;

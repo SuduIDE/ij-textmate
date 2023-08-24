@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Constants;
+import org.rri.ijTextmate.Helpers.LanguageInformationExtractor.ExtractedLanguageInformation;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
@@ -22,7 +23,7 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
 
         if (languageID == null) return;
 
-        TextMateHelper.ExtractedLanguageInformation information = textMateHelper.getInformation(languageID.getID());
+        ExtractedLanguageInformation information = textMateHelper.getInformation(languageID.getID());
 
         information.getKeywords().forEach(word -> {
             ProgressManager.checkCanceled();
