@@ -1,6 +1,5 @@
 package org.rri.ijTextmate.Helpers.LanguageInformationExtractor.WordExtraction;
 
-import com.github.curiousoddman.rgxgen.RgxGen;
 import com.intellij.openapi.util.TextRange;
 import org.jcodings.specific.UTF8Encoding;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +39,10 @@ public class WordExtractionDefault implements WordExtraction {
         Set<String> words = new HashSet<>();
 
         for (String regex : keywords) {
-            String old = regex;
             regex = REMOVED.matcher(regex).replaceAll("");
 
             Matcher extract = EXTRACT.matcher(regex);
-            Set<TextRange> exceptions = recursiveCapture(regex, old);
+            Set<TextRange> exceptions = recursiveCapture(regex);
             generateStrings(regex, extract, words, exceptions, selectingRegisters);
             generateStrings(regex, words, exceptions, selectingRegisters);
         }
@@ -63,17 +61,7 @@ public class WordExtractionDefault implements WordExtraction {
 
             String added = regex.substring(start, end);
 
-            if (added.isEmpty()) continue;
-            if (FILTER.matcher(added).matches()) continue;
-            var rgxgen = new RgxGen(added);
-            if (rgxgen.getUniqueEstimation().isEmpty()) continue;
-            var it = rgxgen.iterateUnique();
-
-            while (it.hasNext()) {
-                String word = it.next();
-                if (word.length() < LIMIT_LENGTH) continue;
-                words.add(selectingRegisters.apply(word));
-            }
+            WordExtraction.generateStrings(added, words, selectingRegisters);
         }
     }
 
@@ -82,21 +70,11 @@ public class WordExtractionDefault implements WordExtraction {
 
             String added = String.format("(%s)", regex.substring(range.getStartOffset(), range.getEndOffset()));
 
-            if (added.isEmpty()) continue;
-            if (FILTER.matcher(added).matches()) continue;
-            var rgxgen = new RgxGen(added);
-            if (rgxgen.getUniqueEstimation().isEmpty()) continue;
-            var it = rgxgen.iterateUnique();
-
-            while (it.hasNext()) {
-                String word = it.next();
-                if (word.length() < LIMIT_LENGTH) continue;
-                words.add(selectingRegisters.apply(word));
-            }
+            WordExtraction.generateStrings(added, words, selectingRegisters);
         }
     }
 
-    private @NotNull Set<TextRange> recursiveCapture(@NotNull String str, String old) {
+    private @NotNull Set<TextRange> recursiveCapture(@NotNull String str) {
         byte[] captureBytes = RECURSIVE_CAPTURE.getBytes(StandardCharsets.UTF_8);
         Regex regex = new Regex(captureBytes, 0, captureBytes.length, Option.CAPTURE_GROUP, UTF8Encoding.INSTANCE);
 

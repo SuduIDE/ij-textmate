@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public interface WordExtraction {
     List<String> extract();
+
     int LIMIT_LENGTH = 2;
     Pattern FILTER = Pattern.compile("([^a-z]*)", Pattern.CASE_INSENSITIVE);
 
@@ -18,17 +19,21 @@ public interface WordExtraction {
         while (extract.find()) {
             String added = regex.substring(extract.start(), extract.end());
 
-            if (added.isEmpty()) continue;
-            if (FILTER.matcher(added).matches()) continue;
-            var rgxgen = new RgxGen(added);
-            if (rgxgen.getUniqueEstimation().isEmpty()) continue;
-            var it = rgxgen.iterateUnique();
+            generateStrings(added, words, selectingRegisters);
+        }
+    }
 
-            while (it.hasNext()) {
-                String word = it.next();
-                if (word.length() < LIMIT_LENGTH) continue;
-                words.add(selectingRegisters.apply(word));
-            }
+    static void generateStrings(@NotNull String added, Set<String> words, SelectingRegistersStrategy selectingRegisters) {
+        if (added.isEmpty()) return;
+        if (FILTER.matcher(added).matches()) return;
+        var rgxgen = new RgxGen(added);
+        if (rgxgen.getUniqueEstimation().isEmpty()) return;
+        var it = rgxgen.iterateUnique();
+
+        while (it.hasNext()) {
+            String word = it.next();
+            if (word.length() < LIMIT_LENGTH) continue;
+            words.add(selectingRegisters.apply(word));
         }
     }
 }
