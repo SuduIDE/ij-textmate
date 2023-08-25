@@ -58,9 +58,9 @@ public class CompletionInjectedLanguageTests extends LightPlatformCodeInsightFix
     }
 
     @Test
-    public void testCSSEchoKeyword() {
+    public void testPowerShellEchoKeyword() {
         Project project = myFixture.getProject();
-        PsiFile file = myFixture.configureByFile("CSSEchoKeyword.java");
+        PsiFile file = myFixture.configureByFile("PowerShellEchoKeyword.java");
         Editor editor = myFixture.getEditor();
 
         TestHelper.injectLanguage(project, editor, file, "powershell");
