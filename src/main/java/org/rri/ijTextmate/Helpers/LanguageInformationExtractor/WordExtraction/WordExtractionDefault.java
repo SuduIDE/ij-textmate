@@ -89,9 +89,9 @@ public class WordExtractionDefault implements WordExtraction {
         while (searched > -1) {
             Region matchedRegion = matcher.getEagerRegion();
             if (matchedRegion != null) {
-                for (int i = 0; i < matchedRegion.getNumRegs(); i++) {
-                    int begin = Math.max(matchedRegion.getBeg(i), 0);
-                    int end = Math.max(matchedRegion.getEnd(i), 0);
+                for (int i = 0; i < matchedRegion.numRegs; i++) {
+                    int begin = Math.max(matchedRegion.beg[i], 0);
+                    int end = Math.max(matchedRegion.end[i], 0);
                     if (begin < end) result.add(new TextRange(begin, end));
                     searched = end;
                 }
