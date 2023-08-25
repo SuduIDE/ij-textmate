@@ -20,10 +20,10 @@ public class WordExtractionDefault implements WordExtraction {
     };
     private static final String COMMENT = "\\(\\?\\#.*\\)|\\#\\ \\(.*\\)|\\#.*\\n";
     private static final String SPECIAL_SYMBOLS = "\\\\[a-z]";
-    private static final String QUESTION = "\\?[a-z]+:?";
     private static final String CONTENT_IN_SQUARE_BRACKETS = "\\[.*\\]";
     private static final String CONTENT_IN_CURLY_BRACKETS = "\\{.*\\}";
     private static final String RECURSIVE_CAPTURE = "(?=\\(((?:[a-zA-Z0-9@?:|_-]++|\\(\\)|\\(\\g<1>\\))++)\\))";
+    private static final Pattern QUESTION = Pattern.compile("\\(\\?[a-z]+:?");
     private static final Pattern EXTRACT = Pattern.compile("(\\?:|\\(@\\)[a-z0-9_|-]*|[a-z0-9_|-]*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED = Pattern.compile(regexToRemove(), Pattern.CASE_INSENSITIVE);
     private final Set<String> keywords;
@@ -41,6 +41,12 @@ public class WordExtractionDefault implements WordExtraction {
         for (String regex : keywords) {
             regex = REMOVED.matcher(regex).replaceAll("");
 
+            Matcher matcher = QUESTION.matcher(regex);
+
+            while (matcher.find()) {
+                regex = regex.substring(0, matcher.start() + 1) + regex.substring(matcher.end());
+            }
+
             Matcher extract = EXTRACT.matcher(regex);
             Set<TextRange> exceptions = recursiveCapture(regex);
             generateStrings(regex, extract, words, exceptions, selectingRegisters);
@@ -50,7 +56,7 @@ public class WordExtractionDefault implements WordExtraction {
     }
 
     private static String regexToRemove() {
-        return String.format("(%s|%s|%s|%s|%s)", CONTENT_IN_SQUARE_BRACKETS, CONTENT_IN_CURLY_BRACKETS, COMMENT, SPECIAL_SYMBOLS, QUESTION);
+        return String.format("(%s|%s|%s|%s)", CONTENT_IN_SQUARE_BRACKETS, CONTENT_IN_CURLY_BRACKETS, COMMENT, SPECIAL_SYMBOLS);
     }
 
     private void generateStrings(String regex, @NotNull Matcher extract, Set<String> words, Set<TextRange> exceptions, SelectingRegistersStrategy selectingRegisters) {
