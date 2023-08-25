@@ -40,12 +40,7 @@ public class WordExtractionDefault implements WordExtraction {
 
         for (String regex : keywords) {
             regex = REMOVED.matcher(regex).replaceAll("");
-
-            Matcher matcher = QUESTION.matcher(regex);
-
-            while (matcher.find()) {
-                regex = regex.substring(0, matcher.start() + 1) + regex.substring(matcher.end());
-            }
+            regex = removeQuestion(regex);
 
             Matcher extract = EXTRACT.matcher(regex);
             Set<TextRange> exceptions = recursiveCapture(regex);
@@ -78,6 +73,18 @@ public class WordExtractionDefault implements WordExtraction {
 
             WordExtraction.generateStrings(added, words, selectingRegisters);
         }
+    }
+
+    private @NotNull String removeQuestion(String regex) {
+        Matcher matcher = QUESTION.matcher(regex);
+
+        List<TextRange> ranges = new ArrayList<>();
+        while (matcher.find()) ranges.add(new TextRange(matcher.start() + 1, matcher.end()));
+        for (int i = ranges.size() - 1; i > -1; i--) {
+            TextRange range = ranges.get(i);
+            regex = regex.substring(0, range.getStartOffset()) + regex.substring(range.getEndOffset());
+        }
+        return regex;
     }
 
     private @NotNull Set<TextRange> recursiveCapture(@NotNull String str) {
