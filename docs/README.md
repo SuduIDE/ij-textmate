@@ -62,9 +62,11 @@ The described method does not work in IDEs version 2023.2
 ---
 
 In this `syntax highlighting` solution, the plan is to:
+
 - use `TextMate Bundles`
 - provide injection recovery on IDE startup
-- perform `syntax highlighting` without using comments. To be able to inject a language where you can't use comments. For example, to inject `JS` into `HTML`
+- perform `syntax highlighting` without using comments. To be able to inject a language where you can't use comments.
+  For example, to inject `JS` into `HTML`
 - add `code completion`
 - ensure that the injection can be performed in any language
 
@@ -75,18 +77,18 @@ which [TextMate Bundles](https://www.jetbrains.com/help/webstorm/tutorial-using-
 
 ## Requirements
 
-| IDE                             | min version | max version | status                |
-|---------------------------------|-------------|-------------|-----------------------|
-| IntelliJ IDEA Community Edition | 2022.2      | 2023.1.5    | supported             |
-| IntelliJ IDEA Community Edition | 2023.2      | 2023.2      | currently unsupported |
-| IntelliJ IDEA Ultimate          | 2022.2      | 2023.1.5    | supported             |
-| CLion                           | 2022.2      | 2023.1      | supported             |
-| PyCharm Professional Edition    | 2022.2      | 2023.1.4    | supported             |
-| PyCharm Community Edition       | 2022.2      | 2023.1      | supported             |
-| PhpStorm                        | 2022.2      | 2023.1      | supported             |
-| Rider                           | 2022.2.4    | 2023.1.4    | supported             |
-| GoLang                          | 2022.2.6    | 2023.1.4    | supported             |
-| RubyMine                        | 2022.2.5    | 2023.1.5    | supported             |
+| IDE                             | min version | max version | status                                                                                                                                                                                                                                                                         |
+|---------------------------------|-------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| IntelliJ IDEA Community Edition | 2022.2      | 2023.1.5    | supported                                                                                                                                                                                                                                                                      |
+| IntelliJ IDEA Community Edition | 2023.2      | 2023.2      | latest release: [ubuntu](https://github.com/SuduIDE/ij-textmate/releases/tag/ij-textmate-plugin-ubuntu-latest-java-19-v0.1.5-intellij_2023.2), [windows](https://github.com/SuduIDE/ij-textmate/releases/tag/ij-textmate-plugin-windows-latest-java-19-v0.1.5-intellij_2023.2) |
+| IntelliJ IDEA Ultimate          | 2022.2      | 2023.1.5    | supported                                                                                                                                                                                                                                                                      |
+| CLion                           | 2022.2      | 2023.1      | supported                                                                                                                                                                                                                                                                      |
+| PyCharm Professional Edition    | 2022.2      | 2023.1.4    | supported                                                                                                                                                                                                                                                                      |
+| PyCharm Community Edition       | 2022.2      | 2023.1      | supported                                                                                                                                                                                                                                                                      |
+| PhpStorm                        | 2022.2      | 2023.1      | supported                                                                                                                                                                                                                                                                      |
+| Rider                           | 2022.2.4    | 2023.1.4    | supported                                                                                                                                                                                                                                                                      |
+| GoLang                          | 2022.2.6    | 2023.1.4    | supported                                                                                                                                                                                                                                                                      |
+| RubyMine                        | 2022.2.5    | 2023.1.5    | supported                                                                                                                                                                                                                                                                      |
 
 Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#`, `Go`, `Ruby`
 
@@ -110,7 +112,7 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
     <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
       <img src="images/dark/without_injection.png" alt="without_injection" />
     </a>
-    
+
     <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only">
       <img src="images/light/without_injection.png" alt="without_injection" />
     </a>
@@ -119,7 +121,7 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
    navigate through the list:
     - `↑` - move up
     - `↓` - move down
-    
+
     <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only">
       <img src="images/dark/select_language.png" alt="select_language" />
     </a>
@@ -163,6 +165,10 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
   </a>
 
 - Injections are saved when the IDE is restarted
+
+  **NOTE:**
+  for this feature to work, it is recommended to restart the IDE after installing the plugin
+
 
 - The list of supported languages depends on the mappings loaded by Textmate Bundles
 
