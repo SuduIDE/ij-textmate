@@ -183,5 +183,3 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
 ## Bugs
 
 - Injected language locale in string literals with references only works for `java`.
-
-- Error occurs during initialization `PersistentStateComponent` in all ide except Intellij.
