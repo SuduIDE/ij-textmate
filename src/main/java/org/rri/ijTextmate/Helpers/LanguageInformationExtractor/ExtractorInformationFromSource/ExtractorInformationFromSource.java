@@ -20,7 +20,7 @@ public interface ExtractorInformationFromSource {
         if (abstractFileType != null && !isEmpty(abstractFileType)) {
             extractor = new ExtractorInformationFromAbstractFileType(abstractFileType);
         } else {
-            extractor = new ExtractorInformationFromTextMate(language, extensions, registersStrategy);
+            extractor = new ExtractorInformationFromTextMate(getLanguageForFilter(language), extensions, registersStrategy);
         }
         return extractor;
     }
@@ -38,5 +38,13 @@ public interface ExtractorInformationFromSource {
                 syntaxTable.getKeywords2().isEmpty() &&
                 syntaxTable.getKeywords3().isEmpty() &&
                 syntaxTable.getKeywords4().isEmpty();
+    }
+
+    private static String getLanguageForFilter(@NotNull String language) {
+        return switch (language) {
+            case "coffeescript" -> "coffee";
+            case "objective-c" -> "objc";
+            default -> language;
+        };
     }
 }

@@ -20,10 +20,10 @@ public class WordExtractionDefault implements WordExtraction {
     };
     private static final String COMMENT = "\\(\\?\\#.*\\)|\\#\\ \\(.*\\)|\\#.*\\n";
     private static final String SPECIAL_SYMBOLS = "\\\\[a-z]";
-    private static final String CONTENT_IN_SQUARE_BRACKETS = "\\[.*\\]";
+    private static final String CONTENT_IN_SQUARE_BRACKETS = "\\[.*\\]\\??";
     private static final String CONTENT_IN_CURLY_BRACKETS = "\\{.*\\}";
     private static final String RECURSIVE_CAPTURE = "(?=\\(((?:[a-zA-Z0-9@?:|_-]++|\\(\\)|\\(\\g<1>\\))++)\\))";
-    private static final Pattern QUESTION = Pattern.compile("\\(\\?[a-z]+:?");
+    private static final Pattern QUESTION = Pattern.compile("\\(\\?[a-z-]+:?");
     private static final Pattern EXTRACT = Pattern.compile("(\\?:|\\(@\\)[a-z0-9_|-]*|[a-z0-9_|-]*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMOVED = Pattern.compile(regexToRemove(), Pattern.CASE_INSENSITIVE);
     private final Set<String> keywords;

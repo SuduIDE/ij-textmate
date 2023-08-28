@@ -42,8 +42,8 @@ public class CompletionInjectedLanguageTests extends LightPlatformCodeInsightFix
 
                 myFixture.complete(CompletionType.BASIC);
                 myFixture.getLookupElementStrings();
-            } catch (Throwable ignored) {
-                fail(String.format("Error extracting keywords for language: %s", language));
+            } catch (Throwable e) {
+                fail(String.format("Error extracting keywords for language: %s.\nMessage: %s", language, e.getMessage()));
             }
         }
 
