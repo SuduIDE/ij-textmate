@@ -37,8 +37,9 @@ public class LanguageHighlight implements MultiHostInjector {
 
             if (!originalHost.getTextRange().intersects(psiElement.getTextRange())) {
                 psiElement.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, placeInjection);
-                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, null);
-                return;
+                placeInjection = getTemporaryInjectionPlaceIntersectsHost(host, psiFile, project);
+                host.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, placeInjection);
+                if (placeInjection == null) return;
             }
 
             List<TextRange> ranges = calculateRanges(host);
@@ -127,6 +128,20 @@ public class LanguageHighlight implements MultiHostInjector {
             return temporaryPlaceInjection;
         }
 
+        return null;
+    }
+
+    private @Nullable TemporaryPlaceInjection getTemporaryInjectionPlaceIntersectsHost(@NotNull PsiLanguageInjectionHost host, PsiFile psiFile, Project project) {
+        TemporaryMapPointerToPlaceInjection storage = TemporaryStorage.getInstance(project).get(InjectorHelper.getRelativePath(project, psiFile));
+        Set<Map.Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection>> entries = storage.entrySet();
+
+        for (var entry : entries) {
+            var key = entry.getKey();
+            var value = entry.getValue();
+
+            Segment segment = key.getRange();
+            if (segment != null && host.getTextRange().intersects(segment)) return value;
+        }
         return null;
     }
 

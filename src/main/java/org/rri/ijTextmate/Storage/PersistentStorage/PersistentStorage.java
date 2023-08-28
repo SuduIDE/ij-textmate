@@ -124,7 +124,7 @@ public class PersistentStorage implements PersistentStateComponent<Element> {
         }
 
         @Override
-        public Set<Map.Entry<String, PersistentSetPlaceInjection>> entrySet() {
+        public @NotNull Set<Map.Entry<String, PersistentSetPlaceInjection>> entrySet() {
             return map.entrySet();
         }
     }

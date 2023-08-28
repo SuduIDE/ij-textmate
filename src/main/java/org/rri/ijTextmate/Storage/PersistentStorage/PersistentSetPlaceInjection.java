@@ -1,5 +1,7 @@
 package org.rri.ijTextmate.Storage.PersistentStorage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,7 +12,7 @@ public class PersistentSetPlaceInjection extends AbstractSet<PersistentPlaceInje
     }
 
     @Override
-    public Iterator<PersistentPlaceInjection> iterator() {
+    public @NotNull Iterator<PersistentPlaceInjection> iterator() {
         return new Iterator<>() {
             private final Iterator<PersistentPlaceInjection> iterator = set.iterator();
 
