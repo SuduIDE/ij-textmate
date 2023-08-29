@@ -68,9 +68,5 @@
                 text="Delete Injected Language" description="Deletes the injected language">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl I"/>
         </action>
-        <action id="org.rri.ijTextmate.CheckType" class="org.rri.ijTextmate.CheckType" text="Type"
-                description="Type">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl BACK_SLASH" second-keystroke="ctrl O"/>
-        </action>
     </actions>
 </idea-plugin>
