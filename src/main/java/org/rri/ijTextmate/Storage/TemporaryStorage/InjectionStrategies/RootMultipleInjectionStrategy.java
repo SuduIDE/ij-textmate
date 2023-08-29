@@ -26,25 +26,6 @@ public class RootMultipleInjectionStrategy implements InjectionStrategy {
                          @NotNull List<TextRange> ranges,
                          @NotNull TemporaryPlaceInjection languageID) {
         single.register(registrar, host, ranges, languageID);
-
-//        PsiElement psiElement = host.getParent();
-//
-//        if (!(psiElement instanceof PsiVariable)) {
-//            psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, PsiNamedElement.class, PsiVariable.class);
-//        }
-//
-//        if (psiElement == null) return;
-//
-//        Collection<PsiReference> references = ReferencesSearch.search(psiElement).findAll();
-//
-//        for (PsiReference reference : references) {
-//            PsiLanguageInjectionHost hostAdd = PsiTreeUtil.getChildOfType(reference.getElement().getParent(), PsiLanguageInjectionHost.class);
-//            if (hostAdd != null && hostAdd.getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE) == null) {
-//                SmartPsiElementPointer<PsiLanguageInjectionHost> hostPointer = SmartPointerManager.createPointer(hostAdd);
-//                TemporaryPlaceInjection temporaryPlaceInjection = new TemporaryPlaceInjection(hostPointer, languageID.languageID, new LeafMultipleInjectionStrategy(languageID));
-//                hostAdd.putUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE, temporaryPlaceInjection);
-//            }
-//        }
     }
 
     @Override

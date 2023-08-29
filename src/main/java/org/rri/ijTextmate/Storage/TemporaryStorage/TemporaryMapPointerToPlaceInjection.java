@@ -5,48 +5,48 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class TemporaryMapPointerToPlaceInjection {
-    private final Object mutex = new Object();
-    private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = new HashMap<>();
+public class TemporaryMapPointerToPlaceInjection extends AbstractMap<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> {
+    private final Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> map = new ConcurrentHashMap<>();
 
     public TemporaryMapPointerToPlaceInjection() {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public TemporaryPlaceInjection add(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
-        return synchronizedSupplier(() -> map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection));
+    public TemporaryPlaceInjection put(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
+        return map.put(temporaryPlaceInjection.hostPointer, temporaryPlaceInjection);
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public TemporaryPlaceInjection remove(@NotNull TemporaryPlaceInjection temporaryPlaceInjection) {
-        return synchronizedSupplier(() -> map.remove(temporaryPlaceInjection.hostPointer));
-    }
-
-    @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public TemporaryPlaceInjection remove(SmartPsiElementPointer<PsiLanguageInjectionHost> psiElementPointer) {
-        return synchronizedSupplier(() -> map.remove(psiElementPointer));
-    }
-
-    public TemporaryPlaceInjection get(SmartPsiElementPointer<PsiLanguageInjectionHost> key) {
-        return synchronizedSupplier(() -> map.get(key));
+        return map.remove(temporaryPlaceInjection.hostPointer);
     }
 
     public TemporaryPlaceInjection get(PsiLanguageInjectionHost psiLanguageInjectionHost) {
-        return synchronizedSupplier(() -> map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost)));
+        return map.get(SmartPointerManager.createPointer(psiLanguageInjectionHost));
     }
 
-    public Map<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection> getMap() {
-        return Collections.unmodifiableMap(map);
+    @Override
+    public TemporaryPlaceInjection remove(Object key) {
+        return map.remove(key);
     }
 
-    private <T> T synchronizedSupplier(@NotNull Supplier<T> supplier) {
-        synchronized (mutex) {
-            return supplier.get();
-        }
+    @Override
+    public TemporaryPlaceInjection get(Object key) {
+        return map.get(key);
+    }
+
+    @NotNull
+    @Override
+    public Set<SmartPsiElementPointer<PsiLanguageInjectionHost>> keySet() {
+        return map.keySet();
+    }
+
+    @NotNull
+    @Override
+    public Set<Entry<SmartPsiElementPointer<PsiLanguageInjectionHost>, TemporaryPlaceInjection>> entrySet() {
+        return map.entrySet();
     }
 }

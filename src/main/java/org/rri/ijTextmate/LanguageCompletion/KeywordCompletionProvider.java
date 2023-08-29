@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.rri.ijTextmate.Constants;
+import org.rri.ijTextmate.Helpers.LanguageInformationExtractor.ExtractedLanguageInformation;
 import org.rri.ijTextmate.Helpers.TextMateHelper;
 import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryPlaceInjection;
 
@@ -16,16 +17,17 @@ public class KeywordCompletionProvider extends CompletionProvider<CompletionPara
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
-        result.runRemainingContributors(parameters, true);
         TextMateHelper textMateHelper = (TextMateHelper) context.get(CompletionPattern.LANGUAGE);
 
         TemporaryPlaceInjection languageID = parameters.getOriginalFile().getUserData(Constants.MY_TEMPORARY_INJECTED_LANGUAGE);
 
         if (languageID == null) return;
 
-        textMateHelper.getKeywords(languageID.getID()).forEach(word -> {
+        ExtractedLanguageInformation information = textMateHelper.getInformation(languageID.getID());
+
+        information.getKeywords().forEach(word -> {
             ProgressManager.checkCanceled();
-            result.addElement(LookupElementBuilder.create(word));
+            result.addElement(LookupElementBuilder.create(word).withCaseSensitivity(false).withIcon(information.getIcon()));
         });
     }
 }

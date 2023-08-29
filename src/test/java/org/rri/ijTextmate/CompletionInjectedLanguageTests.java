@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
+import org.rri.ijTextmate.Helpers.TextMateHelper;
 
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,29 @@ public class CompletionInjectedLanguageTests extends LightPlatformCodeInsightFix
     @Override
     protected String getTestDataPath() {
         return "src/test/testData/CompletionCases";
+    }
+
+    @Test
+    public void testAllKeyword() {
+        Project project = myFixture.getProject();
+        PsiFile file = myFixture.configureByFile("AllKeywords.java");
+        Editor editor = myFixture.getEditor();
+
+        TextMateHelper.getInstance(project).updateLanguages();
+        List<String> languages = TextMateHelper.getInstance(project).getLanguages();
+
+        for (String language : languages) {
+            try {
+                TestHelper.injectLanguage(project, editor, file, language);
+                assertTrue(TestHelper.isInjected(project, editor, file));
+
+                myFixture.complete(CompletionType.BASIC);
+                myFixture.getLookupElementStrings();
+            } catch (Throwable e) {
+                fail(String.format("Error extracting keywords for language: %s.\nMessage: %s", language, e.getMessage()));
+            }
+        }
+
     }
 
     @Test
@@ -58,9 +82,9 @@ public class CompletionInjectedLanguageTests extends LightPlatformCodeInsightFix
     }
 
     @Test
-    public void testCSSEchoKeyword() {
+    public void testPowerShellEchoKeyword() {
         Project project = myFixture.getProject();
-        PsiFile file = myFixture.configureByFile("CSSEchoKeyword.java");
+        PsiFile file = myFixture.configureByFile("PowerShellEchoKeyword.java");
         Editor editor = myFixture.getEditor();
 
         TestHelper.injectLanguage(project, editor, file, "powershell");

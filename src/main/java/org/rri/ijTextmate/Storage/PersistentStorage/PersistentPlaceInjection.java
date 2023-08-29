@@ -54,7 +54,7 @@ public class PersistentPlaceInjection implements LanguageID, ConverterElement {
         int start = Integer.parseInt(placeElement.getAttribute(START).getValue());
         int end = Integer.parseInt(placeElement.getAttribute(END).getValue());
 
-        if (start > end) {
+        if (start > end || start < 0) {
             return false;
         }
         textRange = new TextRange(start, end);

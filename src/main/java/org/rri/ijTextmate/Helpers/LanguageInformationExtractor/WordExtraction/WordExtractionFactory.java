@@ -1,4 +1,4 @@
-package org.rri.ijTextmate.Helpers.WordExtraction;
+package org.rri.ijTextmate.Helpers.LanguageInformationExtractor.WordExtraction;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +10,7 @@ public class WordExtractionFactory {
     @Contract(pure = true)
     public static @NotNull WordExtraction create(@NotNull String language, @NotNull Set<String> keywords, final @NotNull SelectingRegistersStrategy selectingRegisters) {
         return switch (language) {
+            case "pug" -> new WordExtractionPug(keywords, selectingRegisters);
             case "html" -> new WordExtractionHTML(keywords, selectingRegisters);
             default -> new WordExtractionDefault(keywords, selectingRegisters);
         };
