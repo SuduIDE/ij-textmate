@@ -27,7 +27,7 @@ For example `SQL` queries inside `Java` string literals:
 This is where `language injections` help. They allow you to add `syntax highlighting` and `code completion` inside
 string literals.
 
-The language injection plugin is called `IntelliLang`. However, in the `intellij idea community edition`, many languages
+The language injection plugin is called `IntelliLang`. However, in the `Intellij Idea Community Edition`, many languages
 are missing, such as `SQL`. But there are `TextMate Bundles`. With which you can get `syntax highlighting`. This can be
 done as follows:
 <table>
@@ -43,7 +43,7 @@ done as follows:
         <a href="https://github.com/SuduIDE/ij-textmate#gh-dark-mode-only"><img src="images/dark/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
         <a href="https://github.com/SuduIDE/ij-textmate#gh-light-mode-only"><img src="images/light/string_literal_comment_textmate.png" alt="string_literal_comment_textmate" /></a>
     </td>
-    <td> Add a "language=textmate" comment above the string literal </td>
+    <td> Add TextMate injection with IntelliLang. A comment will appear </td>
   </tr>
   <tr>
     <td>
@@ -57,18 +57,23 @@ done as follows:
 ---
 **NOTE**
 
-The described method does not work in IDEs version 2023.2
+The described method does not work in IDE version 2023.2 for all TextMate Bundles
 
 ---
 
-In this `syntax highlighting` solution, the plan is to:
+There are some problems with the approach described above:
 
-- use `TextMate Bundles`
+- a comment is required, and it can be deleted by another developer in the team
+- it doesn't work if you can't insert a comment
+- there is no code completion.
+
+In this solution, the plan is to:
+
+- use `TextMate Bundles` for language highlighting
 - provide injection recovery on IDE startup
-- perform `syntax highlighting` without using comments. To be able to inject a language where you can't use comments.
-  For example, to inject `JS` into `HTML`
+- perform `syntax highlighting` without using comments. To be able to inject a language where you can't use comments
 - add `code completion`
-- ensure that the injection can be performed in any language
+- perform injections regardless of language
 
 ## Short description
 
@@ -180,6 +185,8 @@ Supported languages: `Java`, `Kotlin`, `python`, `C++`, `PHP`, `TypeScript`, `C#
     <img src="images/light/textmate_bundles.png" alt="textmate_bundles" />
   </a>
 
+- Injection into all places where the variable is used
+
 ## Bugs
 
-- Injected language locale in string literals with references only works for `java`.
+- Injection into all places of variable usage works only for `Java`
