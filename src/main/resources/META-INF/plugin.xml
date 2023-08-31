@@ -38,7 +38,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
+        <multiHostInjector implementation="org.rri.ijTextmate.MultiHostInjectorImplementations.DefaultLanguageHighlight"/>
         <projectService serviceImplementation="org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage"/>
         <completion.contributor language="textmate"
                                 implementationClass="org.rri.ijTextmate.LanguageCompletion.LanguageCompletion"

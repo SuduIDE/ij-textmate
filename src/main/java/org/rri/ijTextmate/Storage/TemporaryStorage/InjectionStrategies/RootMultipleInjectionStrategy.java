@@ -13,11 +13,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class RootMultipleInjectionStrategy implements InjectionStrategy {
+    public static final String IDENTIFIER = "RootMultipleInjectionStrategy";
     private final InjectionStrategy single = new SingleInjectionStrategy();
 
     @Override
     public String identifier() {
-        return "RootMultipleInjectionStrategy";
+        return IDENTIFIER;
     }
 
     @Override
