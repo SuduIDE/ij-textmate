@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="org.rri.ijTextmate">
+        <injectionHelper implementation="org.rri.ijTextmate.Helpers.InjectionHelper.JavaInjectionHelper"/>
+    </extensions>
+</idea-plugin>
