@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>org.rri.ij-textmate</id>
+    <id>org.rri.ijTextmate</id>
     <category>Other Tools</category>
 
     <!-- Public plugin name should be written in Title Case.
@@ -33,30 +33,29 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.textmate</depends>
     <depends>org.intellij.intelliLang</depends>
-    <depends>com.intellij.java</depends>
+    <depends optional="true" config-file="injectSense-java.xml">com.intellij.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <multiHostInjector implementation="org.rri.ijTextmate.LanguageHighlight"/>
+        <multiHostInjector implementation="org.rri.ijTextmate.MultiHostInjectorImplementations.DefaultLanguageHighlight"/>
         <projectService serviceImplementation="org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage"/>
         <completion.contributor language="textmate"
                                 implementationClass="org.rri.ijTextmate.LanguageCompletion.LanguageCompletion"
-                                order="before wordCompletion"
-        />
+                                order="before wordCompletion"/>
     </extensions>
-    <project-components>
-<!--                <component>-->
-<!--                    <implementation-class>org.rri.ijTextmate.Storage.PersistentStorage.PersistentStorage</implementation-class>>-->
-<!--                </component>-->
-    </project-components>
+
+    <extensionPoints>
+        <extensionPoint name="injectionHelper"
+                        interface="org.rri.ijTextmate.Helpers.InjectionHelper.InjectionHelper" dynamic="true"/>
+    </extensionPoints>
+
     <projectListeners>
         <listener class="org.rri.ijTextmate.Listeners.InitializerHighlightListener"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
         <listener class="org.rri.ijTextmate.Listeners.FileChangeListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
-    >
     <actions>
         <action id="org.rri.ijTextmate.InjectLanguageAction"
                 class="org.rri.ijTextmate.InjectLanguageAction"

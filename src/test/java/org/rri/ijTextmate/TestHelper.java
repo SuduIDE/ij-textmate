@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ijTextmate.Helpers.InjectionHelper.InjectionHelper;
 import org.rri.ijTextmate.Helpers.InjectorHelper;
 import org.rri.ijTextmate.Inject.InjectLanguageOnePlace;
 
@@ -19,7 +20,8 @@ public class TestHelper {
     public static void injectLanguage(Project project, Editor editor, PsiFile psiFile, String language) {
         PsiLanguageInjectionHost host = TestHelper.getHost(editor, psiFile);
         if (host == null) return;
-        InjectLanguageAction.injectLanguage(project, editor, psiFile, language, InjectLanguageOnePlace.INSTANCE);
+        var data = new InjectLanguageAction.Data(project, editor, psiFile);
+        InjectLanguageAction.injectLanguage(data, language, InjectLanguageOnePlace.INSTANCE, InjectionHelper.INSTANCE);
     }
 
     public static void injectLanguage(Project project, Editor editor, PsiFile psiFile) {

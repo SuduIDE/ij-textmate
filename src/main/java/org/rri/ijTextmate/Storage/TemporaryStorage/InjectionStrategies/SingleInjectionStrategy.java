@@ -19,6 +19,8 @@ import org.rri.ijTextmate.Storage.TemporaryStorage.TemporaryStorage;
 import java.util.List;
 
 public class SingleInjectionStrategy implements InjectionStrategy {
+    public static final String IDENTIFIER = "SingleInjectionStrategy";
+
     @Override
     public String identifier() {
         return "SingleInjectionStrategy";
